@@ -455,7 +455,7 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                     justifyContent:'space-between',
                     flexDirection:'row'
                 }}>
-                    <View style={{alignSelf: 'flex-end'}}>
+                    <View style={{alignSelf: 'flex-end', backgroundColor:'transparent'}}>
                         <Text style={{color: '#fff', fontSize: 13, fontWeight: 'bold', fontFamily: 'arial',}}>
                             DISTANCE
                         </Text>
@@ -466,7 +466,7 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                                 {this.state.sliderValue===0?0.25:this.state.sliderValue + ' '}
                             </Text>
                         </View>
-                        <View style={{alignSelf:'flex-end'}}>
+                        <View style={{alignSelf:'flex-end', backgroundColor:'transparent'}}>
                             <Text style={{color: '#fff', fontSize: 12,fontWeight:'bold', fontFamily: 'arial',}}>
                                 km
                             </Text>

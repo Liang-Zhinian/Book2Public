@@ -17,7 +17,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [AMapServices sharedServices].apiKey = @"5e2443572f20e39be02de5d879441ca3";
+  [AMapServices sharedServices].apiKey = @"67be50719e82fca9506084895ecc1dd9";
   
   NSURL *jsCodeLocation;
 

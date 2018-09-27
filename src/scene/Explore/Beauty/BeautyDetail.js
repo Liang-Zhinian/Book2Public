@@ -404,6 +404,7 @@ export default class BeautyDetail extends PureComponent<Props, State> {
                                           alignSelf: 'center',
                                           paddingTop: 10,
                                           paddingBottom: 10,
+                                          backgroundColor: 'transparent'
                                       }}
                     >
                         <Text style={{fontSize: 15, fontFamily: 'arial', color: '#ffffff', fontWeight: '200'}}>View
@@ -428,6 +429,7 @@ export default class BeautyDetail extends PureComponent<Props, State> {
                                           alignSelf: 'center',
                                           paddingTop: 10,
                                           paddingBottom: 10,
+                                          backgroundColor: 'transparent'
                                       }}
                     >
                         <Text style={{fontSize: 15, fontFamily: 'arial', color: '#ffffff', fontWeight: '200'}}>View Price</Text>

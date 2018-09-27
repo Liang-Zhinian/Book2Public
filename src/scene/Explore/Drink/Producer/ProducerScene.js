@@ -1,24 +1,22 @@
 import React, {Component} from 'react'
 import {
-    ActivityIndicator, BackHandler,
+    ActivityIndicator,
     BVLinearGradient,
     Dimensions,
-    Image, InteractionManager,
+    Image,
     StyleSheet,
     Text,
     TouchableOpacity,
     View
 } from 'react-native'
 import {screen} from '../../../../common';
-import {getAllProducer, getProducerByName} from "../../../../api";
+import {getProducerByName, getProducerByGPS} from "../../../../api";
 import {color} from "../../../../widget";
-import Toast from '../../../../../src/scene/demo&test/react-native-city/ToastUtil'
 import {commonStyle} from "../../../../widget/commonStyle";
 import LinearGradient from "react-native-linear-gradient";
-import {Heading2, Paragraph} from "../../../../widget/Text";
+import {Heading2} from "../../../../widget/Text";
 import RefreshListView, {RefreshState} from "react-native-refresh-list-view";
 import DrinkDetailDataUtils from "../DrinkDetailDataUtils";
-import HorizontalPicker from "../../../Mine/hpicker";
 import StarRating from "../../../Common/StarRating";
 //酒庄列表
 export default class ProducerScene extends Component {
@@ -43,52 +41,52 @@ export default class ProducerScene extends Component {
             isLoading:false,
             letterSelect:true,
             onSearch:false,
+            LocationSearchKey:null,
+            center:null
         }
 
     }
 
 
     componentWillMount() {
-        fetch('http://demo.atpath.com:17509/api/Service/GetToken?appid=123456789&appsecret=123456789', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'timestamp': this.state.timestamp,
-                'appid': '123456789',
-                'nonce':  this.state.nonce
-            }
-        })
-            .then((response) => response.json())
-            .then((responseJson) => {
-                this.setState({SignToken:responseJson.Data.SignToken});
-            })
-            .catch((error) => {
-                console.w(error);
-            });
+        // fetch('http://demo.atpath.com:17509/api/Service/GetToken?appid=123456789&appsecret=123456789', {
+        //     method: 'GET',
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json',
+        //         'timestamp': this.state.timestamp,
+        //         'appid': '123456789',
+        //         'nonce':  this.state.nonce
+        //     }
+        // })
+        //     .then((response) => response.json())
+        //     .then((responseJson) => {
+        //         this.setState({SignToken:responseJson.Data.SignToken});
+        //     })
+        //     .catch((error) => {
+        //         console.w(error);
+        //     });
     }
     page=1;
     dataLength=0;
     size=50;
     type=1;
-    _getAllProducer = async () => {
+    _getProducerByName = async (name) => {
         this.setState({
             onSearch:true,
             isLoading:true});
-        let letterT = this.state.picker2Value;
-
-        await  getAllProducer('ByA',letterT,this.page,this.size, this.type)
+        await  getProducerByName(name, this.page, this.size, this.type)
             .then((msg) => {
                 this.dataLength = this.state.ProducerList.length;
                 let data = DrinkDetailDataUtils.requestProducerData(msg);
+                // console.log(data);
                 data.length>0?this.setState({NoData:false}):this.setState({NoData:true});
-                data.pop();
+                // data.pop();
                 this.setState({
                     isLoading:false,
-                    ProducerList: this.state.ProducerList.concat(data),
+                    ProducerList:this.state.ProducerList.concat(data),
                     refreshState: RefreshState.Idle,
                 },()=>{
-                    // console.log(this.state.ProducerList.length,this.dataLength);
                     if (this.state.ProducerList.length===this.dataLength){
                         this.setState({refreshState:RefreshState.NoMoreData})
                     }
@@ -101,34 +99,28 @@ export default class ProducerScene extends Component {
                 })
             });
     };
-    _getProducerByName = async (name) => {
+    _getProducerByGPS = async (latitude,longitude,radius) => {
         this.setState({
             onSearch:true,
-            isLoading:true});
-        await  getProducerByName(name, this.page, this.size, this.type)
+            isLoading:true
+        });
+        await  getProducerByGPS(latitude,longitude,radius)
             .then((msg) => {
                 this.dataLength = this.state.ProducerList.length;
                 let data = DrinkDetailDataUtils.requestProducerData(msg);
-                // console.log(data);
-                data.length>0?this.setState({NoData:false}):this.setState({NoData:true});
-                data.pop();
+                data.length > 0 ? this.setState({NoData: false}) : this.setState({NoData: true});
                 this.setState({
                     isLoading:false,
-                    ProducerList:this.state.ProducerList.concat(data),
+                    ProducerList: this.state.ProducerList.concat(data),
                     refreshState: RefreshState.Idle,
-                },()=>{
-                    // console.log(this.state.ProducerList.length,this.dataLength);
-                    if (this.state.ProducerList.length===this.dataLength){
-                        this.setState({refreshState:RefreshState.NoMoreData})
+                }, () => {
+                    if (this.state.ProducerList.length === this.dataLength) {
+                        this.setState({refreshState: RefreshState.NoMoreData})
                     }
                 });
             })
-            .catch((e) => {
-                console.warn(e);
-                this.setState({
-                    refreshState: RefreshState.Failure,
-                })
-            });
+            .catch((error) => {
+            })
     };
 
     // stringToBytes(str) {
@@ -239,38 +231,30 @@ export default class ProducerScene extends Component {
 
     renderCell = (rowData: any) => {
         return (
-            <View>
-                <TouchableOpacity
-                    activeOpacity={0.9}
-                    style={styles.container2}
-                    onPress={() => {
-                        console.log('renderCell',rowData);
-                        this.props.navigation.navigate('ProducerDetail', {info: rowData.item})//跳到商品详情
-                    }}
-                >
-                    <View style={styles.rightContainer}>
-                        <Heading2 style={{paddingTop:5}}>{rowData.item.title}</Heading2>
-                        {/*<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>*/}
-                            {/*<Paragraph numberOfLines={0} style={{*/}
-                                {/*marginTop: 5,*/}
-                                {/*width: screen.width * 0.9 - 80*/}
-                            {/*}}>{rowData.item.subtitle?rowData.item.subtitle:'This is a fixed demo data, including telephone and comment.'}</Paragraph>*/}
-
-                        {/*</View>*/}
-                    </View>
+            <TouchableOpacity
+                activeOpacity={0.9}
+                style={styles.container2}
+                onPress={() => {
+                    this.props.navigation.navigate('ProducerDetail', {info: rowData.item})//跳到商品详情
+                }}
+            >
+                <View style={styles.rightContainer}>
+                    <Heading2 style={{paddingTop: 5}}>{rowData.item.title}</Heading2>
                     <View style={{flexDirection: 'row', marginTop: 0, marginBottom: 10}}>
                         <StarRating
-                            // style={{marginBottom: 5}}
                             maxStars={5}
                             rating={3.5}
                             disabled={true}
                             starSize={15}
                             onStarChange={(value) => this.onStarRatingPress(value)}
                         />
-                        <Text style={{paddingLeft:10,fontSize:12}}>456 reviews</Text>
+                        <Text style={{paddingLeft: 10, fontSize: 12}}>456 reviews</Text>
                     </View>
-                </TouchableOpacity>
-            </View>
+                </View>
+                <View style={{flexDirection: 'column',}}>
+                    <Image source={require('../../../../img/public/ProducerIcon.png')} style={styles.icon}/>
+                </View>
+            </TouchableOpacity>
         )
     };
     requestData = async () => {
@@ -278,17 +262,38 @@ export default class ProducerScene extends Component {
             ProducerList:[],
             refreshState:RefreshState.HeaderRefreshing
         });
-        this._getAllProducer()
+        let {searchKey,LocationSearchKey,center,radius} = this.state;
+        if (searchKey !== null) {
+            // this.setState({ProducerList: []});
+            this._getProducerByName(searchKey);
+        } else if (LocationSearchKey!==null){
+            // this.setState({ProducerList: []});
+            this._getProducerByGPS(center.latitude,center.longitude,radius);
+        }
+        else {
+            this.props.setShowSliderBar && this.props.setShowSliderBar(true);
+            if (searchKey === null) {
+                this._getProducerByName('')
+            } else {
+                this._getProducerByName(searchKey);
+            }
+        }
+        // this._getProducerByName(this.state.searchKey);
+        // this._getAllProducer()
         // this._getWine();
     };
     nextPage=async()=>{
         ++this.page;
         //叠加翻页数据
         this.setState({refreshState: RefreshState.FooterRefreshing});
-        if (this.state.searchKey!==null) {
-             this._getProducerByName(this.state.searchKey);
-       }else {
-             this._getAllProducer();
+        let {searchKey,LocationSearchKey,center,radius} = this.state;
+        // this.props.setShowSliderBar && this.props.setShowSliderBar(true);
+        if (searchKey!==null) {
+            this._getProducerByName(searchKey);
+            // this.setState({refreshState: RefreshState.NoMoreData})//暂时没有分页,临时停止翻页刷新
+        } else if (LocationSearchKey!==null){
+            // this._getProducerByGPS(center.latitude,center.longitude,radius);
+            this.setState({refreshState: RefreshState.NoMoreData})//暂时没有分页,临时停止翻页刷新
         }
     };
 
@@ -397,7 +402,7 @@ export default class ProducerScene extends Component {
     //     );
     // }
     render = () => {
-        let {searchKey} =this.state;
+        let {searchKey,LocationSearchKey} =this.state;
         return (
             <LinearGradient colors={screen.colorTemp}
                             start={{x: 0, y: 0}}
@@ -435,28 +440,7 @@ export default class ProducerScene extends Component {
                                 fontFamily: 'arial',
                             }}>Producers</Text>
                         </TouchableOpacity>
-                        {/*<TouchableOpacity*/}
-                            {/*style={{*/}
-                                {/*paddingBottom: 10,*/}
-                                {/*paddingTop: 10,*/}
-                                {/*paddingLeft: 50,*/}
-                                {/*paddingRight: screen.width * 0.025,*/}
-                            {/*}}*/}
-                            {/*onPress={() => {*/}
-                                {/*// this.requestAnimationFrame(() => {*/}
-                                {/*this.toggle()*/}
-                                {/*// });*/}
-                            {/*}}>*/}
-                            {/*<Image source={require('../../../img/nearby/country.png')}*/}
 
-                                   {/*style={{*/}
-                                       {/*tintColor:'#fff',*/}
-                                       {/*// backgroundColor: '#ffaaaa',*/}
-                                       {/*width: 20,*/}
-                                       {/*height: 20,*/}
-                                       {/*alignSelf: 'flex-end',*/}
-                                   {/*}}/>*/}
-                        {/*</TouchableOpacity>*/}
                     </View>
                     <TouchableOpacity
                         activeOpacity={0.9}
@@ -472,7 +456,8 @@ export default class ProducerScene extends Component {
                                         }
                                         this.setState({
                                             searchKey: msg,
-                                            ProducerList: []
+                                            ProducerList: [],
+                                            LocationSearchKey:null
                                         });
                                         this._getProducerByName(msg);
                                     }
@@ -498,7 +483,48 @@ export default class ProducerScene extends Component {
                                 color: '#fff'
                             }}>search?</Text> : <Text/>}
                     </TouchableOpacity>
+                    <TouchableOpacity style={commonStyle.searchBar} underlineColorAndroid='white' onPress={() => {
+                        this.props.navigation.navigate('ExploreRangeScene'
+                            , {
+                                callbackLocation: (address,latitude,longitude,name,radius) => {
+                                    this.setState({
+                                        ProducerList:[],
+                                        LocationSearchKey: address,
+                                        searchKey:null,
+                                        center:{
+                                            latitude:latitude,
+                                            longitude:longitude
+                                        },
+                                        radius:radius
+                                    },()=>{
+                                        this._getProducerByGPS(latitude,longitude,radius);
+                                    });
 
+                                },
+                                category:'Producer',
+                                // siteId: this.props.navigation.state.params.siteId,
+                            }
+                            );
+                    }}>
+                        <Image source={require('../../../../img/nearby/locationB.png')} style={commonStyle.searchIcon}/>
+                        <Text style={{
+                            paddingLeft: 10,
+                            fontSize: 14,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            alignSelf: 'center',
+                            color: '#e5e5e5'
+                        }}>{LocationSearchKey === null ? 'Select the' : LocationSearchKey} </Text>
+                        {LocationSearchKey === null &&
+                        <Text style={{
+                            fontSize: 14,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            alignSelf: 'center',
+                            fontWeight: 'bold',
+                            color: '#ffffff'
+                        }}>area</Text>}
+                    </TouchableOpacity>
                     {/*<View style={styles.letters}>*/}
                     {/*{this.state.letters.map((letter, index) => this._renderRightLetters(letter, index))}*/}
                     {/*</View>*/}
@@ -580,7 +606,7 @@ export default class ProducerScene extends Component {
 
 const styles = StyleSheet.create({
     container2: {
-        flexDirection: 'column',
+        flexDirection: 'row',
         paddingLeft: 10,
         paddingRight: 10,
         width:screen.width*0.95,
@@ -588,12 +614,13 @@ const styles = StyleSheet.create({
         marginBottom:10,
         borderBottomWidth: screen.onePixel,
         borderColor: color.border,
-        backgroundColor: 'white',
+        backgroundColor: '#fff',
         borderRadius:3,
     },
     rightContainer: {
         flex: 1,
         backgroundColor:"#9dff4f00",
+        justifyContent:'space-between'
     },
     container: {
         flex: 1,
@@ -695,5 +722,12 @@ const styles = StyleSheet.create({
     },
     picker: {
         flex: 1,
-    }
+    },
+    icon: {
+        width: 50,
+        height:50,
+        // paddingBottom:100,
+        backgroundColor:"#9e9e9e00",
+        resizeMode:'contain'
+    },
 });

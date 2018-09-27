@@ -1,30 +1,30 @@
 import React, {PureComponent} from 'react'
 import {
-    BackHandler,
-    Clipboard,
-    Image,
+    ActivityIndicator,
+    Image, ImageBackground,
     InteractionManager,
-    Linking,
-    Platform,
     RefreshControl,
+    SafeAreaView,
     ScrollView,
     StatusBar,
     StyleSheet,
     Text,
     TouchableOpacity,
-    View
+    View, WebView
 } from 'react-native'
-import {Separator} from '../../../../widget'
-import {Heading3} from '../../../../widget/Text'
+import {Separator} from '../../../../widget/index'
 import {screen} from '../../../../common'
-import {amapStaticImg, recommendUrlWithId} from '../../../../api'
-import GroupPurchaseCell from '../../../GroupPurchase/GroupPurchaseCell'
 import StarRating from "../../../Common/StarRating";
-import ActionSheet from '../../../Common/ActionSheet'
-import LinearGradient from 'react-native-linear-gradient';
-import AMapAndroid from "../../../Api/AMapAndroid";
 import {commonStyle} from "../../../../widget/commonStyle";
-
+import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
+import DrinkDetailDataUtils from "../DrinkDetailDataUtils";
+import VineyardCell from "./VineyardCell";
+import {getWineByVineyard,amapStaticImg} from "../../../../api";
+import MasonryList from "../../../Common/Waterfall/MasonryList";
+import PlacehoderImage from "../../../Common/Waterfall/PlaceholderImage";
+import {Heading2} from "../../../../widget/Text";
+import {color} from "../../../../widget";
+import AMapAndroid from "../../../Api/AMapAndroid";
 
 type
 Props = {
@@ -37,26 +37,33 @@ State = {
     refreshState: number,
 }
 
-//葡萄园
+const secToTime = (s) => {
+    let h = 0, m = 0;
+    if(s > 60){
+        m = parseInt(s / 60);
+        s = parseInt(s % 60);
+        if(m > 60) {
+            h = parseInt(i / 60);
+            m = parseInt(i % 60);
+        }
+    }
+    // 补零
+    const zero = (v) => {
+        return (v >> 0) < 10 ? ("0" + v) : v;
+    };
+    return (h === 0 ? [zero(m), zero(s)].join(":") : [zero(h), zero(m), zero(s)].join(":"));
+};
+
+
+const { width, height } = screen;
+const itemWidth = (width - 16) / 2;
+
+//酒庄详情
 export default class VineyardDetail extends PureComponent<Props, State> {
-    _didFocusSubscription;
-    _willBlurSubscription;
+
     static navigationOptions = ({navigation}: any) => ({
         header: null,
     });
-
-    // static navigationOptions = ({ navigation }: any) => ({
-    //     headerTitle: '',
-    //     headerStyle: { backgroundColor: 'white' },
-    //     headerRight: (
-    //         <NavigationItem
-    //             icon={require('../../img/public/share.png')}
-    //             onPress={() => {
-    //                 alert('分享按钮')
-    //             }}
-    //         />
-    //     ),
-    // })
 
     constructor(props: Props) {
         super(props);
@@ -65,132 +72,238 @@ export default class VineyardDetail extends PureComponent<Props, State> {
             refreshState: false,
             loveTintColor: '#696969',
             handerBgc: '#69696900',
-            falseSwitchIsOn: false,
-            center: {
-                longitude: 116.404,
-                latitude: 39.915
-            },
-            mapImgUrl: ''
-        }
-        // this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
-        //     BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-        // );
-    }
+            WinedList:[],
+            refreshStateRe: RefreshState.Idle,
+            refreshing:false,
+            title:'',
+            isLoading:false,
 
-    onBackAndroid = () => {
-        // console.log(NavigationActions)
-        // this.props.navigation.state.params.rootNavigator.goBack(/*{ routeName: 'SettingScene' }*/);
-        // console.log( 'onBackAndroid', this.props);
-        // let routeName =this.props.navigation.state.params.routeName;
-        // this.props.navigation.state.params.rootNavigator.goBack({key:'CountryListScene', routeName: 'CountryListScene'});
-        // routeName&&this.props.navigation.goBack();
-        // this.props.navigation.state.params.rootNavigator.dispatch(NavigationActions.back({key:'CountryListScene', routeName: 'CountryListScene'}));
-        // this.props.navigation.goBack({key:'CountryListScene', routeName: 'CountryListScene'});
-        !this.props.navigation.state.params.fromCube&&this.props.navigation.goBack();
-        // let navigateAction = NavigationActions.reset({
-        //     index: 0,
-        //     actions: [
-        //         NavigationActions.navigate({ routeName: 'CountryListScene'})]
-        // });
-        // this.props.navigation.dispatch(navigateAction);
-        //
-        // let navigateAction = NavigationActions.back({key:'VineyardScene'});
-        // this.props.navigation.dispatch(navigateAction);
-
-        // screenProps
-        // const nav = this.props.navigation.goBack();
-        // nav.goBack();
-        // const routers = nav.getCurrentRoutes();
-        // if (routers.length > 1) {
-        //     return true;
-        // }
-    };
-
-    componentWillMount() {
-        if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
         }
     }
 
     componentWillUnmount() {
-        // this._didFocusSubscription && this._didFocusSubscription.remove();
-        // this._willBlurSubscription && this._willBlurSubscription.remove();
-        if (Platform.OS === 'android') {
-            BackHandler.removeEventListener('hardwareBackPress', this.onBackAndroid);
-        }
-
-        // let info = this.props.navigation.state.params.info;
-        // this.setState({center:{
-        //         longitude: info.latLng.longitude,
-        //         latitude: info.latLng.latitude
-        //     }})
         StatusBar.setBackgroundColor("#0F143A00");
+        // this.requestData();
+        // this._onRefreshing();
     }
 
     componentDidMount() {
-        // this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
-        //     BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-        // );
         InteractionManager.runAfterInteractions(() => {
-            this.requestData()
+            this.requestData();
+            // this._getWine();
         })
 
     }
-    // onBackButtonPressAndroid = () => {
-    //     let navigateAction = NavigationActions.back({key:'VineyardScene'});
-    //     this.props.navigation.dispatch(navigateAction);
-    // };
-
-
-    requestData = () => {
-        this.requestRecommend()
+    requestData = async () => {
+        this._getWine();
     };
 
-    requestRecommend = async () => {
-        try {
-            this.setState({refreshState: true});
+    renderWineList(){
+        return (
+            <View style={commonStyle.container}>
+                <RefreshListView
+                    style={{
+                        width: screen.width,
+                        flexDirection:'row',
+                        backgroundColor:'#b3ffa0'
+                    }}
+                    data={this.state.WinedList}
+                    // ListHeaderComponent={this.GetADList()}//广告位
+                    renderItem={this.renderCell}
+                    refreshState={this.state.refreshStateRe}
+                    onHeaderRefresh={this.requestData}
+                    footerTextStyle={{color: '#ffffff'}}
+                    footerRefreshingText={'loading...'}
+                    footerFailureText={'click refresh'}
+                    footerNoMoreDataText={'no more data'}
+                    footerEmptyDataText={'empty data'}
+                />
+            </View>
+        )
+    }
 
-            let info = this.props.navigation.state.params.info;
-            info = info?info:this.props.info;
-            let response = await fetch(recommendUrlWithId(info.id));
-            let json = await response.json();
-            let dataList = json.data.deals.map((info) => {
-                return {
-                    id: info.Id,
-                    imageUrl: info.Image,
-                    title: info.brandname,
-                    subtitle: `[${info.range}]${info.title}`,
-                    // price: info.price
-                }
+    renderWineListFalls() {
+        return (
+            <SafeAreaView style={styles.container}>
+                <MasonryList
+                    data={this.state.WinedList}
+                    numColumns={2}
+                    renderItem={this._renderItem}
+                    getHeightForItem={this._getHeightForItem}
+                    refreshing={this.state.refreshing}
+                    onRefresh={this._onRefreshing}
+                    onEndReachedThreshold={0.5}
+                    onEndReached={this._onEndReached}
+                    keyExtractor={this._keyExtractor}
+                />
+            </SafeAreaView>
+        )
+    }
+    _keyExtractor = (item, index) => {
+        return item.text + index;
+    };
+    _onEndReached = () => {
+        // this.setState({
+        //     refreshing: false,
+        // });
+    };
+    _onRefreshing = () => {
+        this._getWine();
+        // this.setState({
+        //     refreshing: false,
+        // });
+    };
+
+    _onPressContent = (item) => {
+        // this.props.navigation.navigate('WineDetail', {item});
+    };
+    _renderItem = ({item}) => {
+        //null
+        // firmId : 1
+        // id : 1
+        // imageUrl : null
+        // key : 1
+        // title : "Domaine de Cazaban Hors Serie N°1"
+
+        const itemHeight = this._getHeightForItem({item});
+        return (
+            <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => this._onPressContent(item)}
+                style={styles.item}>
+                <PlacehoderImage
+                    source={require('../../../../img/public/What2Book.png')}
+                    placeholder={{uri: 'placeholder'}}
+                    style={{width: itemWidth, height: itemHeight, borderRadius: 4}}
+                />
+                <View style={styles.itemText}>
+                    {/*<Text style={{color: '#fff'}}>{secToTime(item.id)}</Text>*/}
+                    {/*<Text style={{color: '#fff'}}>{item.title}</Text>*/}
+                </View>
+            </TouchableOpacity>
+        )
+    };
+    _getHeightForItem = ({item}) => {
+        return Math.max(itemWidth, itemWidth / 200 * 200);
+    };
+
+
+    _getWine = async () => {
+        this.setState({isLoading:true});
+        let {title,id} = this.props.navigation.state.params.info;
+        // console.log(this.props.navigation.state.params.info)
+        await getWineByVineyard(title,id,1,100)
+            .then((msg) => {
+                console.log(msg);
+                this.setState({
+                    refreshing: false,
+                    isLoading:false,
+                    WinedList: DrinkDetailDataUtils.requestWineData(msg),
+                    refreshStateRe: RefreshState.NoMoreData,
+                });
+            })
+            .catch(() => {
+
             });
-
-
-            this.setState({
-                data: dataList,
-                refreshState: false,
-            })
-        } catch (error) {
-            this.setState({
-                refreshState: true,
-            })
-        }
-
     };
 
-    keyExtractor = (item: Object, index: number) => {
-        return item.id
+    _getWineItem(){
+        let info = this.props.navigation.state.params.info;
+        let {WinedList} = this.state;
+        let WineItem = WinedList.map((item) => {
+            return <View style={{paddingTop:5,flexDirection:'row',width:screen.width*0.95,justifyContent:'space-between'}}>
+                <TouchableOpacity
+                    activeOpacity={0.9}
+                    style={styles.container2}
+                    onPress={() => {
+                        this.props.navigation.navigate('WineDetail', {info :item});//跳到商品详情
+                    }}
+                >
+                    <View style={styles.rightContainer}>
+                        <Heading2 style={{paddingTop: 5}}>{item.title}</Heading2>
+                    </View>
+                    <View style={{flexDirection: 'row', marginTop: 0, marginBottom: 10}}>
+                        <StarRating
+                            maxStars={5}
+                            rating={3.5}
+                            disabled={true}
+                            starSize={15}
+                            onStarChange={(value) => this.onStarRatingPress(value)}
+                        />
+                        <Text style={{paddingLeft: 10, fontSize: 12}}>456 reviews</Text>
+                    </View>
+                </TouchableOpacity>
+                <View style={{flexDirection: 'column',}}>
+                    {(info.imageUrl !== null && info.imageUrl !== 'null') ?
+                        <Image source={{uri: info.imageUrl}} style={styles.icon}/>
+                        : <Image source={require('../../../../img/public/WineIcon.png')} style={styles.icon}/>}
+                </View>
+            </View>
+        });
+        return WineItem
+    }
+
+    renderCell = (rowData: any) => {
+        return (
+            <VineyardCell
+                info={rowData.item}
+                onPress={() => {
+                    console.log(rowData.item)
+                    // let scene = this.state.title+'Scene';
+                    // this.props.navigation.navigate(scene, {info: rowData.item})//跳到商品详情
+                }}
+            />
+        )
     };
-
-
+    showLoading() {
+        return (
+            <View style={{alignItems:'center'}}>
+                <ActivityIndicator size="large" color="#EDDEFF" />
+            </View>
+        )
+    }
+    getMapView(){
+        let info = this.props.navigation.state.params.info;
+        let url =   amapStaticImg();
+        return (
+            <AMapAndroid
+                style={commonStyle.mapImageStyle}
+                ref={component => this._amap = component}
+                options={{
+                    centerCoordinate: {
+                        //113.23	23.16
+                        // longitude:113.23,
+                        // latitude:  23.16
+                        longitude: info.Longitude,
+                        latitude: info.Latitude
+                    },
+                    radius: 0,
+                    zoomLevel: 18,//缩放比例级别
+                }}
+                zoomGestures={false}
+                scaleControls={false}
+                MapLanguage={"en"}
+                fill_color={0x7a888888}
+                // onMapClick={() => {
+                //     this.showActionSheet();
+                // }}
+            />
+        )
+    }
     renderHeader = () => {
         let info = this.props.navigation.state.params.info;
-        info = info?info:this.props.info;
+        this.setState({title:info.title});
+        let {isLoading} = this.state;
         return (
             <View>
                 <View>
-                    {(info.AdditionalLocationImages !== null && info.AdditionalLocationImages !== 'null') ?
-                        <Image source={{uri: info.AdditionalLocationImages}} style={commonStyle.banner}/>
-                        : <Image source={require('../../../../img/public/What2Book.png')} style={commonStyle.banner}/>}
+                    {(info.AdditionalLocationImages !== null && info.AdditionalLocationImages !== 'null')
+                        ?<Image source={{uri: info.AdditionalLocationImages}} style={commonStyle.banner}/>
+                        :<ImageBackground source={require('../../../../img/public/Book2_Producer_Background.png')} style={[commonStyle.banner,{justifyContent:'center',alignItem:'center',alignSelf:'center'}]}>
+                            <Image source={require('../../../../img/public/Book2_Vineyard_Word.png')}
+                                   style={{alignSelf:'center' }}/>
+                        </ImageBackground>
+                    }
 
                     <View style={{flexDirection: 'row', paddingTop: 20, paddingBottom: 20}}>
                         <View style={{flexDirection: 'column', width: screen.width * 0.2}}>
@@ -213,18 +326,18 @@ export default class VineyardDetail extends PureComponent<Props, State> {
                             <View style={{
                                 flexDirection: 'row',
                             }}>
-                                <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                                <Text style={{fontWeight: 'bold', fontSize: 15,fontFamily:'arial',color:'#000'}}>
                                     {info.title}
                                 </Text>
                             </View>
-                            <View style={{}}>
+                            {(info.URL!==null&&info.URL!=='')&&<View style={{}}>
                                 <Text style={{lineHeight: 25}}>
-                                    {info.subtitle}
+                                    Website: {info.URL}
                                 </Text>
                                 <Text>
-                                    Expires:14 days after purchase
+                                    Away from you: 254km
                                 </Text>
-                            </View>
+                            </View>}
                             <View style={{flexDirection: 'row', paddingTop: 10}}>
                                 <StarRating
                                     // style={{marginBottom: 5}}
@@ -252,289 +365,38 @@ export default class VineyardDetail extends PureComponent<Props, State> {
                         </View>
                     </View>
                     <Separator/>
-
                 </View>
-                <AMapAndroid
-                    style={commonStyle.mapImageStyle}
-                    ref={component => this._amap = component}
-                    options={{
-                        centerCoordinate: {
-                            longitude: info.Longitude,
-                            latitude: info.Latitude
-                        },
-                        radius: 0,
-                        zoomLevel: 18,//缩放比例级别
-                    }}
-                    zoomGestures={true}
-                    scaleControls={false}
-                    MapLanguage={"cn"}
-                    fill_color={0x7a888888}
-                    onMapClick={() => {
-                        this.showActionSheet();
-                    }}
-                />
-                <TouchableOpacity activeOpacity={0.9} style={{
-                    padding: 10,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between'
-                }}
-                                  onPress={() => {
-                                      this.showActionSheet();
-                                  }}
-                >
-                    <View>
-                        <Text style={{width: screen.width * 0.8}}>{info.subtitle}</Text>
-                    </View>
-                    <View style={{flexDirection: 'column', alignItems: 'center', alignSelf: 'center'}}>
-                        <Image style={commonStyle.arrow} source={require('../../../../img/public/right_arrow.png')}/>
-                    </View>
-                </TouchableOpacity>
-
-                {/*<SpacingView />*/}
-
-                <View style={commonStyle.tipHeader}>
-                    <Heading3>About the Studio</Heading3>
-                </View>
-                <View style={{flexDirection: 'column', margin: 10}}>
-                    <View style={{marginBottom: 5}}>
-                        <Text style={{width: screen.width * 0.5}}>CONTACT</Text>
-                    </View>
-                    <View style={{flexDirection: 'row'}}>
-                        <Image style={{}} source={require('../../../../img/public/phone.png')}/>
-                        <Text style={{marginLeft: 5, textDecorationLine: 'underline '}} onPress={() => {
-                            Linking.openURL('tel:28050880')
-                        }}>{info.phone}</Text>
-                    </View>
-                </View>
-
-                {info.firmId !== null ? this.companyView(info) : <View/>}
+                {this.getMapView()}
+                {/*<TouchableOpacity activeOpacity={0.9} style={{*/}
+                {/*padding: 10,*/}
+                {/*flexDirection: 'row',*/}
+                {/*justifyContent: 'space-between'*/}
+                {/*}}*/}
+                {/*onPress={() => {*/}
+                {/*// this.showActionSheet();*/}
+                {/*}}*/}
+                {/*>*/}
+                {/*<View>*/}
+                {/*<Text style={{width: screen.width * 0.8}}>{info.subtitle}</Text>*/}
+                {/*</View>*/}
+                {/*<View style={{flexDirection: 'column', alignItems: 'center', alignSelf: 'center'}}>*/}
+                {/*<Image style={commonStyle.arrow} source={require('../../../../img/public/right_arrow.png')}/>*/}
+                {/*</View>*/}
+                {/*</TouchableOpacity>*/}
+                {/*{this.renderWineList()}*/}
+                {/*{console.log(this.state.WinedList)}*/}
+                {isLoading?this.showLoading():this._getWineItem()}
+                {/*<ContentWaterfall data={this.state.WinedList} onPressContent={(item)=>{*/}
+                {/*this.props.navigation.navigate('WineDetail', {item});*/}
+                {/*}} />*/}
 
             </View>
         )
-    }
-
-    renderCell = (rowData: any) => {
-        return (
-            <GroupPurchaseCell
-                info={rowData.item}
-                onPress={() => this.props.navigation.navigate('GroupPurchase', {info: rowData.item})}
-            />
-        )
-    }
-
-    getaMap(Longitude, Latitude) {
-        fetch(amapStaticImg(Longitude, Latitude))
-            .then((response) => {
-                this.setState({mapImgUrl: response.url})
-            }).catch(() => {
-        })
-
-    }
-
-    companyView(info) {
-        return (
-            //   显示公司
-            <TouchableOpacity activeOpacity={0.8} onPress={() => {
-
-            }} style={{flexDirection: 'row', paddingTop: 20, paddingBottom: 20}}>
-                <View style={{flexDirection: 'column', width: screen.width * 0.2}}>
-                    <View style={{alignItems: 'center'}}>
-                        {(info.imageUrl !== null && info.imageUrl !== 'null') ?
-                            <Image source={{uri: info.imageUrl}} style={[{
-                                width: screen.width * 0.2 * 0.5,
-                                height: screen.width * 0.2 * 0.5,
-                                resizeMode: 'cover',
-                            }]}/>
-                            : <Image source={require('../../../../img/public/shop.png')}
-                                     style={[{
-                                         tintColor: '#696969',
-                                         width: screen.width * 0.2 * 0.5,
-                                         resizeMode: 'contain',
-                                     }]}/>}
-                    </View>
-                </View>
-                <View style={{width: screen.width * 0.7}}>
-                    <View style={{
-                        flexDirection: 'row',
-                    }}>
-                        <Text style={{fontWeight: 'bold', fontSize: 15}}>
-                            Aeral Arts Academy
-                        </Text>
-                    </View>
-                    <View style={{}}>
-                        <Text style={{lineHeight: 25}}>
-                            9 Shelter Street Causeway Bay Hong Kong Aerial Arts Academy lsland
-                        </Text>
-                        <Text>
-                            Expires:14 days after purchase
-                        </Text>
-                    </View>
-                    <View style={{flexDirection: 'row', paddingTop: 5}}>
-                        <StarRating
-                            // style={{marginBottom: 5}}
-                            maxStars={5}
-                            rating={3.5}
-                            disabled={true}
-                            starSize={15}
-                            onStarChange={(value) => this.onStarRatingPress(value)}
-                        />
-                        <Text style={{paddingLeft: 10, fontSize: 12}}>456 reviews</Text>
-                    </View>
-                    <TouchableOpacity activeOpacity={0.8}
-                                      style={{flexDirection: 'row', marginTop: 10, marginBottom: 10}}
-                    >
-                        <Image style={{}} source={require('../../../../img/public/phone.png')}/>
-                        <Text style={{marginLeft: 5, textDecorationLine: 'underline '}} onPress={() => {
-                            Linking.openURL('tel:28058888')
-                        }}>(852) 28058888</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={{flexDirection: 'column', width: screen.width * 0.1}}>
-                    <TouchableOpacity activeOpacity={0.8} onPress={() => {
-                        this.setState({
-                            loveTintColor: this.state.loveTintColor === '#696969' ? '#ff4b1a' : '#696969'
-                        })
-                    }}>
-                        <Image source={require('../../../../img/public/right_arrow.png')} style={[{
-                            width: screen.width * 0.08,
-                            resizeMode: 'contain',
-                            tintColor: this.state.loveTintColor
-                        }]}/>
-                    </TouchableOpacity>
-                </View>
-            </TouchableOpacity>
-        )
-    }
-
-    schedule_Price() {
-        return (
-            <LinearGradient colors={screen.gradualColorBottom}
-                            start={{x: 0.3, y: 0}}
-                            end={{x: 1, y: 0.8}}
-            >
-                <View style={{justifyContent: 'space-between', flexDirection: 'row',}}>
-                    <TouchableOpacity activeOpacity={0.5}
-                                      onPress={() => {
-                                          this.props.navigation.navigate('ScheduleScene'
-                                              , {
-                                                  commodityInfo: this.props.navigation.state.params.info,
-                                              });
-                                      }}
-                                      style={{
-                                          width: screen.width * 0.5,
-                                          justifyContent: 'flex-end',
-                                          alignItems: 'center',
-                                          alignSelf: 'center',
-                                          paddingTop: 10,
-                                          paddingBottom: 10,
-                                      }}
-                    >
-                        <Text style={{fontSize: 15, fontFamily: 'arial', color: '#ffffff', fontWeight: '200'}}>View
-                            Schedule</Text>
-                    </TouchableOpacity>
-                    <View style={{
-                        width: StyleSheet.hairlineWidth,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: '#fff'
-                    }}>
-                    </View>
-
-                    <TouchableOpacity activeOpacity={0.5}
-                                      onPress={() => {
-                                          alert('View Price')
-                                      }}
-                                      style={{
-                                          width: screen.width * 0.5,
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          alignSelf: 'center',
-                                          paddingTop: 10,
-                                          paddingBottom: 10,
-                                      }}
-                    >
-                        <Text style={{fontSize: 15, fontFamily: 'arial', color: '#ffffff', fontWeight: '200'}}>View
-                            Price</Text>
-                    </TouchableOpacity>
-                </View>
-            </LinearGradient>
-        )
-    }
-
-//弹出底部菜单
-    showActionSheet() {
-        this.actionsheet.show();
-    }
-
-//  拷贝商家地址
-    clickedCopyAddress() {
-        let info = this.props.navigation.state.params.info;
-        info = info?info:this.props.info;
-        Clipboard.setString(info.title);
-    }
-
-// 定位商家  dat=androidamap://viewMap?sourceApplication=appname&poiname=abc&lat=36.2&lon=116.1&dev=0 静态数据
-    clickedOpenInMaps() {
-        let info = this.props.navigation.state.params.info;
-        info = info?info:this.props.info;
-        let shopLocation = info.title ? info.title : info.Name;
-        let title = info.title ? info.title : info.Name;
-        let longitude = info.Longitude;
-        let latitude = info.Latitude;
-        Linking.canOpenURL('androidamap://viewMap?sourceApplication=' + title + '&' + title + '=' + shopLocation + '&lat=' + latitude + '&lon=' + longitude + '&dev=0').then(supported => {
-            if (supported) {
-                Linking.openURL('androidamap://viewMap?sourceApplication=' + title + '&' + title + '=' + shopLocation + '&lat=' + latitude + '&lon=' + longitude + '&dev=0');
-            } else {
-                // toastShort(`请先安装XXX`);
-                alert('Please install Amap');
-            }
-        });
-    }
-
-//  导航路线
-    clickedOpenDirectons() {
-        let info = this.props.navigation.state.params.info;
-        info = info?info:this.props.info;
-        let longitude = info.Longitude;
-        let latitude = info.Latitude;
-
-        Linking.canOpenURL('androidamap://route?sourceApplication=appname&dev=0&m=0&t=0&dlon=' + longitude + '&dlat=' + latitude).then(supported => {
-            if (supported) {
-                Linking.openURL('androidamap://route?sourceApplication=appname&dev=0&m=0&t=0&dlon=' + longitude + '&dlat=' + latitude);
-            } else {
-                // toastShort(`请先安装XXX`);
-                alert('Please install Amap');
-            }
-        });
-    }
-
-    getActionSheet() {
-
-        let info = this.props.navigation.state.params.info;
-        info = info?info:this.props.info;
-        return (
-            <ActionSheet
-                mainTitle={info.title ? info.title : info.Name}
-                itemTitles={["Copy Address", "Open in Maps", "Open Directions",]}
-                selectionCallbacks={[this.clickedCopyAddress.bind(this), this.clickedOpenInMaps.bind(this), this.clickedOpenDirectons.bind(this)]}
-                itemTitleColor='#006FFF'
-                mainTitleTextAlign='center'
-                contentBackgroundColor='#EFF0F1'
-                cancelTitleColor='#FE2701'
-                cancelVerticalSpace={5}
-                borderRadius={5}
-                sideSpace={6}
-                bottomSpace={0}//底部间距
-                ref={(actionsheet) => {
-                    this.actionsheet = actionsheet
-                }}
-            />
-        )
-    }
+    };
 
     render() {
+        let {title} = this.state;
         return (
-
             <View style={[commonStyle.container,{backgroundColor:'#fff'}]}>
                 <View style={{
                     position: 'absolute',
@@ -551,13 +413,13 @@ export default class VineyardDetail extends PureComponent<Props, State> {
                     }}>
                         <Image source={require('../../../../img/mine/icon_homepage_left_arrow.png')}
                                style={[commonStyle.callbackIcon, {}]}
-                            // onPress={() => {
-                            //     this.props.navigation.goBack();
-                            // }}
+                               onPress={() => {
+                                   this.props.navigation.goBack();
+                               }}
                         />
                     </TouchableOpacity>
-                    <View>
-                        <Text style={{color: '#fff'}}>STUDIO DETAIL</Text>
+                    <View style={{width:screen.width*0.8,alignItems:'center'}}>
+                        <Text numberOfLines={1} style={{fontWeight: '400', fontSize: 15,fontFamily:'arial',color:'#fff'}}>{title.toUpperCase()}</Text>
                     </View>
                     <TouchableOpacity activeOpacity={0.5} onPress={() => {
                         this.props.navigation.goBack();
@@ -576,7 +438,7 @@ export default class VineyardDetail extends PureComponent<Props, State> {
                         if (dy >= 0) {
                             let opacity = Math.round(dy > 255 ? 255 : dy).toString(16);
                             this.setState({handerBgc: "#0F143A" + ((opacity.length === 1) ? '0' + opacity : opacity)});
-                            StatusBar.setBackgroundColor("#0F143A" + ((opacity.length === 1) ? '0' + opacity : opacity));
+                            this.setBackgroundColorAsync("#0F143A" + ((opacity.length === 1) ? '0' + opacity : opacity));
                         }
                     }}
                     refreshControl={
@@ -585,14 +447,67 @@ export default class VineyardDetail extends PureComponent<Props, State> {
                             onRefresh={() => this.requestData()}
                             tintColor='gray'
                         />
-                    }>
+                    }
+                >
                     {this.renderHeader()}
                 </ScrollView>
-                {this.schedule_Price()}
-                {this.getActionSheet()}
             </View>
         )
     }
 
+    setBackgroundColorAsync = (color)=>{
+        setTimeout(function(){
+            StatusBar.setBackgroundColor(color);
+        },50)
+    }
 }
 
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        width:screen.width,
+        height:500,
+        backgroundColor:'#0064ff'
+    },
+    item: {
+        margin: 4,
+    },
+    itemText: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: 30,
+        backgroundColor: '#ff4f70',
+        borderBottomLeftRadius: 4,
+        borderBottomRightRadius: 4
+    },
+    container2: {
+        flexDirection: 'column',
+        paddingLeft: 10,
+        paddingRight: 10,
+        width:screen.width*0.7,
+        alignSelf:'center',
+        marginBottom:10,
+        borderBottomWidth: screen.onePixel,
+        borderColor: color.border,
+        backgroundColor: 'white',
+        borderRadius:3,
+    },
+    rightContainer: {
+        flex: 1,
+        backgroundColor:"#9dff4f00",
+    },
+    icon: {
+        width: 50,
+        height:50,
+        // paddingBottom:100,
+        backgroundColor:"#9e9e9e00",
+        resizeMode:'contain'
+    },
+});

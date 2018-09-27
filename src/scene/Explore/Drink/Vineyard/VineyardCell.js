@@ -68,7 +68,7 @@ class VineyardCell extends PureComponent<Props> {
                     <View style={{flexDirection: 'column',}}>
                         {(info.imageUrl !== null && info.imageUrl !== 'null') ?
                             <Image source={{uri: info.imageUrl}} style={styles.icon}/>
-                            : <Image source={require('../../../../img/public/Vineyard2.png')} style={styles.icon}/>}
+                            : <Image source={require('../../../../img/public/VineyardIcon.png')} style={styles.icon}/>}
                     </View>
                     {/*</ImageBackground>*/}
                 </TouchableOpacity>
@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         width: 50,
+        height:50,
         // paddingBottom:100,
         backgroundColor:"#9e9e9e00",
         resizeMode:'contain'

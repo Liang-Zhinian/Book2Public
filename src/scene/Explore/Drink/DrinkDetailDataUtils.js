@@ -64,8 +64,8 @@ function requestWineData(data) {
                     AdditionalLocationImages: null,
                     firmId: info.Producer_Id,
                     Appellation:info.Appellation,
-                    Colour:info.Colour
-
+                    Colour:info.Colour,
+                    ProducerId:info.Producer_Id
                 }
             });
         // }

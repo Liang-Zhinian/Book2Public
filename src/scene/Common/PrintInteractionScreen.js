@@ -106,7 +106,7 @@ export default  class PrintInteractionScreen extends Component {
     }
 
     _onBarCodeRead = (e) => {
-        console.log(`e.nativeEvent.data.type = ${e.nativeEvent.data.type}, e.nativeEvent.data.code = ${e.nativeEvent.data.code}`,e.nativeEvent)
+        // console.log(`e.nativeEvent.data.type = ${e.nativeEvent.data.type}, e.nativeEvent.data.code = ${e.nativeEvent.data.code}`,e.nativeEvent)
 
         // alert(type);
         this._getDataByCode(e.nativeEvent.data.code)

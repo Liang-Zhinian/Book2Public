@@ -45,6 +45,7 @@ import Drink2SearchScene from "./scene/Explore/Drink/Drink2SearchScene";
 import BeautyScene from "./scene/Explore/Beauty/BeautyScene";
 import BeautyDetail from "./scene/Explore/Beauty/BeautyDetail";
 import Beauty2SearchScene from "./scene/Explore/Beauty/Beauty2SearchScene";
+import VineyardDetail from "./scene/Explore/Drink/Vineyard/VineyardDetail";
 
 const lightContentScenes = ['Home', 'Mine'];
 
@@ -277,6 +278,7 @@ const Navigator = StackNavigator(
         ProducerScene: {screen: ProducerScene},
         WineDetail:{screen:WineDetail},
         VineyardScene: {screen: VineyardScene},
+        VineyardDetail:{screen:VineyardDetail},
         CountryListScene: {screen: CountryListScene},
         ProducerDetail: {screen: ProducerDetail},
         PrintInteractionScreen: {screen: PrintInteractionScreen},

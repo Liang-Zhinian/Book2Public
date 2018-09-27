@@ -184,7 +184,8 @@ class ScheduleSceneChild extends PureComponent<Props, State> {
                                }}
                         />
                     </TouchableOpacity>
-                    <Text style={{color: '#fff', fontSize: 12, fontFamily: 'arial'}}
+                    <Text style={{color: '#fff', fontSize: 12, fontFamily: 'arial',
+                                          backgroundColor: 'transparent'}}
                           numberOfLines={1}>{this.props.navigation.state.params.service.title}</Text>
                     <TouchableOpacity activeOpacity={0.5} onPress={() => {
                         this.props.navigation.goBack();
@@ -266,7 +267,8 @@ class ScheduleSceneChild extends PureComponent<Props, State> {
                                 paddingBottom: 10,
                             }}
                         >
-                            <Text style={{color: '#fff', fontSize: 13, fontFamily: 'arial'}}>
+                            <Text style={{color: '#fff', fontSize: 13, fontFamily: 'arial',
+                                          backgroundColor: 'transparent'}}>
                                 VIEW SCHEDULE
                             </Text>
                         </LinearGradient>

@@ -30,7 +30,7 @@ import AMap from '../Api/AMapAndroid'
 import AMap3D from '../Api/AMap.ios';
 import testData from '../../testData'
 import ExploreRangeMarkerList from './ExploreRangeMarkerList';
-import {CoordinateConverter, getVineyardByGPS, regeocodeLocation} from "../../api";
+import {CoordinateConverter, getVineyardByGPS, regeocodeLocation,getProducerByGPS } from "../../api";
 import Slider from "../Common/Slider";
 import DrinkDetailDataUtils from "./Drink/DrinkDetailDataUtils";
 import Mater from "react-native-vector-icons/MaterialIcons";
@@ -262,6 +262,14 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                 },
                 1000
             );
+            setTimeout(()=>{
+                this.setState({
+                    center: {
+                        longitude: 116.404,
+                        latitude: 39.915
+                    }
+                })
+            },5000);
         });
         clearInterval(this.interval);
     };
@@ -331,6 +339,8 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
             this.refs['ExploreRangeMarkerList']._GetBusinessLocationsWithinRadius(center.latitude,center.longitude,'',radius);
         }else if(category==='Vineyard'){
             this.refs['ExploreRangeMarkerList']._GetVineyardLocationsWithinRadius(center.latitude,center.longitude,radius);
+        }else if(category==='Producer'){
+            this.refs['ExploreRangeMarkerList']._GetProducerLocationsWithinRadius(center.latitude,center.longitude,radius);
         }
         // this.refs['ExploreRangeMarkerList']._GetVineyardLocationsWithinRadius(center.latitude,center.longitude,radius);
     }
@@ -432,13 +442,16 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                 </TouchableOpacity>
                 <View style={[ {
                     alignSelf:'center',
+                    alignItems:'center',
+                    justifyContent:'center',
+                    // backgroundColor:'#ff464f',
                     // position: 'absolute',
                     // bottom: 10,
                     marginTop: 10,
                     marginBottom: 10,
-                    width: screen.width * 0.9,
+                    width: this.state.markerView ? screen.width * 0.9 : 0,
                     opacity: this.state.markerView ? 1 : 0,
-                    height: this.state.markerView ? 100 : 0
+                    // height: this.state.markerView ? 100 : 0
                 }]}>
                     <ExploreRangeMarkerList
                         ref={'ExploreRangeMarkerList'}
@@ -448,6 +461,8 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                             if (category==='Beauty') {
                                 this.props.navigation.navigate('BeautyDetail', {info: info})//跳到商品详情
                             }else if(category==='Vineyard'){
+                                // this.props.navigation.navigate('BeautyDetail', {info: info})//跳到商品详情
+                            }else if(category==='Producer'){
                                 // this.props.navigation.navigate('BeautyDetail', {info: info})//跳到商品详情
                             }
 

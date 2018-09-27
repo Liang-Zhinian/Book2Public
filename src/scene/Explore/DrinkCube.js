@@ -357,6 +357,7 @@ export default class DrinkCube extends React.Component {
                     justifyContent: 'center',
                     alignItems: 'center',}}>
                     <Switch
+                        disabled={true}
                         onValueChange={(value) => {
                             Vibration.vibrate( [0, 30,0, 0]);
                             this.setState({falseSwitchIsOn_2: value})
@@ -387,10 +388,10 @@ export default class DrinkCube extends React.Component {
                                       Vibration.vibrate( [0, 30,0, 0]);
                                       let category = allPageList[page - 1][0].props.category;
                                       this.props.onSwipe(category, this.state.subareaObj,true);
-                                      this.setState({
-                                          triangleType: RightTitle,
-                                          falseSwitchIsOn_2: true
-                                      });
+                                      // this.setState({
+                                      //     triangleType: RightTitle,
+                                      //     falseSwitchIsOn_2: true
+                                      // });
                                   }}>
                     <View style={{
                         width: screen.width * 0.3,

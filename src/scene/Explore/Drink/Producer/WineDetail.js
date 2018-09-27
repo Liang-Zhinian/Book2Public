@@ -96,7 +96,7 @@ export default class WineDetail extends PureComponent<Props, State> {
                                         height: screen.width * 0.2 * 0.5,
                                         resizeMode: 'cover',
                                     }]}/>
-                                    : <Image source={require('../../../../img/public/timgMin.jpg')}
+                                    : <Image source={require('../../../../img/public/WineIcon.png')}
                                              style={[{
                                                  // tintColor: '#696969',
                                                  width: screen.width * 0.2 * 0.5,

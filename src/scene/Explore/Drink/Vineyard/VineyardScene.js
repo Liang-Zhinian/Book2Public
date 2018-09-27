@@ -86,15 +86,6 @@ export default class VineyardScene extends Component {
             refreshState: RefreshState.HeaderRefreshing
         });
         let {searchKey,LocationSearchKey,center,radius} = this.state;
-        // BeautyList:[],
-        //                                             LocationSearchKey: address,
-        //                                             center:{
-        //                                                 latitude:latitude,
-        //                                                 longitude:longitude
-        //                                             },
-        //                                             radius:radius
-
-        console.log(searchKey);
         if (searchKey !== null) {
             this.setState({VineyardList: []});
             this._getVineyardByName(searchKey);
@@ -146,7 +137,7 @@ export default class VineyardScene extends Component {
                 this.dataLength = this.state.VineyardList.length;
                 let data = DrinkDetailDataUtils.requestData(msg);
                 data.length > 0 ? this.setState({NoData: false}) : this.setState({NoData: true});
-                data.pop();
+                // data.pop();
                 this.setState({
                     isLoading:false,
                     VineyardList: this.state.VineyardList.concat(data),
@@ -181,10 +172,10 @@ export default class VineyardScene extends Component {
             .then((msg) => {
                 this.dataLength = this.state.VineyardList.length;
                 let data = DrinkDetailDataUtils.requestData(msg);
-                data.length > 0 ? this.setState({NoData: false}) : this.setState({NoData: true});
+                (data.length > 0&&data.length!==1) ? this.setState({NoData: false}) : this.setState({NoData: true});
                 // if (this.page!==1&&data.length>0) data.shift();
                 // if(data.length=this.size){data.pop();}
-                data.pop();
+                // data.pop();
                 this.setState({
                     isLoading:false,
                     VineyardList: this.state.VineyardList.concat(data),
@@ -208,40 +199,9 @@ export default class VineyardScene extends Component {
             isLoading:true});
         await  getVineyardByGPS(latitude,longitude,radius)
             .then((msg) => {
-                // console.log('GetVineyardLocationsWithinRadius',responseJson);
-                // const dataList = responseJson.map((info) => {
-                //     return {
-                //         key: info.Vineyard_Id,
-                //         id: info.Vineyard_Id,
-                //         imageUrl: null,
-                //         title: info.Vineyard,
-                //         subtitle: null,
-                //         phone: null,
-                //         Latitude: info.Latitude,
-                //         Longitude: info.Longitude,
-                //         AdditionalLocationImages: null,
-                //         SiteId: info.Vineyard_Id,
-                //     }
-                // });
-                // let dataListTemp = [];
-                // if (dataList.length>=20){
-                //     for (let i = 0;i<20;i++){
-                //         dataListTemp.push(dataList[i]);
-                //     }
-                // }else{
-                //     dataListTemp=dataList
-                // }
-                //
-                //
-                // console.log(dataListTemp);
-                // this.setState({data: dataListTemp});
-                // this.props.loadMarker(dataListTemp)
                 this.dataLength = this.state.VineyardList.length;
                 let data = DrinkDetailDataUtils.requestData(msg);
                 data.length > 0 ? this.setState({NoData: false}) : this.setState({NoData: true});
-                // if (this.page!==1&&data.length>0) data.shift();
-                // if(data.length=this.size){data.pop();}
-                data.pop();
                 this.setState({
                     isLoading:false,
                     VineyardList: this.state.VineyardList.concat(data),
@@ -271,7 +231,7 @@ export default class VineyardScene extends Component {
                     info={rowData.item}
                     onPress={() => {
                         //跳到商品详情
-                        console.log(rowData.item)
+                        this.props.navigation.navigate('VineyardDetail', {info: rowData.item})//跳到商品详情
                     }}
                 />
             </View>
@@ -422,7 +382,8 @@ export default class VineyardScene extends Component {
                                 , {
                                     callback: (msg) => {
                                         this.setState({
-                                                searchKey: msg
+                                                searchKey: msg,
+                                                LocationSearchKey:null
                                             },
                                             () => {
                                                 this._clearData();

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Animated, Easing, PanResponder, Platform, StyleSheet, View,} from 'react-native';
+import {Animated, Easing, PanResponder, Platform, StyleSheet, Vibration, View,} from 'react-native';
 import screen from "../../common/screen";
 const styles = StyleSheet.create({
     container: {
@@ -190,6 +190,7 @@ export default class Cube extends Component {
                         this.props.addface()// ? ()=>{this.props.addface()} : ''
                     }
                 }
+                Vibration.vibrate( [0, 30,0, 0]);
             } else {
                 this.direction = -1
                 this.directionZ = -1

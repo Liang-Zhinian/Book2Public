@@ -59,7 +59,7 @@ const { width, height } = screen;
 const itemWidth = (width - 16) / 2;
 
 //酒庄详情
-class ProducerDetail extends PureComponent<Props, State> {
+export default class ProducerDetail extends PureComponent<Props, State> {
 
     static navigationOptions = ({navigation}: any) => ({
         header: null,
@@ -207,8 +207,9 @@ class ProducerDetail extends PureComponent<Props, State> {
 
     _getWineItem(){
         let {WinedList} = this.state;
+        let info = this.props.navigation.state.params.info;
         let WineItem = WinedList.map((item) => {
-            return <View style={{paddingTop:5}}>
+            return <View style={{paddingTop:5,flexDirection:'row',width:screen.width*0.95,justifyContent:'space-between'}}>
                 <TouchableOpacity
                     activeOpacity={0.9}
                     style={styles.container2}
@@ -230,6 +231,11 @@ class ProducerDetail extends PureComponent<Props, State> {
                         <Text style={{paddingLeft: 10, fontSize: 12}}>456 reviews</Text>
                     </View>
                 </TouchableOpacity>
+                <View style={{flexDirection: 'column',}}>
+                    {(info.imageUrl !== null && info.imageUrl !== 'null') ?
+                        <Image source={{uri: info.imageUrl}} style={styles.icon}/>
+                        : <Image source={require('../../../../img/public/WineIcon.png')} style={styles.icon}/>}
+                </View>
             </View>
         });
         return WineItem
@@ -255,6 +261,8 @@ class ProducerDetail extends PureComponent<Props, State> {
         )
     }
     getMapView(){
+        let info = this.props.navigation.state.params.info;
+        console.log(info)
       let url =   amapStaticImg();
         return (
             <AMapAndroid
@@ -265,8 +273,10 @@ class ProducerDetail extends PureComponent<Props, State> {
                         //113.23	23.16
                         // longitude:113.23,
                         // latitude:  23.16
-                        longitude: 0.00005077,
-                        latitude: 51.50329
+                        // longitude: 0.00005077,
+                        // latitude: 51.50329
+                        longitude: parseFloat(info.Longitude),
+                        latitude: parseFloat(info.Latitude)
                     },
                     radius: 0,
                     zoomLevel: 18,//缩放比例级别
@@ -321,7 +331,7 @@ class ProducerDetail extends PureComponent<Props, State> {
                                     {info.title}
                                 </Text>
                             </View>
-                            {info.Email&&<View style={{}}>
+                            {(info.URL!==null&&info.URL!=='')&&<View style={{}}>
                                 <Text style={{lineHeight: 25}}>
                                     Website: {info.URL}
                                 </Text>
@@ -453,7 +463,7 @@ class ProducerDetail extends PureComponent<Props, State> {
     }
 }
 
-export default ProducerDetail
+
 
 const styles = StyleSheet.create({
     container: {
@@ -483,7 +493,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         paddingLeft: 10,
         paddingRight: 10,
-        width:screen.width*0.95,
+        width:screen.width*0.7,
         alignSelf:'center',
         marginBottom:10,
         borderBottomWidth: screen.onePixel,
@@ -494,5 +504,12 @@ const styles = StyleSheet.create({
     rightContainer: {
         flex: 1,
         backgroundColor:"#9dff4f00",
+    },
+    icon: {
+        width: 50,
+        height:50,
+        // paddingBottom:100,
+        backgroundColor:"#9e9e9e00",
+        resizeMode:'contain'
     },
 });

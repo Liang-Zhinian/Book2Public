@@ -27,7 +27,6 @@ export const commonStyle = {
         width: 20,
         height: 20,
         // alignSelf: 'flex-start',
-        
     },
     searchBar: {
 

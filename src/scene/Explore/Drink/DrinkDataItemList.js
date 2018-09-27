@@ -1,23 +1,7 @@
 import React, {Component} from 'react';
-import {
-    ActivityIndicator,
-    BackHandler,
-    BVLinearGradient,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    InteractionManager
-} from 'react-native';
+import {BackHandler, BVLinearGradient, View} from 'react-native';
 import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
 import {screen} from '../../../common'
-import {commonStyle} from "../../../widget/commonStyle";
-import {getAllProducer, getAllVineyard, getProducerByName, getVineyardBySubAreaId, getVineyardByName} from "../../../api";
-import DrinkDetailDataUtils from "./DrinkDetailDataUtils";
-import LinearGradient from "react-native-linear-gradient";
-import HorizontalPicker from "../../Mine/hpicker";
-import Toast from '../../../../src/scene/demo&test/react-native-city/ToastUtil'
 import VineyardCell from "./Vineyard/VineyardCell";
 
 

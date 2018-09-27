@@ -401,7 +401,7 @@ class ScheduleSceneChildDetail extends PureComponent<Props, State> {
                                }}
                         />
                     </TouchableOpacity>
-                    <Text style={{color: '#ededed', fontSize: 12, fontFamily: 'arial'}}
+                    <Text style={{color: '#ededed', fontSize: 12, fontFamily: 'arial', backgroundColor: 'transparent'}}
                           numberOfLines={1}>APPOINTMENT BOOKING</Text>
                     <TouchableOpacity activeOpacity={0.5} onPress={() => {
                         this.props.navigation.goBack();

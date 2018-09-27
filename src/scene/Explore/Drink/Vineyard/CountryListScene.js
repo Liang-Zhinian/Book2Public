@@ -179,7 +179,6 @@ export default class CountryListScene extends Component {
         )
     }
     renderList(data,index){
-        console.log('CountryListScene renderList', data, index)
         let getFun=[this._getRegion.bind(this),this._getSubregion.bind(this),this._getArea.bind(this),this._getSubarea.bind(this)];
 
         let AreaList = data.map((item) => {
@@ -250,7 +249,8 @@ export default class CountryListScene extends Component {
         let {countryList,regionList,subregionList,areaList,subareaList} = this.state;
         let data = [countryList,regionList,subregionList,areaList,subareaList];
         let menuViews = [];
-        let title=['Country','Region','Subregion','Area','Subarea'];
+        let title=['Search by Country','Search by Region','Search by Subregion','Search by Area','Search by Subarea'];
+        let titleT=['Country','Region','Subregion','Area','Subarea'];
         let color = ['#4ff0','#f4f0','#ff40','#44f0','#7740',];
 
         for (let i =0;i<=4;i++) {
@@ -298,7 +298,7 @@ export default class CountryListScene extends Component {
                                 fontSize: 14,
                                 fontWeight:'100',
                                 fontFamily: 'arial',
-                            }}>{i>0&&title[i-1]}</Text>
+                            }}>{i>0&&titleT[i-1]}</Text>
                         </TouchableOpacity>
                     </View>
                     {/*<View style={{alignSelf: 'center',justifyContent:'center',alignItems:'center'}}>*/}

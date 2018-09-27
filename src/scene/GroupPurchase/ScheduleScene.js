@@ -257,7 +257,8 @@ export default class ScheduleScene extends React.Component {
                                }}
                         />
                     </TouchableOpacity>
-                    <Text style={{color: '#fff', fontSize: 12, fontFamily: 'arial'}}>SCHEDULE</Text>
+                    <Text style={{color: '#fff', fontSize: 12, fontFamily: 'arial', 
+                                          backgroundColor: 'transparent'}}>SCHEDULE</Text>
                     <TouchableOpacity activeOpacity={0.5} onPress={() => {
                         this.props.navigation.goBack();
                     }}>

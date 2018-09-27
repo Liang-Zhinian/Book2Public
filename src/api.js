@@ -136,7 +136,7 @@ export function getVineyardByName(letter,name,index,size){
 }
 
 export function getVineyardByGPS(Lat,Lng,Distance) {
-    console.log('http://demo.atpath.com:17509/api/Vineyard/GetByGPS?Lat=' + Lat + '&Lng=' + Lng + '&Distance=' + Distance);
+    // console.log('http://demo.atpath.com:17509/api/Vineyard/GetByGPS?Lat=' + Lat + '&Lng=' + Lng + '&Distance=' + Distance);
     return fetch('http://demo.atpath.com:17509/api/Vineyard/GetByGPS?Lat=' + Lat + '&Lng=' + Lng + '&Distance=' + Distance, {
         method: 'GET',
     })
@@ -149,8 +149,33 @@ export function getVineyardByGPS(Lat,Lng,Distance) {
         });
 }
 
-export function getAllProducer(letter,name,index,size,type){
-    return fetch('http://demo.atpath.com:17509/api/Producer/GeProducer'+letter+'?Name='+name+'&index='+index+'&size='+size+'&type='+type , {
+export function getProducerByGPS(Lat,Lng,Distance) {
+    // console.log('http://demo.atpath.com:17509/api/Producer/GetByGPS?Lat=' + Lat + '&Lng=' + Lng + '&Distance=' + Distance);
+    return fetch('http://demo.atpath.com:17509/api/Producer/GetByGPS?Lat=' + Lat + '&Lng=' + Lng + '&Distance=' + Distance, {
+        method: 'GET',
+    })
+        .then((response) => response.json())
+        .then((responseJson) => {
+            return responseJson.Data;
+        })
+        .catch((error) => {
+            console.warn('请求错误',error);
+        });
+}
+export function getAllProducer(letter,name,index,size,type,id){
+    return fetch('http://demo.atpath.com:17509/api/Producer/GeProducer'+letter+'?Name='+name+'&index='+index+'&size='+size+'&type='+type+'&id='+id , {
+        method: 'GET',
+    })
+        .then((response) => response.json())
+        .then((responseJson) => {
+            return responseJson.Data;
+        })
+        .catch((error) => {
+            console.warn('请求错误',error);
+        });
+}
+export function getProducerById(letter,name,index,size,type,id){
+    return fetch('http://demo.atpath.com:17509/api/Producer/GeProducer?id='+id+'&Name='+name+'&index='+index+'&size='+size+'&type='+type, {
         method: 'GET',
     })
         .then((response) => response.json())
@@ -162,7 +187,6 @@ export function getAllProducer(letter,name,index,size,type){
             console.warn('请求错误',error);
         });
 }
-
 export function getProducerByName(Name,index,size,type){
     // console.log('http://demo.atpath.com:17509/api/Producer/GeProducerByA?Name='+Name+'&index='+index+'&size='+size+'&type='+type)
     return fetch('http://demo.atpath.com:17509/api/Producer/GeProducerByA?Name='+Name+'&index='+index+'&size='+size+'&type='+type , {
@@ -179,6 +203,21 @@ export function getProducerByName(Name,index,size,type){
 export function getWineByProducer(ProducerName,index,size){
     // console.log('http://demo.atpath.com:17509/api/Wines/GetWine?entity='+ProducerName+'&Name=&color=&appellation='+'&index='+index+'&size='+size);
     return fetch('http://demo.atpath.com:17509/api/Wines/GetWine?entity='+ProducerName+'&Name=&color=&appellation='+'&index='+index+'&size='+size, {
+        method: 'GET',
+    })
+        .then((response) => response.json())
+        .then((responseJson) => {
+            return responseJson.Data;
+        })
+        .catch((error) => {
+            console.warn('请求错误',error);
+        });
+}
+///api/Wines/GetByVineyard	Vineyardname
+// vineyard_id  (最少一个)
+export function getWineByVineyard(VineyardName,vineyard_id,index,size){
+    // console.log('http://demo.atpath.com:17509/api/Wines/GetByVineyard?Vineyardname='+VineyardName+'&vineyard_id='+vineyard_id+'&Name=&color=&appellation='+'&index='+index+'&size='+size);
+    return fetch('http://demo.atpath.com:17509/api/Wines/GetByVineyard?Vineyardname='+VineyardName+'&vineyard_id='+vineyard_id+'&Name=&color=&appellation='+'&index='+index+'&size='+size, {
         method: 'GET',
     })
         .then((response) => response.json())
@@ -348,10 +387,10 @@ export function getExploreSceneTestBEAUTY(){
 
 export function getExploreSceneTestWINE(){
     homePage= [
-        {id:'b1',siteId:'',sign:true,type:'Drink',category:'Vineyard',tag: 'EXPLORE',title:'BEAUTY 1 classes near you',prompt:'', img: require('./img/home/Wine/Find_Vineyard_EN.png')},
-        {id:'b2',siteId:'',sign:true,type:'Drink',category:'QR',tag: 'EXPLORE',title:'BEAUTY 2 classes near you',prompt:'', img: require('./img/home/Wine/QR.png')},
-        {id:'b3',siteId:'',sign:true,type:'Drink',category:'White_Wine',tag: 'EXPLORE',title:'BEAUTY 3 classes near you',prompt:'', img: require('./img/home/Wine/3-White_Wine_EN.png')},
-        {id:'b4',siteId:'',sign:true,type:'Drink',category:'Producer',tag: 'EXPLORE',title:'BEAUTY 4 classes near you',prompt:'', img: require('./img/home/Wine/Find_Wine_EN.png')},
+        {id:'b1',siteId:'',sign:true,type:'Drink',category:'Vineyard',tag: 'EXPLORE',title:'BEAUTY 1 classes near you',prompt:'', img: require('./img/home/Wine/2-FindVineyards_EN.png')},
+        {id:'b2',siteId:'',sign:true,type:'Drink',category:'QR',tag: 'EXPLORE',title:'BEAUTY 2 classes near you',prompt:'', img: require('./img/home/Wine/3-ScanQRCodeFindWine_EN.png')},
+        {id:'b3',siteId:'',sign:true,type:'Drink',category:'Producer',tag: 'EXPLORE',title:'BEAUTY 4 classes near you',prompt:'', img: require('./img/home/Wine/1-FindWines_EN.png')},
+        {id:'b4',siteId:'',sign:true,type:'Drink',category:'QR',tag: 'EXPLORE',title:'BEAUTY 3 classes near you',prompt:'', img: require('./img/home/Wine/3-ScanQRCodeFindWine_EN.png')},
 
 
     ];

@@ -3,7 +3,7 @@ import {ScrollView, StyleSheet, View} from 'react-native'
 
 import {screen} from '../../common/index'
 import ExploreRangeMarkerListItem from './ExploreRangeMarkerListItem'
-import {GetBusinessLocationsWithinRadius, getVineyardByGPS} from "../../api";
+import {GetBusinessLocationsWithinRadius, getVineyardByGPS,getProducerByGPS } from "../../api";
 
 type Props = {
     menuInfos: Array<Object>,
@@ -63,8 +63,8 @@ class ExploreRangeMarkerList extends PureComponent<Props, State>  {
                         title: info.Vineyard,
                         subtitle: null,
                         phone: null,
-                        Latitude: info.Latitude,
-                        Longitude: info.Longitude,
+                        Latitude: parseFloat(info.Latitude),
+                        Longitude: parseFloat(info.Longitude),
                         AdditionalLocationImages: null,
                         SiteId: info.Vineyard_Id,
                     }
@@ -77,14 +77,44 @@ class ExploreRangeMarkerList extends PureComponent<Props, State>  {
                 }else{
                     dataListTemp=dataList
                 }
-
-
                 console.log(dataListTemp);
                 this.setState({data: dataListTemp});
                 this.props.loadMarker(dataListTemp)
             })
             .catch((error) => {
 
+            })
+    };
+    _GetProducerLocationsWithinRadius = async (latitude,longitude,radius) => {
+        await  getProducerByGPS(latitude,longitude,radius)
+            .then((responseJson) => {
+                const dataList = responseJson.map((info) => {
+                    return {
+                        key: info.Entity_Id,
+                        id: info.Entity_Id,
+                        imageUrl: null,
+                        title: info.EntityName,
+                        subtitle: null,
+                        phone: null,
+                        Latitude: parseFloat(info.Latitude),
+                        Longitude: parseFloat(info.Longitude),
+                        AdditionalLocationImages: null,
+                        SiteId: info.Entity_Id,
+                    }
+                });
+                let dataListTemp = [];
+                if (dataList.length>=20){
+                    for (let i = 0;i<20;i++){
+                        dataListTemp.push(dataList[i]);
+                    }
+                }else{
+                    dataListTemp=dataList
+                }
+                console.log(dataListTemp);
+                this.setState({data: dataListTemp});
+                this.props.loadMarker(dataListTemp)
+            })
+            .catch((error) => {
             })
     };
     componentWillMount() {
