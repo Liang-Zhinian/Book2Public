@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-# platform :ios, '8.0'
+platform :ios, '8.0'
 
 target 'Book2' do
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
@@ -34,7 +34,7 @@ target 'Book2' do
 
   pod 'RNFS', :path => '../node_modules/react-native-fs'
 
-  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+  # pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
 
   # pod 'react-native-material-kit', :path => '../node_modules/react-native-material-kit'
 
@@ -50,7 +50,7 @@ target 'Book2' do
 
   # pod 'react-native-camera', :path => '../node_modules/react-native-camera'
 
-  pod 'RNI18n', :path => '../node_modules/react-native-i18n'
+  # pod 'RNI18n', :path => '../node_modules/react-native-i18n'
 
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
 
@@ -58,4 +58,13 @@ target 'Book2' do
 
   pod 'RNSound', :path => '../node_modules/react-native-sound'
 
+end
+
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == "React"
+      target.remove_from_project
+    end
+  end
 end

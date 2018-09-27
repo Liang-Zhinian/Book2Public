@@ -62,7 +62,7 @@ export default class App extends Component {
     HomeView() {
         var hooo= [
             <View ref='f0' style={styles.surface}>
-                <ImageBackground source={require('../../../img/home/CubeImages-Beauty.png')}
+                <ImageBackground source={require('../../../img/home/Beauty.png')}
                                  style={[styles.pageImg,{flexDirection:'column',justifyContent:'center' ,alignSelf:'center',alignItems: 'center',}]}>
                     {/*<Square/>*/}
                     {/*<View style={{flexDirection:'row', alignItems: 'center',backgroundColor:'#ff001100',width:screen.width,height:screen.width/3}}/>*/}
@@ -87,7 +87,7 @@ export default class App extends Component {
                 </ImageBackground>
             </View>,
             <View ref='f1' style={styles.surface}>
-                <ImageBackground source={require('../../../img/home/CubeImages-AllGoodDeals.png')}
+                <ImageBackground source={require('../../../img/home/Fitness.png')}
                                  style={[styles.pageImg,{flexDirection:'column',justifyContent:'center' ,alignSelf:'center',alignItems: 'center',}]}>
                     <View style={{flexDirection:'column',backgroundColor:'#2b90cd5e',padding:5,width:screen.width,height:screen.width/3}}>
                         <Text style={{
@@ -116,7 +116,7 @@ export default class App extends Component {
                 </ImageBackground>
             </View>,
             <View ref='f2' style={styles.surface}>
-                <ImageBackground source={require('../../../img/home/CubeImages-Fitness.png')}
+                <ImageBackground source={require('../../../img/home/Wellness.png')}
                                  style={[styles.pageImg,{flexDirection:'column',justifyContent:'center' ,alignSelf:'center',alignItems: 'center',}]}>
                     <View style={{flexDirection:'column',backgroundColor:'#2b90cd5e',padding:5,width:screen.width,height:screen.width/3}}>
                         <Text style={{
@@ -138,7 +138,7 @@ export default class App extends Component {
                 </ImageBackground>
             </View>,
             <View ref='f3' style={styles.surface}>
-                <ImageBackground source={require('../../../img/home/CubeImages-Wellness.png')}
+                <ImageBackground source={require('../../../img/home/Beauty.png')}
                                  style={[styles.pageImg,{flexDirection:'column',justifyContent:'center' ,alignSelf:'center',alignItems: 'center',}]}>
                     <View style={{flexDirection:'column',backgroundColor:'#2b90cd5e',padding:5,width:screen.width,height:screen.width/3}}>
                         <Text style={{

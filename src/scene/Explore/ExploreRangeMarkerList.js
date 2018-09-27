@@ -1,12 +1,9 @@
 import React, {PureComponent} from 'react'
-import {BackHandler, Platform, ScrollView, StyleSheet, Text, View} from 'react-native'
-import PageControl from 'react-native-page-control'
+import {ScrollView, StyleSheet, View} from 'react-native'
 
 import {screen} from '../../common/index'
-import {color} from '../../widget/index'
 import ExploreRangeMarkerListItem from './ExploreRangeMarkerListItem'
-import {GetBusinessLocationsWithinRadius, getProducerByName} from "../../api";
-import testData2 from '../../testData01'
+import {GetBusinessLocationsWithinRadius, getVineyardByGPS} from "../../api";
 
 type Props = {
     menuInfos: Array<Object>,
@@ -29,22 +26,22 @@ class ExploreRangeMarkerList extends PureComponent<Props, State>  {
             data: [],
         }
     }
-    _GetBusinessLocationsWithinRadius = async (name) => {
-      let  latitude=22.2798079,longitude=114.1837883,radius=10,pageSize=10,pageIndex=0;
+    _GetBusinessLocationsWithinRadius = async (latitude,longitude,name,radius) => {
+      let pageSize=10,pageIndex=0;
         await  GetBusinessLocationsWithinRadius(latitude,longitude,radius,name,pageSize,pageIndex)
             .then((responseJson) => {
                 const dataList = responseJson.map((info) => {
                     return {
                         key: info.Id,
                         id: info.Id,
-                        imageUrl:info.ImageUri,
+                        imageUrl: info.ImageUri,
                         title: info.Name,
                         subtitle: info.Address.Street,
+                        phone: info.ContactInformation.PrimaryTelephone,
                         Latitude: info.Geolocation.Latitude,
                         Longitude: info.Geolocation.Longitude,
-                        description: info.Description,
-                        AdditionalLocationImages: info.AdditionalLocationImages[0].ImageUri,
-                        Telephone:info.ContactInformation.PrimaryTelephone
+                        AdditionalLocationImages: info.AdditionalLocationImages,
+                        SiteId: info.SiteId,
                     }
                 });
                 this.setState({data: dataList});
@@ -54,8 +51,45 @@ class ExploreRangeMarkerList extends PureComponent<Props, State>  {
 
             })
     };
+    _GetVineyardLocationsWithinRadius = async (latitude,longitude,radius) => {
+        await  getVineyardByGPS(latitude,longitude,radius)
+            .then((responseJson) => {
+                // console.log('GetVineyardLocationsWithinRadius',responseJson);
+                const dataList = responseJson.map((info) => {
+                    return {
+                        key: info.Vineyard_Id,
+                        id: info.Vineyard_Id,
+                        imageUrl: null,
+                        title: info.Vineyard,
+                        subtitle: null,
+                        phone: null,
+                        Latitude: info.Latitude,
+                        Longitude: info.Longitude,
+                        AdditionalLocationImages: null,
+                        SiteId: info.Vineyard_Id,
+                    }
+                });
+                let dataListTemp = [];
+                if (dataList.length>=20){
+                    for (let i = 0;i<20;i++){
+                        dataListTemp.push(dataList[i]);
+                    }
+                }else{
+                    dataListTemp=dataList
+                }
+
+
+                console.log(dataListTemp);
+                this.setState({data: dataListTemp});
+                this.props.loadMarker(dataListTemp)
+            })
+            .catch((error) => {
+
+            })
+    };
     componentWillMount() {
-        this._GetBusinessLocationsWithinRadius('')
+        // this._GetBusinessLocationsWithinRadius('')
+        // console.log(this.state.navigation['Vineyard'])
         // if (this.props.siteId==='f996cb01-6b0c-4dfa-9687-78e59df6d0b1'){
         //     fetch(api.findLocations)
         //         .then((response) => response.json())

@@ -43,6 +43,8 @@ import QRDetailScene from "./scene/Explore/Drink/QRDetailScene";
 import {StatusBar, View} from "react-native";
 import Drink2SearchScene from "./scene/Explore/Drink/Drink2SearchScene";
 import BeautyScene from "./scene/Explore/Beauty/BeautyScene";
+import BeautyDetail from "./scene/Explore/Beauty/BeautyDetail";
+import Beauty2SearchScene from "./scene/Explore/Beauty/Beauty2SearchScene";
 
 const lightContentScenes = ['Home', 'Mine'];
 
@@ -79,6 +81,13 @@ class RootScene extends PureComponent<{}> {
         getLanguages().then(languages => {
             this.setState({languages});
         });
+        // const is24Hour = DeviceInfo.is24Hour(true); // true
+        // const deviceCountry = DeviceInfo.getDeviceCountry(); // "US"
+        // DeviceInfo.default.getBatteryLevel().then(batteryLevel => {
+            // 0.759999
+
+        // });
+
     }
 
     constructor() {
@@ -262,6 +271,8 @@ const Navigator = StackNavigator(
         ScheduleSceneChild: {screen: ScheduleSceneChild},
         ScheduleSceneChildDetail: {screen: ScheduleSceneChildDetail},
         BeautyScene:{screen:BeautyScene},
+        BeautyDetail:{screen:BeautyDetail},
+        Beauty2SearchScene:{screen:Beauty2SearchScene},
         Drink2SearchScene:{screen:Drink2SearchScene},
         ProducerScene: {screen: ProducerScene},
         WineDetail:{screen:WineDetail},

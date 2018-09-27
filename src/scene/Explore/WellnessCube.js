@@ -245,8 +245,12 @@ export default class WellnessCube extends React.Component {
                       reduceface={() => {
                           //上一个页面, right
                           let face = --this.state.face;
-                          if (face <0) face = 4+face;
-
+                          if (face <0) {
+                              if (page>1){
+                                  this.animate();
+                              }
+                              face = 4+face;
+                          }
                           this.setState({face: face});
                           this.props.onSwipe( allPageList[page - 1][face].props.category);
 
@@ -254,8 +258,10 @@ export default class WellnessCube extends React.Component {
                       addface={() => {
 
                           let face = ++this.state.face;
-                          if (face > 3) face = face-4;
-
+                          if (face > 3) {
+                              this.animate();
+                              face = face-4;
+                          }
                           this.setState({face: face});
                           this.props.onSwipe( allPageList[page - 1][face].props.category);
 

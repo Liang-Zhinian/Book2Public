@@ -1,3 +1,9 @@
+/*
+附近-->搜索anything输入框 进入的页面
+    显示内容:
+        输入框输入内容后显示搜索历史
+        键盘隐藏后回调
+ */
 
 import React, {Component} from 'react'
 import {AsyncStorage, BVLinearGradient, FlatList, Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
@@ -61,9 +67,7 @@ export default class Beauty2SearchScene extends Component<Props, State> {
             // searchKey:null,
             SearchLogs:[],
             SearchLocationLogs:[],
-            letters:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
             letter:'A',
-            letterSelect:true,
             picker2Value: 'A',
             defaultValue:null,
             defaultLocationValue:null,
@@ -88,7 +92,8 @@ export default class Beauty2SearchScene extends Component<Props, State> {
     }
     saveAndGoBack(v){
         if (v===null||this.isNull(v)===true){
-            this.props.navigation.state.params.callback('');
+            // this.props.navigation.state.params.callback('');
+
         }else {
             this.props.navigation.state.params.callback(v);
             SearchTemp.push(v);
@@ -100,7 +105,7 @@ export default class Beauty2SearchScene extends Component<Props, State> {
     saveAndGoBackB(v){
         AsyncStorage.setItem('defaultSliderValue',(this.state.sliderValue / 5).toString());
         if (v===null||this.isNull(v)===true){
-            this.props.navigation.state.params.callback('');
+            this.props.navigation.state.params.callback(null);
         }else {
             this.props.navigation.state.params.callback(v);
             SearchLocationTemp.push(v);
@@ -178,7 +183,7 @@ export default class Beauty2SearchScene extends Component<Props, State> {
         this.getDefaultSliderValue();
 
     }
-     componentDidMount() {
+    componentDidMount() {
         this.setState({isLoading: true});
         // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
         //  this.getSearchLogs();
@@ -191,7 +196,7 @@ export default class Beauty2SearchScene extends Component<Props, State> {
         //     console.log(v);
         //     // this.setState({SearchLogs: v, isLoading: false});
         //     })
-            //.catch(error=>console.log('error=>>', error))
+        //.catch(error=>console.log('error=>>', error))
     }
     /** 获取地理位置（经纬度） */
     getPosition = (): void => {
@@ -325,7 +330,8 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                     style={{
                         flex: 1,
                         paddingTop: 10,
-                        paddingBottom: 10
+                        paddingBottom: 10,
+                        backgroundColor: 'transparent'
                     }}
                     onPress={() => {
                         if (this.state.showLetter){
@@ -339,7 +345,7 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                     key={index}
                 >
                     <View style={{}}>
-                        <Text style={{color: '#ffffff'}}>{item}</Text>
+                        <Text style={{color: '#ffffff',fontSize:14,fontFamily:'arial'}}>{item}</Text>
                     </View>
                 </TouchableOpacity>
 
@@ -398,12 +404,13 @@ export default class Beauty2SearchScene extends Component<Props, State> {
         return(
             <View style={{flex: 1,}}>
                 {/*<View style={{alignItems:'flex-start',backgroundColor:'#d5ff7e00',paddingLeft:screen.width*0.025}}>*/}
-                    {/*<Text style={{color: '#fff8', fontSize: 13, fontFamily: 'arial'}}>*/}
-                        {/*RECENT*/}
-                    {/*</Text>*/}
+                {/*<Text style={{color: '#fff8', fontSize: 13, fontFamily: 'arial'}}>*/}
+                {/*RECENT*/}
+                {/*</Text>*/}
                 {/*</View>*/}
-                <View style={{alignSelf: 'flex-start', paddingTop: 5,paddingLeft:screen.width*0.025}}>
-                    <Text style={{color: '#fff', fontSize: 15, fontFamily: 'arial',}}>
+                <View style={{
+                                backgroundColor: 'transparent', alignSelf: 'flex-start', paddingTop: 5,paddingLeft:screen.width*0.025}}>
+                    <Text style={{color: '#fff', fontSize: 14, fontFamily: 'arial',}}>
                         RECENT
                     </Text>
                 </View>
@@ -421,46 +428,6 @@ export default class Beauty2SearchScene extends Component<Props, State> {
             </View>
         )
     }
-    showLetter(){
-        return (
-            <View>
-                <View style={{alignItems:'flex-start',backgroundColor:'#d5ff7e00',paddingTop:10,paddingLeft:screen.width*0.025}}>
-                    <Text style={{color: '#fff8', fontSize: 13, fontFamily: 'arial'}}>
-                        Please scroll to left to select a letter to search...
-                    </Text>
-                </View>
-                <View style={styles.pickerContainer}>
-                    <HorizontalPicker
-                        ref={'HorizontalPicker'}
-                        style={styles.picker}
-                        itemWidth={40}
-                        selectedValue={this.state.picker2Value}
-                        foregroundWeight={'bold'}
-                        onChange={i => {
-                            this.setState({
-                                picker2Value: i,
-                                // defaultValue:i,
-                            });
-                        }}
-                        onSelectLetter={()=>{
-                            this.saveAndGoBack(this.state.picker2Value);
-                        }}
-                        // onScrollChange={i => {
-                        //     this.setState({
-                        //         picker2Value: i,
-                        //         defaultValue:i,
-                        //     });
-                        // }}
-
-                    >
-                        {this.state.letters.map(item =>
-                            <HorizontalPicker.Item key={item} label={`${item}`} value={item}/>
-                        )}
-                    </HorizontalPicker>
-                </View>
-            </View>
-        )
-    }
 
     showSlider2(){
         return (
@@ -472,7 +439,7 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                 thumbTouchSize={{width: 50, height: 40}}
             />
         )
-}
+    }
 
     showSlider() {
         return (
@@ -500,9 +467,9 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                             </Text>
                         </View>
                         <View style={{alignSelf:'flex-end'}}>
-                        <Text style={{color: '#fff', fontSize: 12,fontWeight:'bold', fontFamily: 'arial',}}>
-                            km
-                        </Text>
+                            <Text style={{color: '#fff', fontSize: 12,fontWeight:'bold', fontFamily: 'arial',}}>
+                                km
+                            </Text>
                         </View>
                     </View>
                 </View>
@@ -544,26 +511,26 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                         }}
                     />
                     {/*<SliderV*/}
-                        {/*style={customStyles8.container}*/}
-                        {/*minimumValue={0}*/}
-                        {/*maximumValue={10}*/}
-                        {/*value={this.state.sliderValue/5}*/}
-                        {/*trackStyle={customStyles8.track}*/}
-                        {/*thumbStyle={customStyles8.thumb}*/}
-                        {/*minimumTrackTintColor='#31a4db'*/}
-                        {/*thumbTouchSize={{width: 50, height: 40}}*/}
-                        {/*onValueChange={(e) => {*/}
-                            {/*console.log(e);*/}
-                            {/*let ev = Math.round(e);*/}
-                            {/*ev === 0 ? ev = 0.25 : ev;*/}
-                            {/*this.setState({sliderValue:ev!==0.25?ev*5:0.25,});*/}
-                        {/*}}*/}
+                    {/*style={customStyles8.container}*/}
+                    {/*minimumValue={0}*/}
+                    {/*maximumValue={10}*/}
+                    {/*value={this.state.sliderValue/5}*/}
+                    {/*trackStyle={customStyles8.track}*/}
+                    {/*thumbStyle={customStyles8.thumb}*/}
+                    {/*minimumTrackTintColor='#31a4db'*/}
+                    {/*thumbTouchSize={{width: 50, height: 40}}*/}
+                    {/*onValueChange={(e) => {*/}
+                    {/*console.log(e);*/}
+                    {/*let ev = Math.round(e);*/}
+                    {/*ev === 0 ? ev = 0.25 : ev;*/}
+                    {/*this.setState({sliderValue:ev!==0.25?ev*5:0.25,});*/}
+                    {/*}}*/}
                     {/*/>*/}
                 </View>
             </View>
         )
     }
-showLocationList(){
+    showLocationList(){
         return(
             <View style={{ width: screen.width * 0.95,
                 alignSelf: 'center',
@@ -606,14 +573,14 @@ showLocationList(){
                     </TouchableOpacity>
                 </View>
                 {/*<View style={{alignSelf:'flex-start',paddingTop:5}}>*/}
-                    {/*<Text style={{color: '#fff', fontSize: 15, fontFamily: 'arial',}}>*/}
-                        {/*RECENT*/}
-                    {/*</Text>*/}
+                {/*<Text style={{color: '#fff', fontSize: 15, fontFamily: 'arial',}}>*/}
+                {/*RECENT*/}
+                {/*</Text>*/}
                 {/*</View>*/}
 
             </View>
         )
-}
+    }
 
     render() {
         if (this.state.isLoading)
@@ -648,7 +615,8 @@ showLocationList(){
                             style={{
                                 paddingTop: 10,
                                 paddingBottom: 10,
-                                paddingRight:50
+                                paddingRight:50,
+                                backgroundColor: 'transparent'
                             }}
                             activeOpacity={0.9}
                             onPress={() => {
@@ -660,24 +628,25 @@ showLocationList(){
                         </TouchableOpacity>
 
                         {/*<TouchableOpacity*/}
-                            {/*activeOpacity={0.9}*/}
-                            {/*style={{alignItems: 'center', paddingLeft: 5}}*/}
-                            {/*onPress={() => {*/}
-                                {/*this.props.navigation.goBack();*/}
-                            {/*}}*/}
+                        {/*activeOpacity={0.9}*/}
+                        {/*style={{alignItems: 'center', paddingLeft: 5}}*/}
+                        {/*onPress={() => {*/}
+                        {/*this.props.navigation.goBack();*/}
+                        {/*}}*/}
                         {/*>*/}
-                            {/*<Text style={{*/}
-                                {/*color: '#ffffff',*/}
-                                {/*fontSize: 16,*/}
-                                {/*fontFamily: 'arial',*/}
-                                {/*alignSelf: 'flex-start',*/}
-                            {/*}}>What to search?</Text>*/}
+                        {/*<Text style={{*/}
+                        {/*color: '#ffffff',*/}
+                        {/*fontSize: 16,*/}
+                        {/*fontFamily: 'arial',*/}
+                        {/*alignSelf: 'flex-start',*/}
+                        {/*}}>What to search?</Text>*/}
                         {/*</TouchableOpacity>*/}
                     </View>
 
                     <View style={{alignItems:'center'}}>
                         <TouchableOpacity
-                            style={{}}
+                            style={{
+                                backgroundColor: 'transparent'}}
                             onPress={() => {
                                 if (showLetter){
                                     this.saveAndGoBack(this.state.defaultValue);
@@ -708,7 +677,7 @@ showLocationList(){
                             showLocation: false,
                             SearchBoxKeyValueBGC:'#ffffff50',
                             SearchBoxLocationBGC:'#ffffff20',
-                            defaultLocationValue:null,
+                            // defaultLocationValue:null,
                         })
                     }}
                     clearValue={()=>{
@@ -720,7 +689,7 @@ showLocationList(){
                     img={'location'}
                     backgroundColor={this.state.SearchBoxLocationBGC}
                     defaultValue={this.state.defaultLocationValue}
-                    placeholder={'City,postal code or address'}
+                    placeholder={'Address...'}
                     onChangeText={(text) => {
                         this.onChangeSearchLocationBoxText(text)
                     }}
@@ -728,7 +697,7 @@ showLocationList(){
                         this.setState({
                             showLetter: false,
                             showLocation: true,
-                            defaultValue:null,
+                            // defaultValue:null,
                             SearchBoxLocationBGC:'#ffffff50',
                             SearchBoxKeyValueBGC:'#ffffff20'
                         })
@@ -737,7 +706,7 @@ showLocationList(){
                         this.setState({defaultLocationValue:null})
                     }}
                 />
-                {this.state.showLetter&&this.showLetter()}
+                {/*{this.state.showLetter&&this.showLetter()}*/}
 
                 {this.state.showLocation&&this.showSlider()}
                 {this.state.showLocation&&this.showLocationList()}
@@ -746,21 +715,21 @@ showLocationList(){
                 {(this.state.SearchLocationLogs.length > 0&&this.state.showLocation)&&this.renderLogList(this.state.SearchLocationLogs)}
 
                 {/*<View style={commonStyle.searchBox}>*/}
-                    {/*<TextInput*/}
-                        {/*underlineColorAndroid='transparent'*/}
-                        {/*placeholder={'What to search?'}*/}
-                        {/*placeholderTextColor={'#d8d8d8'}*/}
-                        {/*style={{*/}
-                            {/*height: Platform.OS === 'ios' ? 30 : 40,*/}
-                            {/*fontSize: 18,*/}
-                            {/*lineHeight: 20,*/}
-                            {/*color: '#fff',*/}
-                            {/*width: screen.width * 0.95,*/}
-                            {/*backgroundColor: '#fff0',*/}
-                            {/*borderColor: '#fff8',*/}
-                            {/*borderBottomWidth: screen.onePixel*/}
-                        {/*}}>*/}
-                    {/*</TextInput>*/}
+                {/*<TextInput*/}
+                {/*underlineColorAndroid='transparent'*/}
+                {/*placeholder={'What to search?'}*/}
+                {/*placeholderTextColor={'#d8d8d8'}*/}
+                {/*style={{*/}
+                {/*height: Platform.OS === 'ios' ? 30 : 40,*/}
+                {/*fontSize: 18,*/}
+                {/*lineHeight: 20,*/}
+                {/*color: '#fff',*/}
+                {/*width: screen.width * 0.95,*/}
+                {/*backgroundColor: '#fff0',*/}
+                {/*borderColor: '#fff8',*/}
+                {/*borderBottomWidth: screen.onePixel*/}
+                {/*}}>*/}
+                {/*</TextInput>*/}
                 {/*</View>*/}
 
 

@@ -245,7 +245,8 @@ export default class SearchAnythingInfoScene extends PureComponent<Props, State>
                 {/*RECENT*/}
                 {/*</Text>*/}
                 {/*</View>*/}
-                <View style={{alignSelf: 'flex-start', paddingTop: 5,paddingLeft:screen.width*0.025}}>
+                <View style={{alignSelf: 'flex-start', paddingTop: 5,paddingLeft:screen.width*0.025,
+                                backgroundColor: 'transparent'}}>
                     <Text style={{color: '#fff', fontSize: 15, fontFamily: 'arial',}}>
                         RECENT
                     </Text>
@@ -297,7 +298,8 @@ export default class SearchAnythingInfoScene extends PureComponent<Props, State>
                             style={{
                                 paddingTop: 10,
                                 paddingBottom: 10,
-                                paddingRight:30
+                                paddingRight:30,
+                                backgroundColor: 'transparent'
                             }}
                             activeOpacity={0.9}
                             onPress={() => {
@@ -326,7 +328,8 @@ export default class SearchAnythingInfoScene extends PureComponent<Props, State>
 
                     <View>
                         <TouchableOpacity
-                            style={{}}
+                            style={{
+                                backgroundColor: 'transparent'}}
                             onPress={() => {
                                 this.saveAndGoBack(this.state.defaultValue);
                             }}

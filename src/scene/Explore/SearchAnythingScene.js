@@ -226,6 +226,7 @@ export default class SearchAnythingScene extends PureComponent<Props> {
                             position:'absolute',
                             left:0,
                             right:0,
+                            backgroundColor: 'transparent'
                         }}>
                             <Text style={{
                                 color: '#ffffff',

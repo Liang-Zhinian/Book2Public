@@ -133,12 +133,13 @@ export default  class PrintInteractionScreen extends Component {
                 this.setState({
                     data: msg,
                 });
-                let formatData=DrinkDetailDataUtils.requestWineData(msg);
-                    this.props.navigation.navigate('QRDetailScene',{data:formatData,
-                        restartScan: () => {
-                            this._startScan();
-                        }
-                    });//跳到扫码页面
+                let formatData = DrinkDetailDataUtils.requestWineData(msg);
+                this.props.navigation.navigate('QRDetailScene', {
+                    data: formatData,
+                    restartScan: () => {
+                        this._startScan();
+                    }
+                });//跳到扫码页面
 
             })
             .catch(() => {

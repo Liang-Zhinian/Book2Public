@@ -41,7 +41,8 @@ export default class QRDetailScene extends Component {
 
     renderContent() {
         let {data} = this.props.navigation.state.params;
-        let item = data[Math.floor(Math.random()*100)];
+        // let item = data[Math.floor(Math.random()*100)];
+        let item = data[0];
         let contentView = data.length > 0
             ? <View>
                 <TouchableOpacity activeOpacity={0.9} style={styles.container} onPress={() => {

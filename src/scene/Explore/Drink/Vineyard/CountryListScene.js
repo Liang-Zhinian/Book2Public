@@ -179,6 +179,7 @@ export default class CountryListScene extends Component {
         )
     }
     renderList(data,index){
+        console.log('CountryListScene renderList', data, index)
         let getFun=[this._getRegion.bind(this),this._getSubregion.bind(this),this._getArea.bind(this),this._getSubarea.bind(this)];
 
         let AreaList = data.map((item) => {

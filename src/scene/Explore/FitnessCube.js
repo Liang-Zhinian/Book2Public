@@ -27,6 +27,7 @@ import es from  '../../scene/demo&test/react-native-i18n_example/translations/es
 import fr from  '../../scene/demo&test/react-native-i18n_example/translations/fr'
 import frCA from  '../../scene/demo&test/react-native-i18n_example/translations/fr-CA'
 import cn from  '../../scene/demo&test/react-native-i18n_example/translations/cn'
+import Toast from "react-native-easy-toast";
 I18n.fallbacks = true;
 
 // Available languages
@@ -196,7 +197,7 @@ export default class FitnessCube extends React.Component {
         const opacity = this.animatedValue.interpolate({
             inputRange: [0, 0.5, 1],
             outputRange: [0, 1, 0]
-        })
+        });
         if (typeof allPageList!=='undefined'&&allPageList.length > 1) {
 
             return (
@@ -462,7 +463,13 @@ export default class FitnessCube extends React.Component {
                           reduceface={() => {
                               //上一个页面, right
                               let face = --this.state.face;
-                              if (face <0) face = 4+face;
+                              if (face <0) {
+                                  if (page>1){
+                                      this.animate();
+                                      // this.refs.toast.show('the first');
+                                  }
+                                  face = 4+face;
+                              }
 
                               this.setState({face: face});
                               this.props.onSwipe( allPageList[page - 1][face].props.category);
@@ -471,7 +478,12 @@ export default class FitnessCube extends React.Component {
                           addface={() => {
 
                               let face = ++this.state.face;
-                              if (face > 3) face = face-4;
+                              if (face > 3) {
+                                  // alert(allPageList.length);
+                                  // this.refs.toast.show('the last');
+                                  this.animate();
+                                  face = face-4;
+                              }
 
                               this.setState({face: face});
                               this.props.onSwipe( allPageList[page - 1][face].props.category);
@@ -508,7 +520,7 @@ export default class FitnessCube extends React.Component {
                         }}
                         onPickerSelected={(pickerId, value) => {
                             debugger;
-                            var v = this.state.selectedValue;
+                            let v = this.state.selectedValue;
 
                             v[pickerId] = value;
 
@@ -516,6 +528,14 @@ export default class FitnessCube extends React.Component {
                         }}
                         ref={ref => this.DatePicker1 = ref}>
                     </DatePicker>
+                    <Toast
+                        ref="toast"
+                        position='top'
+                        positionValue={200}
+                        fadeInDuration={750}
+                        fadeOutDuration={1000}
+                        opacity={0.8}
+                    />
                 </View>
         );
     }

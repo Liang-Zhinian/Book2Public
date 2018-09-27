@@ -47,7 +47,7 @@ export default class AMap3D extends Component {
     time: new Date(),
     zoomEnabled: true,
     scrollEnabled: true,
-    rotateEnabled: true,
+    rotateEnabled: false,
     tiltEnabled: false,
     locationEnabled: true,
     showsCompass: false,

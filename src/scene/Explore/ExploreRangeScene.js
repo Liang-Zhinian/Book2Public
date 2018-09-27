@@ -8,6 +8,7 @@
 
 import React, {PureComponent} from 'react'
 import {
+    ActivityIndicator,
     Animated,
     AsyncStorage,
     BVLinearGradient, DeviceEventEmitter,
@@ -33,6 +34,7 @@ import {CoordinateConverter, getVineyardByGPS, regeocodeLocation} from "../../ap
 import Slider from "../Common/Slider";
 import DrinkDetailDataUtils from "./Drink/DrinkDetailDataUtils";
 import Mater from "react-native-vector-icons/MaterialIcons";
+import BeautyDetail from "./Beauty/BeautyDetail";
 
 type
 Props = { navigation: any, };
@@ -69,10 +71,7 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
             zoom:12.5,
             radius: 5,
             opacity:[0,1,0],
-            center: {
-                longitude: 113.341411,
-                latitude: 23.170044
-            },
+            center:null,
             isDateTimePickerVisible: false,
             date: new Date(),
             params: {
@@ -102,24 +101,25 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
     //     AMap.searchPoiByCenterCoordinate(this.state.params);
     // }
 
-    _onMapLongClick(v) {
-        console.log('_onMapLongClick',address);
-        let {center} = this.state;
-        AsyncStorage.setItem('LatLngLog',JSON.stringify([ center.latitude,center.longitude]));
-        this.props.navigation.state.params.callbackLocation(address);
+    _onSearchClick(v) {
+        let {center,radius,zoom,locationSearchKey} = this.state;
+        // console.log(center.latitude,center.longitude,radius);
+        this.props.navigation.state.params.callbackLocation(address,center.latitude,center.longitude,'',radius,locationSearchKey);
+        AsyncStorage.setItem('LatLngLog',JSON.stringify([ center.latitude,center.longitude,radius,zoom]));
     }
-
     componentDidMount() {
 
         StatusBar.setBackgroundColor('#0000005e');
         this.setState({ isLoading: true });
+        let {center,radius} = this.state;
         DeviceEventEmitter.addListener('amap.onMapClickDone', function (e) {
             let index = e.addressName.indexOf(",");
             address= e.addressName.indexOf(",") !== -1?e.addressName.substr(0,index):e.addressName;
-            console.log('onMapClickDone',e.addressName,'address',address)
+            // console.log('onMapClickDone',e.addressName,'address',address)
             // this.props.navigation.state.params.callbackLocation(address.addressName);
         });
-
+        // this.UpdateMarkerList();
+        // this.refs['ExploreRangeMarkerList']._GetBusinessLocationsWithinRadius(center.latitude,center.longitude,'',radius);
         // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
     }
 
@@ -135,7 +135,7 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
             alert(222)
             // Error retrieving data
         }
-    }
+    };
     componentWillMount() {
         // this._retrieveData();
         try {
@@ -151,12 +151,16 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                         // console.warn('成功'+result);
                         let LatLngLog=JSON.parse(result);
                         // this.regeocodeLocation(LatLngLog[1],LatLngLog[0]);
+                        console.log('LatLngLog',LatLngLog);
                         this.setState({
                             center: {
                                 latitude:LatLngLog[0],
                                 longitude:LatLngLog[1]
-                            }
+                            },
+                            // radius:LatLngLog[2],
+                            // zoom:LatLngLog[3]
                         });
+                        this.UpdateMarkerList();
                         console.log('成功'+result);
                     }
                 }
@@ -320,8 +324,18 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                 }, 10);
             });
     };
-    
+    UpdateMarkerList(){
+        let {center,radius} = this.state;
+        let {category} = this.props.navigation.state.params;
+        if (category==='Beauty') {
+            this.refs['ExploreRangeMarkerList']._GetBusinessLocationsWithinRadius(center.latitude,center.longitude,'',radius);
+        }else if(category==='Vineyard'){
+            this.refs['ExploreRangeMarkerList']._GetVineyardLocationsWithinRadius(center.latitude,center.longitude,radius);
+        }
+        // this.refs['ExploreRangeMarkerList']._GetVineyardLocationsWithinRadius(center.latitude,center.longitude,radius);
+    }
     loadMarker(data){
+        this.setState({coordinates:[]});
         let coordinates = [];
         data.forEach(item => {
             if (item.Latitude !== null && item.Longitude !== null) {
@@ -336,7 +350,7 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
     }
 
     loadAMap() {
-        let {coordinates} = this.state;
+        let {coordinates,radius} = this.state;
         return (
             <AMap3D
                 // region = {{latitudeDelta: 0,
@@ -347,15 +361,18 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                 ref={component => this._amap = component}
                 // onFormattedAddressReceived={this.onFormattedAddressReceived}
                 onLongPressEvent={(e) => {
-                    // console.log('onLongPressEvent Delta', e)
+                    console.log('onLongPressEvent Delta', e)
                     this.setState({
                         center: {
                             latitude: e.latitude,
                             longitude: e.longitude
                         }
+                    },()=>{
+                        this.UpdateMarkerList();
                     });
                     // this.regeocodeLocation(e.longitude,e.latitude);
                     // this._onMapLongClick(address);
+
                 }}
                 onMarkerPress={(index) => {
                     this.setState({ markerView: true });
@@ -366,7 +383,7 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                 }}
                 circle={{
                     enabled: true,
-                    radius: this.state.radius * 1000
+                    radius: radius * 1000
                 }}
                 coordinates={coordinates}
                 _onStatusChangeComplete={()=>{
@@ -375,7 +392,13 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
             />
         );
     }
-
+    showLoading() {
+        return (
+            <View style={{alignItems:'center'}}>
+                <ActivityIndicator size="large" color="#EDDEFF" />
+            </View>
+        )
+    }
     _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
 
     _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
@@ -386,12 +409,13 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
 
 
     GetMarkerList() {//markerList
+        let {category} = this.props.navigation.state.params;
         return (
             <View style={[styles.sliderStyle]}>
                 <TouchableOpacity
                     activeOpacity={0.9}
                     onPress={() => {
-                        this._onMapLongClick(address);
+                        this._onSearchClick(address);
                         this.props.navigation.goBack();
                     }}
                     style={{
@@ -421,12 +445,16 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                         siteId={this.props.navigation.state.params.siteId}
                         loadMarker={this.loadMarker.bind(this)}
                         onMenuSelected={(info) => {
-                            this.props.navigation.navigate('CommodityDetails', {info: info})//跳到商品详情
+                            if (category==='Beauty') {
+                                this.props.navigation.navigate('BeautyDetail', {info: info})//跳到商品详情
+                            }else if(category==='Vineyard'){
+                                // this.props.navigation.navigate('BeautyDetail', {info: info})//跳到商品详情
+                            }
+
                         }}
                         _scrollToMarker={(info) => {
                             this._amap._scrollToMarker(info)
-                        }
-                        }
+                        }}
                     />
                 </View>
             </View>
@@ -479,8 +507,7 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
             inputRange: [0, 0.5, 1],
             outputRange: this.opacity
         });
-        let  {signWidth}=this.state;
-
+        let  {signWidth,radius,locationSearchKey,center}=this.state;
         let li=[50,45,40,35,30,25,20,15,10,5,0.5,0.25];
         let liTemp=[50,45,40,35,30,25,20,15,10,5,0.5,0.25];
         let u=[9,9.2,9.3,9.5,10,10,10,11,11.5,12.5,15,17];
@@ -527,14 +554,14 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                             onChangeText={(value) => {
                                 this.onChangeSearchBoxText(value)
                             }}
-                            defaultValue={this.state.locationSearchKey}
+                            defaultValue={locationSearchKey}
                             style={{
                                 width: screen.width * 0.8,
                                 fontSize: 15,
                                 color: '#232323',
                                 textAlignVertical: 'center',
                             }}/>
-                        {(this.state.locationSearchKey!==null&&this.state.locationSearchKey.length > 0)&&
+                        {(locationSearchKey!==null&&locationSearchKey.length > 0)&&
                         <TouchableOpacity
                             activeOpacity={0.9}
                             style={[styles.inputIcon, {
@@ -577,7 +604,7 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                                 fontFamily: 'arial',
                                 fontWeight: '400',
                                 fontSize: 20,
-                            }}>{this.state.radius}</Text>
+                            }}>{radius}</Text>
                         <Text
                             style={{
                                 flexDirection: 'column',
@@ -617,11 +644,14 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
 
                 </View>
                 <View style={[styles.mapStyle]}>
-                    {
-                        // InteractionManager.runAfterInteractions(() => {
-                            this.loadAMap()
-                        // })
-                    }
+                    {center===null?this.showLoading():this.loadAMap()}
+
+                    {/*{*/}
+                        {/*// InteractionManager.runAfterInteractions(() => {*/}
+                        {/**/}
+                            {/*this.loadAMap()*/}
+                        {/*// })*/}
+                    {/*}*/}
 
                 </View>
                 {this.GetMarkerList()}
@@ -630,6 +660,7 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                     style={{position: 'absolute', bottom: 0,width:screen.width,}}
                 >
                     <Slider
+                        initialValue={radius/5}
                         onSelect={(e) => {
                             e === 0 ? e = 0.25 : e;
                             li.map((info,i)=>{
@@ -637,28 +668,33 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                                 if ((e!==0.25?e*5:0.25)===info) this.setState({zoom:u[i]})
                             })
                         }}
-                        onPress={(v) => {
+                        onPress={(v) => {//滑动
                             this.animate(v);
+                            let {center,radius} = this.state;
                             // let li=[50,45,40,35,30,25,20,15,10,5,0.25];
                             // let u=[8.5,9.2,9.3,9.5,10,10,10,11,11.5,12.5,17];
-                            if (li.indexOf(this.state.radius) < 0) {
-                                liTemp.push(this.state.radius);
+                            if (li.indexOf(radius) < 0) {
+                                liTemp.push(radius);
                                 this.sortarr(liTemp);//排序
-                                let radius = liTemp.indexOf(this.state.radius);//取到新半径的位置
-                                let lastDiffer = Math.abs(liTemp[radius - 1] - liTemp[radius]);//前一个相差值
-                                let nextDiffer = Math.abs(liTemp[radius + 1] - liTemp[radius]);//后一个相差值
+                                let _radius = liTemp.indexOf(radius);//取到新半径的位置
+                                let lastDiffer = Math.abs(liTemp[_radius - 1] - liTemp[_radius]);//前一个相差值
+                                let nextDiffer = Math.abs(liTemp[_radius + 1] - liTemp[_radius]);//后一个相差值
                                 if (lastDiffer === nextDiffer) {
                                     return;
                                 } else if (lastDiffer > nextDiffer) {//取后一个值
                                     this.setState({
-                                        zoom: u[li.indexOf(liTemp[radius + 1])]
+                                        zoom: u[li.indexOf(liTemp[_radius + 1])]
                                     })
                                 } else if (lastDiffer < nextDiffer) {
                                     this.setState({
-                                        zoom: u[li.indexOf(liTemp[radius - 1])]
+                                        zoom: u[li.indexOf(liTemp[_radius - 1])]
                                     })
                                 }
                             }
+                            // let {center,radius} = this.state;
+                            this.UpdateMarkerList();
+                            // this.refs['ExploreRangeMarkerList']._GetBusinessLocationsWithinRadius(center.latitude,center.longitude,'',radius);
+                            // this.refs['ExploreRangeMarkerList']._GetVineyardLocationsWithinRadius(center.latitude,center.longitude,radius);
                         }}
                     />
                 </View>

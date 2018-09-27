@@ -52,6 +52,7 @@ function requestProducerData(data) {
 }
 
 function requestWineData(data) {
+    console.log('requestWineData',data);
     try {
         // if (data.length > 0) {
             return data.map((info) => {
@@ -63,7 +64,7 @@ function requestWineData(data) {
                     AdditionalLocationImages: null,
                     firmId: info.Producer_Id,
                     Appellation:info.Appellation,
-                    Colour:info.Colour,
+                    Colour:info.Colour
 
                 }
             });

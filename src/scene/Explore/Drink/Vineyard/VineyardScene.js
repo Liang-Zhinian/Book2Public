@@ -14,7 +14,7 @@ import {screen} from '../../../../common'
 import {commonStyle} from "../../../../widget/commonStyle";
 import CountryListScene from "../Vineyard/CountryListScene";
 import DrinkDetailDataUtils from "../DrinkDetailDataUtils";
-import {getVineyardByName, getVineyardBySubAreaId} from "../../../../api";
+import {getVineyardByGPS, getVineyardByName, getVineyardBySubAreaId} from "../../../../api";
 import Drink2SearchScene from "../Drink2SearchScene";
 import VineyardCell from "../Vineyard/VineyardCell";
 // import EZSideMenu from "../../../Common/EZSideMenu";
@@ -35,7 +35,7 @@ export default class VineyardScene extends Component {
         this.state = {
             refreshState: RefreshState.Idle,
             searchKey: null,
-            LocationSearchKey: 'Select the',
+            LocationSearchKey: null,
             title: '',
             NoData:false,
             showSliderBar:false,
@@ -85,11 +85,24 @@ export default class VineyardScene extends Component {
         this.setState({
             refreshState: RefreshState.HeaderRefreshing
         });
-        let {searchKey} = this.state;
+        let {searchKey,LocationSearchKey,center,radius} = this.state;
+        // BeautyList:[],
+        //                                             LocationSearchKey: address,
+        //                                             center:{
+        //                                                 latitude:latitude,
+        //                                                 longitude:longitude
+        //                                             },
+        //                                             radius:radius
+
+        console.log(searchKey);
         if (searchKey !== null) {
             this.setState({VineyardList: []});
             this._getVineyardByName(searchKey);
-        } else {
+        } else if (LocationSearchKey!==null){
+            this.setState({VineyardList: []});
+            this._getVineyardByGPS(center.latitude,center.longitude,radius);
+        }
+        else {
             this.props.setShowSliderBar && this.props.setShowSliderBar(true);
             if (searchKey === null) {
                 this._getVineyardByName('')
@@ -189,7 +202,60 @@ export default class VineyardScene extends Component {
                 })
             });
     };
+    _getVineyardByGPS = async (latitude,longitude,radius) => {
+        this.setState({
+            onSearch:true,
+            isLoading:true});
+        await  getVineyardByGPS(latitude,longitude,radius)
+            .then((msg) => {
+                // console.log('GetVineyardLocationsWithinRadius',responseJson);
+                // const dataList = responseJson.map((info) => {
+                //     return {
+                //         key: info.Vineyard_Id,
+                //         id: info.Vineyard_Id,
+                //         imageUrl: null,
+                //         title: info.Vineyard,
+                //         subtitle: null,
+                //         phone: null,
+                //         Latitude: info.Latitude,
+                //         Longitude: info.Longitude,
+                //         AdditionalLocationImages: null,
+                //         SiteId: info.Vineyard_Id,
+                //     }
+                // });
+                // let dataListTemp = [];
+                // if (dataList.length>=20){
+                //     for (let i = 0;i<20;i++){
+                //         dataListTemp.push(dataList[i]);
+                //     }
+                // }else{
+                //     dataListTemp=dataList
+                // }
+                //
+                //
+                // console.log(dataListTemp);
+                // this.setState({data: dataListTemp});
+                // this.props.loadMarker(dataListTemp)
+                this.dataLength = this.state.VineyardList.length;
+                let data = DrinkDetailDataUtils.requestData(msg);
+                data.length > 0 ? this.setState({NoData: false}) : this.setState({NoData: true});
+                // if (this.page!==1&&data.length>0) data.shift();
+                // if(data.length=this.size){data.pop();}
+                data.pop();
+                this.setState({
+                    isLoading:false,
+                    VineyardList: this.state.VineyardList.concat(data),
+                    refreshState: RefreshState.Idle,
+                }, () => {
+                    if (this.state.VineyardList.length === this.dataLength) {
+                        this.setState({refreshState: RefreshState.NoMoreData})
+                    }
+                });
+            })
+            .catch((error) => {
 
+            })
+    };
 
     componentWillMount() {
         let {category} = this.props.navigation.state.params;
@@ -280,7 +346,7 @@ export default class VineyardScene extends Component {
         }
     }
     render() {
-        let {searchKey,openMenuOffset} =  this.state;
+        let {searchKey,openMenuOffset,LocationSearchKey,isOpen} =  this.state;
         const menu =
             <CountryListScene
                 _toggle={this._toggle.bind(this)}
@@ -288,9 +354,10 @@ export default class VineyardScene extends Component {
             />;
         return (
             <SideMenu
+                // style={{opacity:isOpen?1:1}}
                 menu={menu}
                 openMenuOffset={screen.width}
-                isOpen={this.state.isOpen}
+                isOpen={isOpen}
                 onChange={isOpen => this.updateMenuState(isOpen)}
                 menuPosition={'right'}
             >
@@ -385,7 +452,47 @@ export default class VineyardScene extends Component {
                                     color: '#fff'
                                 }}>search?</Text> : <Text/>}
                         </TouchableOpacity>
+                        <TouchableOpacity style={commonStyle.searchBar} underlineColorAndroid='white' onPress={() => {
+                            this.props.navigation.navigate('ExploreRangeScene'
+                                , {
+                                    callbackLocation: (address,latitude,longitude,name,radius) => {
+                                        this.setState({
+                                            BeautyList:[],
+                                            LocationSearchKey: address,
+                                            searchKey:null,
+                                            center:{
+                                                latitude:latitude,
+                                                longitude:longitude
+                                            },
+                                            radius:radius
+                                        },()=>{
+                                            this.requestData()
+                                        });
 
+                                    },
+                                    category:'Vineyard',
+                                    siteId: this.props.navigation.state.params.siteId,
+                                });
+                        }}>
+                            <Image source={require('../../../../img/nearby/locationB.png')} style={commonStyle.searchIcon}/>
+                            <Text style={{
+                                paddingLeft: 10,
+                                fontSize: 14,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                alignSelf: 'center',
+                                color: '#e5e5e5'
+                            }}>{LocationSearchKey === null ? 'Select the' : LocationSearchKey} </Text>
+                            {LocationSearchKey === null &&
+                            <Text style={{
+                                fontSize: 14,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                alignSelf: 'center',
+                                fontWeight: 'bold',
+                                color: '#ffffff'
+                            }}>area</Text>}
+                        </TouchableOpacity>
                     </View>
                     {!this.state.onSearch?this.showNoSearchMsg():this.renderVineyardList()}
                 </LinearGradient>

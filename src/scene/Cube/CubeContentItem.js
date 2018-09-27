@@ -1,6 +1,8 @@
 import React, {PureComponent} from 'react'
-import {StyleSheet, ImageBackground, View, Text, TouchableHighlight} from 'react-native'
+import {StyleSheet, ImageBackground, View, Text,BVLinearGradient, TouchableHighlight} from 'react-native'
 import {screen} from '../../common/index'
+import {commonStyle} from "../../widget/commonStyle";
+import LinearGradient from "react-native-linear-gradient";
 
 type
 Props = {
@@ -24,18 +26,22 @@ class CubeContentItem extends PureComponent<Props> {
                                      alignSelf: 'center',
                                      alignItems: 'center'
                                  }]}>
-                    {this.props.sign ? <View style={{
-                        flexDirection: 'column',
-                        backgroundColor: '#24242451',
-                        padding: 5,
-                        width: screen.width,
-                        height: screen.width / 3
-                    }}>
-                        {/*<Text style={{fontSize: 17,color: '#fff',fontFamily: 'arial'}}>{this.props.tag}</Text>*/}
-                        {/*<Text style={{fontSize: 40,color: '#fff',fontFamily: 'arial'}}>{this.props.title}</Text>*/}
-                        {/*<Text style={{fontSize: 17,color: '#fff',fontFamily: 'arial'}}>{this.props.prompt}</Text>*/}
-                    </View> : <View/>}
-
+                    {/*{this.props.sign ? <View style={{*/}
+                        {/*flexDirection: 'column',*/}
+                        {/*backgroundColor: '#24242451',*/}
+                        {/*padding: 5,*/}
+                        {/*width: screen.width,*/}
+                        {/*height: screen.width / 3*/}
+                    {/*}}>*/}
+                       {/**/}
+                    {/*</View> : <View/>}*/}
+                    {/*<Text style={{fontSize: 17,color: '#fff',fontFamily: 'arial'}}>{this.props.tag}</Text>*/}
+                    {/*<Text style={{fontSize: 40,color: '#fff',fontFamily: 'arial'}}>{this.props.title}</Text>*/}
+                    {/*<Text style={{fontSize: 17,color: '#fff',fontFamily: 'arial'}}>{this.props.prompt}</Text>*/}
+                    {/*<LinearGradient colors={screen.colorTemp2} start={{x: 0, y: 0}} end={{x: 1, y: 1}} style={{position:'absolute',top:0, height:  1,width:screen.width}}/>*/}
+                    {/*<LinearGradient colors={screen.colorTemp2} start={{x: 1, y: 0}} end={{x: 1, y: 1}} style={{position:'absolute',left:0, width: 1,height: screen.width}}/>*/}
+                    {/*<LinearGradient colors={screen.colorTemp2} start={{x: 1, y: 1}} end={{x: 0, y: 0}} style={{position:'absolute',bottom:0, height:  1,width:screen.width}}/>*/}
+                    {/*<LinearGradient colors={screen.colorTemp2} start={{x: 1, y: 1}} end={{x: 0, y: 0}} style={{position:'absolute',right:0, width: 1,height: screen.width}}/>*/}
                 </ImageBackground>
             </TouchableHighlight>
         );

@@ -118,81 +118,80 @@
         "id":"abc123123",
         "staffId":"",
         "serviceItemId":"ABC123",
-        "startTime":"2018-08-10 08:30",
-        "endTime":"2018-08-10 09:30"
+        "startTime":"2018-09-26 08:30",
+        "endTime":"2018-09-26 09:30"
     },{
         "id":"abc123124",
         "staffId":"",
         "serviceItemId":"ABC123",
-        "startTime":"2018-08-10 09:00",
-        "endTime":"2018-08-10 10:30"
+        "startTime":"2018-09-26 09:00",
+        "endTime":"2018-09-26 10:30"
     },{
         "id":"abc123125",
         "staffId":"",
         "serviceItemId":"ABC123",
-        "startTime":"2018-08-10 12:30",
-        "endTime":"2018-08-10 13:30"
+        "startTime":"2018-09-26 12:30",
+        "endTime":"2018-09-26 13:30"
     },{
         "id":"abc123126",
         "staffId":"",
         "serviceItemId":"ABC123",
-        "startTime":"2018-08-10 16:30",
-        "endTime":"2018-08-10 17:30"
+        "startTime":"2018-09-26 16:30",
+        "endTime":"2018-09-26 17:30"
     },{
       "id":"abc123126",
       "staffId":"",
       "serviceItemId":"ABC123",
-      "startTime":"2018-08-10 17:00",
-      "endTime":"2018-08-10 18:00"
+      "startTime":"2018-09-26 17:00",
+      "endTime":"2018-09-26 18:00"
     },{
       "id":"abc123126",
       "staffId":"",
       "serviceItemId":"ABC123",
-      "startTime":"2018-08-10 18:30",
-      "endTime":"2018-08-10 20:30"
+      "startTime":"2018-09-26 18:30",
+      "endTime":"2018-09-26 20:30"
     },{
       "id":"abc123126",
       "staffId":"",
       "serviceItemId":"ABC123",
-      "startTime":"2018-08-10 19:30",
-      "endTime":"2018-08-10 20:30"
+      "startTime":"2018-09-26 19:30",
+      "endTime":"2018-09-26 20:30"
     },{
       "id":"abc123126",
       "staffId":"",
       "serviceItemId":"ABC123",
-      "startTime":"2018-08-10 20:30",
-      "endTime":"2018-08-10 20:30"
+      "startTime":"2018-09-26 20:30",
+      "endTime":"2018-09-26 20:30"
     },{
       "id":"abc123126",
       "staffId":"",
       "serviceItemId":"ABC123",
-      "startTime":"2018-08-10 21:00",
-      "endTime":"2018-08-10 22:00"
+      "startTime":"2018-09-26 21:00",
+      "endTime":"2018-09-26 22:00"
     },{
       "id":"abc123126",
       "staffId":"",
       "serviceItemId":"ABC123",
-      "startTime":"2018-08-10 21:30",
-      "endTime":"2018-08-10 20:00"
+      "startTime":"2018-09-26 21:30",
+      "endTime":"2018-09-26 20:00"
     },{
       "id":"abc123126",
       "staffId":"",
       "serviceItemId":"ABC123",
-      "startTime":"2018-08-10 22:30",
-      "endTime":"2018-08-10 20:30"
+      "startTime":"2018-09-26 22:30",
+      "endTime":"2018-09-26 20:30"
     },{
       "id":"abc123126",
       "staffId":"",
       "serviceItemId":"ABC123",
-      "startTime":"2018-08-10 22:45",
-      "endTime":"2018-08-10 20:30"
+      "startTime":"2018-09-26 22:45",
+      "endTime":"2018-09-26 20:30"
     },{
       "id":"abc123126",
       "staffId":"",
       "serviceItemId":"ABC123",
-      "startTime":"2018-08-10 22:50",
-      "endTime":"2018-08-10 20:30"
+      "startTime":"2018-09-26 22:50",
+      "endTime":"2018-09-26 20:30"
     }
-
   ]
 }

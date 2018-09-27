@@ -625,7 +625,12 @@ export default class DrinkCube extends React.Component {
                       reduceface={() => {
                           //上一个页面, right
                           let face = --this.state.face;
-                          if (face <0) face = 4+face;
+                          if (face <0) {
+                              if (page>1){
+                                  this.animate();
+                              }
+                              face = 4+face;
+                          }
                           let category = allPageList[page - 1][face].props.category;
 
                           this.setState({face: face,category:category});
@@ -636,7 +641,10 @@ export default class DrinkCube extends React.Component {
                       addface={() => {
 
                           let face = ++this.state.face;
-                          if (face > 3) face = face - 4;
+                          if (face > 3) {
+                              this.animate();
+                              face = face-4;
+                          }
                           let category = allPageList[page - 1][face].props.category;
 
                           this.setState({face: face, category: category});

@@ -409,7 +409,8 @@ export default class Drink2SearchScene extends Component<Props, State> {
                         {/*RECENT*/}
                     {/*</Text>*/}
                 {/*</View>*/}
-                <View style={{alignSelf: 'flex-start', paddingTop: 5,paddingLeft:screen.width*0.025}}>
+                <View style={{
+                                backgroundColor: 'transparent',alignSelf: 'flex-start', paddingTop: 5,paddingLeft:screen.width*0.025}}>
                     <Text style={{color: '#fff', fontSize: 14, fontFamily: 'arial',}}>
                         RECENT
                     </Text>
@@ -655,7 +656,8 @@ showLocationList(){
                             style={{
                                 paddingTop: 10,
                                 paddingBottom: 10,
-                                paddingRight:50
+                                paddingRight:50,
+                                backgroundColor: 'transparent'
                             }}
                             activeOpacity={0.9}
                             onPress={() => {
@@ -684,7 +686,8 @@ showLocationList(){
 
                     <View style={{alignItems:'center'}}>
                         <TouchableOpacity
-                            style={{}}
+                            style={{
+                                backgroundColor: 'transparent'}}
                             onPress={() => {
                                 if (showLetter){
                                     this.saveAndGoBack(this.state.defaultValue);

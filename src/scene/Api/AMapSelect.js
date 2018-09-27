@@ -1,5 +1,6 @@
 import React, {PureComponent,} from 'react'
 import {
+    ActivityIndicator,
     AsyncStorage,
     BackHandler,
     BVLinearGradient,
@@ -16,6 +17,7 @@ import AMap3D from './AMap.ios';
 import {screen} from "../../common";
 import LinearGradient from 'react-native-linear-gradient';
 import {CoordinateConverter,regeocodeLocation} from "../../api";
+import {commonStyle} from "../../widget/commonStyle";
 
 const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window')
 
@@ -39,10 +41,7 @@ export default class AMapSelect extends PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            center: {
-                longitude: 116.404,
-                latitude: 39.915
-            },
+            center: null,
             zoom: 18,
             locationSelect: '地图上选点'
         }
@@ -77,7 +76,6 @@ export default class AMapSelect extends PureComponent<Props, State> {
                 'LatLngLog',
                 (error,result)=>{
                     if (error||result==null){
-                        // alert('取值失败:'+error);
                         console.warn('取值失败')
                         this.getPosition();
                     }else{
@@ -141,6 +139,14 @@ export default class AMapSelect extends PureComponent<Props, State> {
                 },
                 1000
             );
+            setTimeout(()=>{
+                this.setState({
+                    center: {
+                        longitude: 116.404,
+                        latitude: 39.915
+                    }
+                })
+            },5000);
             console.warn('There was a problem with obtaining your location: ' + JSON.stringify(error));
         });
         clearInterval(this.interval);
@@ -176,43 +182,114 @@ export default class AMapSelect extends PureComponent<Props, State> {
         AsyncStorage.setItem('LocationSearchKey',formatted_address);
     };
 
-    // onBackAndroid = () => {
-    //     this.props.navigation.state.params.callbackLocationOfMap(address);
-    //     return false;
-    // };
-
-    // this.props.navigation.state.params.callbackLocationOfMap(address);
 
     onLongPressEvent(){
         let {center} = this.state;
-        this.props.navigation.state.params.callbackLocationOfMap(address);
+        this.props.navigation.state.params.callbackLocationOfMap(address,center.latitude,center.longitude,'');
         AsyncStorage.setItem('LatLngLog', JSON.stringify([center.latitude, center.longitude]));
+    }
+    loadAMap(){
+        return (
+            <View style={styles.sliderStyle}>
+                <AMap3D
+                    locationEnabled={false}
+                    coordinate={this.state.center}
+                    ref={component => this._amap = component}
+                    onFormattedAddressReceived={this.onFormattedAddressReceived}
+
+                    onMapLoaded={(e) => {
+                        console.warn('onMapLoaded--->' + e)
+                    }}
+                    onLongPressEvent={(e) => {
+
+                        // this.regeocodeLocation(e.longitude,e.latitude);
+                        this.setState({
+                            center: {
+                                latitude: e.latitude,
+                                longitude: e.longitude
+                            },
+                        });
+                        this.onLongPressEvent();
+                    }}
+                />
+            </View>
+        )
+    }
+    showLoading() {
+        return (
+            <View style={{alignItems:'center'}}>
+                <ActivityIndicator size="large" color="#EDDEFF" />
+            </View>
+        )
     }
     render() {
         // console.log('this.state.center',this.state.center)
+        let {center} = this.state;
         return (
             <LinearGradient colors={colorTemp}
                             start={{ x:0, y: 0 }}
                             end={{ x: 1, y: 1 }}
                 style={styles.linearGradient}>
-                <View style={[]}>
-                    <View style={{alignItems: 'center', flexDirection: 'row',width:screen.width,marginTop:5,justifyContent:'space-between'}}>
-                        <TouchableOpacity style={{
+                {/*<View style={[]}>*/}
+                    {/*<View style={{alignItems: 'center', flexDirection: 'row',width:screen.width,marginTop:5,justifyContent:'space-between'}}>*/}
+                        {/*<TouchableOpacity style={{*/}
+                            {/*zIndex: 999,*/}
+                            {/*paddingBottom: 10,*/}
+                            {/*paddingTop: 10,*/}
+                            {/*paddingRight: 50,*/}
+                            {/*paddingLeft:screen.width*0.025*/}
+                            {/*}}*/}
+                            {/*onPress={() => {*/}
+                                {/*this.props.navigation.state.params.callbackLocationOfMap(address,center.latitude,center.longitude,'');*/}
+                                {/*this.onLongPressEvent();*/}
+                                {/*this.props.navigation.goBack();*/}
+                            {/*}}>*/}
+                            {/*<Image source={require('../../img/mine/icon_homepage_left_arrow.png')}*/}
+                                   {/*style={[commonStyle.searchIcon, {}]}/>*/}
+                        {/*</TouchableOpacity>*/}
+                    {/*</View>*/}
+                {/*</View>*/}
+                <View style={{alignItems: 'center', flexDirection: 'row',width:screen.width,marginTop:5,justifyContent:'space-between'}}>
+                    <TouchableOpacity style={{
+                        zIndex: 999,
+                        paddingBottom: 10,
+                        paddingTop: 10,
+                        paddingRight: 50,
+                        paddingLeft:screen.width*0.025
+                    }} onPress={() => {
+                        this.props.navigation.goBack();//返回按钮图片
+                    }}>
+                        <Image source={require('../../img/mine/icon_homepage_left_arrow.png')}
+                               style={[commonStyle.searchIcon, {}]}/>
+                    </TouchableOpacity>
+                    {/*<TouchableOpacity style={{*/}
+                        {/*alignItems: 'center',*/}
+                        {/*position: 'absolute',*/}
+                        {/*left: 0,*/}
+                        {/*right: 0,*/}
+                    {/*}}>*/}
+                        {/*<Text style={{*/}
+                            {/*color: '#ffffff',*/}
+                            {/*fontSize: 16,*/}
+                            {/*fontFamily: 'arial',*/}
+                        {/*}}>BUSINESSES</Text>*/}
+                    {/*</TouchableOpacity>*/}
+                    <TouchableOpacity
+                        style={{
                             zIndex: 999,
                             paddingBottom: 10,
                             paddingTop: 10,
-                            paddingRight: 50,
-                            paddingLeft:screen.width*0.025
-                            }}
-                            onPress={() => {
-                                this.props.navigation.state.params.callbackLocationOfMap(address);
-                                this.onLongPressEvent();
-                                this.props.navigation.goBack();
-                            }}>
-                            <Image source={require('../../img/mine/icon_homepage_left_arrow.png')}
-                                   style={[styles.searchIcon, {}]}/>
-                        </TouchableOpacity>
-                    </View>
+                            paddingLeft: 50,
+                            paddingRight: screen.width * 0.025,
+                        }}
+                        onPress={() => {
+                            this.props.navigation.state.params.callbackLocationOfMap(address,center.latitude,center.longitude,'');
+                            this.onLongPressEvent();
+                            this.props.navigation.goBack();
+                        }}>
+                        <Image source={require('../../img/mine/ico_true.png')}
+                               style={[commonStyle.searchIcon, {tintColor:'#fff'}]}/>
+                    </TouchableOpacity>
                 </View>
                 <View
                     style={{
@@ -236,34 +313,11 @@ export default class AMapSelect extends PureComponent<Props, State> {
                         }}
                     >
                         <Image source={require('../../img/nearby/my_location.png')}
-                               style={[styles.searchIcon, {tintColor: '#707070'}]}/>
+                               style={[commonStyle.searchIcon, {tintColor: '#707070'}]}/>
                     </TouchableOpacity>
 
                 </View>
-                <View style={styles.sliderStyle}>
-                  <AMap3D
-                      locationEnabled={false}
-                        coordinate={this.state.center}
-                        ref={component => this._amap = component}
-                        onFormattedAddressReceived={this.onFormattedAddressReceived}
-
-                        onMapLoaded={(e) => {
-                            console.warn('onMapLoaded--->' + e)
-                        }}
-                        onLongPressEvent={(e) => {
-
-                            // this.regeocodeLocation(e.longitude,e.latitude);
-                            this.setState({
-                                center: {
-                                    latitude: e.latitude,
-                                    longitude: e.longitude
-                                },
-                            });
-                            this.onLongPressEvent();
-                        }}
-                    />
-                </View>
-
+                {center===null?this.showLoading():this.loadAMap()}
             </LinearGradient>
         )
     }
@@ -316,9 +370,9 @@ const styles = StyleSheet.create({
         borderRadius: 45,
     },
     linearGradient: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        alignSelf: 'center',
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        // alignSelf: 'center',
         flex: 1,
         width: screen.width,
         paddingTop:screen.statusBarHeight,

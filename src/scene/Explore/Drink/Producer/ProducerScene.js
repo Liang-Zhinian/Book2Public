@@ -102,7 +102,8 @@ export default class ProducerScene extends Component {
             });
     };
     _getProducerByName = async (name) => {
-        this.setState({onSearch:true,
+        this.setState({
+            onSearch:true,
             isLoading:true});
         await  getProducerByName(name, this.page, this.size, this.type)
             .then((msg) => {
@@ -570,8 +571,8 @@ export default class ProducerScene extends Component {
                     ? this.showNoSelectLetter()
                     :*/}
                 {!this.state.onSearch?this.showNoSearchMsg():this.renderProducerList()}
-                <Toast ref="toast" position='center' positionValue={200} fadeInDuration={750} fadeOutDuration={1000}
-                       opacity={0.8}/>
+                {/*<Toast ref="toast" position='center' positionValue={200} fadeInDuration={750} fadeOutDuration={1000}*/}
+                       {/*opacity={0.8}/>*/}
             </LinearGradient>
         )
     }

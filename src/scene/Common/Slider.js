@@ -39,6 +39,17 @@ export default class Slider extends React.Component {
     componentDidMount() {
         this.calculationProps()
     }
+    // shouldComponentUpdate(newProps, newState) {
+    //     return false
+    // }
+    componentWillMount () {
+        this.setState({
+            initialValue:this.props.initialValue,
+        },()=>{
+            this.calculationProps()
+        });
+
+    }
 
     componentWillUnmount() {
     }

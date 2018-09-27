@@ -135,7 +135,8 @@ export function getVineyardByName(letter,name,index,size){
         });
 }
 
-export function getVineyardByGPS(Lng, Lat, Distance) {
+export function getVineyardByGPS(Lat,Lng,Distance) {
+    console.log('http://demo.atpath.com:17509/api/Vineyard/GetByGPS?Lat=' + Lat + '&Lng=' + Lng + '&Distance=' + Distance);
     return fetch('http://demo.atpath.com:17509/api/Vineyard/GetByGPS?Lat=' + Lat + '&Lng=' + Lng + '&Distance=' + Distance, {
         method: 'GET',
     })
@@ -214,6 +215,7 @@ export function GetBusinessLocationsWithinRadius(latitude,longitude,radius,searc
         + '&searchText=' + searchText
         + '&pageSize=' + pageSize
         + '&pageIndex=' + pageIndex;
+    console.log(url);
     return fetch(url, {
         method: 'GET',
     })
@@ -273,11 +275,12 @@ export function GetSeriviceItemsWithinRadius(latitude,longitude,radius,searchTex
 //根据siteId和service item id获取可提供服务列表信息
 // http://book2.atpath.com:5216/api/v1/s/Site/withSiteId/{siteId}/ServiceItems
 export function ServiceItems(siteId,ids,pageSize,pageIndex){
-    let url = 'http://book2.atpath.com:5216/api/v1/s/Site/withSiteId/{siteId}/ServiceItems'
-        + '?siteId=' + siteId
-        + '&ids=' + ids
-        + '&pageSize=' + pageSize
-        + '&pageIndex=' + pageIndex;
+    let url = 'http://isd4u.com:5216/api/v1/s/Site/withSiteId/'+siteId+'/ServiceItems';
+        // + '?siteId=' + siteId
+        // + '&ids=' + ids
+        // + '&pageSize=' + pageSize
+        // + '&pageIndex=' + pageIndex;
+    console.log('ServiceItems',url);
     return fetch(url, {
         method: 'GET',
     })
@@ -315,10 +318,10 @@ export function groupPurchaseDetailWithLOLA(longitude: string,latitude: string) 
 
 export function getHomePages(){
     homePage= [
-        {sign:false,type:'Beauty',category:'CubeImages-Beauty',tag: 'EXPLORE',title:'Discover beauty shops near you',prompt:'', img: require('./img/home/CubeImages-Beauty.png')},
-        {sign:false,type:'Drink',category:'CubeImages-AllGoodDeals',tag: 'SPECIAL OFFERS',title:'Good deals for you ',prompt:'.', img: require('./img/home/CubeImages-AllGoodDeals.png')},
-        {sign:false,type:'Fitness',category:'CubeImages-Fitness',tag: 'EXPLORE',title:'Discover fitness classes near you',prompt:'', img: require('./img/home/CubeImages-Fitness.png')},
-        {sign:false,type:'Wellness',category:'CubeImages-Wellness',tag: 'EXPLORE',title:'Discover wellness classes near you',prompt:'', img: require('./img/home/CubeImages-Wellness.png')},
+        {sign:false,type:'Beauty',category:'CubeImages-Beauty',tag: 'EXPLORE',title:'Discover beauty shops near you',prompt:'', img: require('./img/home/Beauty.png')},
+        {sign:false,type:'Wellness',category:'CubeImages-AllGoodDeals',tag: 'SPECIAL OFFERS',title:'Good deals for you ',prompt:'.', img: require('./img/home/Wellness.png')},
+        {sign:false,type:'Fitness',category:'CubeImages-Fitness',tag: 'EXPLORE',title:'Discover fitness classes near you',prompt:'', img: require('./img/home/Fitness.png')},
+        {sign:false,type:'Drink',category:'CubeImages-Wellness',tag: 'EXPLORE',title:'Discover wellness classes near you',prompt:'', img: require('./img/home/RedWine.png')},
 
     ];
 
@@ -331,11 +334,11 @@ export function getHomePages(){
 export function getExploreSceneTestBEAUTY(){
     homePage= [
         {id:'f996cb01-6b0c-4dfa-9687-78e59df6d0b1',siteId:'f996cb01-6b0c-4dfa-9687-78e59df6d0b1',sign:true,type:'Wellness',category:'Face_Treatments',tag: 'EXPLORE',title:'',prompt:'', img: require('./img/home/Beauty/1-Face_Treatments_EN.png')},
-        {id:'b2',siteId:'b2',sign:true,type:'Beauty',category:'Hair_Salon_and_Treatments',tag: 'SPECIAL OFFERS',title:'BEAUTY 2 for you ',prompt:'Find great ', img: require('./img/home/Beauty/2-Hair_Salon_and_Treatments_EN.png')},
-        {id:'b3',siteId:'b3',sign:true,type:'Beauty',category:'Makeup_Lashes_Brows',tag: 'EXPLORE',title:'BEAUTY 3 classes near you',prompt:'', img: require('./img/home/Beauty/3-Makeup_Lashes_Brows_EN.png')},
+        {id:'b2',siteId:'b2',sign:true,type:'Beauty',category:'Hair_Salon_and_Treatments',tag: 'SPECIAL OFFERS',title:'BEAUTY 2 for you ',prompt:'Find great ', img: require('./img/home/Beauty/2-Hair_Salon_Treatments_EN.png')},
+        {id:'b3',siteId:'b3',sign:true,type:'Beauty',category:'Makeup_Lashes_Brows',tag: 'EXPLORE',title:'BEAUTY 3 classes near you',prompt:'', img: require('./img/home/Beauty/3-MAKEUP_LASHES_BROWS_EN.png')},
         {id:'b4',siteId:'',sign:true,type:'Beauty',category:'Nails',tag: 'EXPLORE',title:'BEAUTY 4 classes near you',prompt:'', img: require('./img/home/Beauty/4-Nails_EN.png')},
         {id:'b5',siteId:'',sign:true,type:'Beauty',category:'Tanning',tag: 'EXPLORE',title:'BEAUTY 5 classes near you',prompt:'', img: require('./img/home/Beauty/5-Tanning_EN.png')},
-        {id:'b6',siteId:'',sign:true,type:'Beauty',category:'Tattoo_Pierce',tag: 'EXPLORE',title:'BEAUTY 6 classes near you',prompt:'', img: require('./img/home/Beauty/6-Tattoo_Pierce_EN.png')},
+        {id:'b6',siteId:'',sign:true,type:'Beauty',category:'Tattoo_Pierce',tag: 'EXPLORE',title:'BEAUTY 6 classes near you',prompt:'', img: require('./img/home/Beauty/6-Tattoo_Piercing_EN.png')},
 
     ];
     // let response = await fetch(api.homePage)

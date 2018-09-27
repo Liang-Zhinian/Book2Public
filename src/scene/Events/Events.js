@@ -116,6 +116,17 @@ class Events extends React.Component {
                     renderEmptyDate={this.renderEmptyDate.bind(this)}
                     rowHasChanged={this.rowHasChanged.bind(this)}
                     futureScrollRange={12}
+                    // markedDates={{
+                    //     '2018-09-27': {marked: true},
+                    //     '2018-09-28': {marked: true},
+                    //     '2018-10-03': {marked: true},
+                    //     '2018-10-10': {marked: true},
+                    //     '2018-10-17': {marked: true},
+                    //     '2018-10-21': {marked: true},
+                    //     '2018-10-24': {marked: true},
+                    //     '2018-11-07': {marked: true},
+                    //     '2018-10-14': {marked: true},
+                    // }}
                     // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
                     // minDate={'2018-08-08'}
                     // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
@@ -131,7 +142,7 @@ class Events extends React.Component {
                     // monthFormat={'yyyy'}
                     //theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
                     // renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
-                    style={{width:screen.width}}
+                    style={{width:screen.width,}}
                 />
             </LinearGradient>
         )

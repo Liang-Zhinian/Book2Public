@@ -64,11 +64,11 @@ class ScheduleSceneChildDetail extends PureComponent<Props, State> {
     }
 
     timePointDetail() {
-        let id = this.props.navigation.state.params.service.id;
+        // let id = this.props.navigation.state.params.service.id;
         let info = null;
         let Morning = [], Midday = [], Evening = [];
         testAppointmentsData.testAppointmentsDataTimePoint.map((data) => {
-            if (data.serviceItemId === id) {
+            if (data.serviceItemId === 'ABC123') {
                 let dateS = data.startTime.substring(0, 16);
                 dateS = dateS.replace(/-/g, '/');
                 let dateE = data.endTime.substring(0, 16);
@@ -352,11 +352,19 @@ class ScheduleSceneChildDetail extends PureComponent<Props, State> {
                     return r1.text !== r2.text
                 }}
                 markedDates={{
-                    '2018-08-16': {marked: true},
-                    '2018-08-18': {marked: true},
+                    '2018-09-27': {marked: true},
+                    '2018-09-28': {marked: true},
+                    '2018-10-03': {marked: true},
+                    '2018-10-10': {marked: true},
+                    '2018-10-17': {marked: true},
+                    '2018-10-21': {marked: true},
+                    '2018-10-24': {marked: true},
+                    '2018-11-07': {marked: true},
+                    '2018-10-14': {marked: true},
                 }}
                 onDayPress={(day) => {
-                    if (day.dateString === '2018-08-16' || day.dateString === '2018-08-18') {
+                    let workList = ['2018-09-27','2018-09-28','2018-10-03','2018-10-10','2018-10-17','2018-10-21','2018-10-24','2018-11-07','2018-10-14'];
+                    if (workList.indexOf( day.dateString)>=0){
                         this.setState({showTimePoint: true})
                     } else {
                         this.setState({showTimePoint: false})

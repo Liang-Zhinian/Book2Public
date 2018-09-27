@@ -1,17 +1,14 @@
 import React, {PureComponent} from 'react'
 import LinearGradient from 'react-native-linear-gradient';
-import {AsyncStorage, BVLinearGradient, Image, Text, TouchableOpacity, View,} from 'react-native'
+import {ActivityIndicator, AsyncStorage, BVLinearGradient, Image, Text, TouchableOpacity, View,} from 'react-native'
 import {screen} from '../../../common'
-import api, {CoordinateConverter,GetBusinessLocationsWithinRadius} from '../../../api'
-import testData from '../../../testData'
+import api, {CoordinateConverter, GetBusinessLocationsWithinRadius} from '../../../api'
 import AdSwiper from '../../AD/AdSwiper';
-import SearchAnythingInfoScene from "../SearchAnythingInfoScene";
 import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
-import GroupPurchaseCell from '../../GroupPurchase/GroupPurchaseCell'
-import CommodityDetails from "../../GroupPurchase/CommodityDetails";
 import {commonStyle} from "../../../widget/commonStyle";
 import AMapSelect from "../../Api/AMapSelect";
-import DrinkDetailDataUtils from "../Drink/DrinkDetailDataUtils";
+import BeautyDataUtils from './BeautyDataUtils'
+import BeautyCell from "./BeautyCell";
 
 var Geolocation = require('Geolocation');
 type
@@ -33,7 +30,7 @@ export default class BeautyScene extends PureComponent<Props> {
 
         this.state = {
             discounts: [],
-            dataList: [],
+            BeautyList: [],
             refreshing: false,
             typeTemp: null,
             face: 1,
@@ -46,7 +43,9 @@ export default class BeautyScene extends PureComponent<Props> {
             data: [],
             refreshState: RefreshState.NoMoreData,
             isLoading:false,
-            radius:0
+            center:{},
+            radius:0,
+            onSearch:false,
         };
 
         this.count = 0;
@@ -82,49 +81,48 @@ export default class BeautyScene extends PureComponent<Props> {
 
     GetExploreList() {//商品列表
         return (
-            <View style={commonStyle.container}>
-                <RefreshListView
-                    style={{
-                        marginTop:5,
-                        width: screen.width,
-                    }}
-                    data={this.state.data}
-                    ListHeaderComponent={this.GetADList()}//广告位
-                    renderItem={this.renderCell}
-                    refreshState={this.state.refreshState}
-                    onHeaderRefresh={this.requestData}
-                    footerTextStyle={{color: '#ffffff'}}
-                    footerRefreshingText={'loading...'}
-                    footerFailureText={'click refresh'}
-                    footerNoMoreDataText={'no more data'}
-                    footerEmptyDataText={'empty data'}
-                />
-            </View>
+            (this.state.BeautyList.length > 0
+                    ? <View style={commonStyle.container}>
+                        <RefreshListView
+                            style={{
+                                marginTop: 5,
+                                width: screen.width,
+                            }}
+                            data={this.state.BeautyList}
+                            ListHeaderComponent={this.GetADList()}//广告位
+                            renderItem={this.renderCell}
+                            refreshState={this.state.refreshState}
+                            onHeaderRefresh={this.requestData}
+                            footerTextStyle={{color: '#ffffff'}}
+                            footerRefreshingText={'loading...'}
+                            footerFailureText={'click refresh'}
+                            footerNoMoreDataText={'no more data'}
+                            footerEmptyDataText={'empty data'}
+                        />
+                    </View> : (this.state.isLoading ? this.showLoading() : (this.state.NoData && this.showNoDataMsg()))
+            )
         )
     }
-    page = 1;
+    page = 0;
     size = 25;
     dataLength = 0;
     requestData = async () => {
             this.setState({
-                // onSearch:true,
+                onSearch:true,
                 isLoading:true
             });
-            let {latitude,longitude,radius,searchKey} = this.state;
-            await GetBusinessLocationsWithinRadius(latitude,longitude,radius,searchKey,this.size,this.page)
+            let {center,radius,searchKey,BeautyList} = this.state;
+            await GetBusinessLocationsWithinRadius(center.latitude,center.longitude,radius,searchKey===null?'':searchKey,this.size,this.page)
                 .then((msg) => {
-                    this.dataLength = this.state.VineyardList.length;
-                    let data = DrinkDetailDataUtils.requestData(msg);
+                    this.dataLength = BeautyList.length;
+                    let data = BeautyDataUtils.requestBeautyData(msg);
                     data.length > 0 ? this.setState({NoData: false}) : this.setState({NoData: true});
-                    // if (this.page!==1&&data.length>0) data.shift();
-                    // if(data.length=this.size){data.pop();}
-                    data.pop();
                     this.setState({
                         isLoading:false,
-                        VineyardList: this.state.VineyardList.concat(data),
+                        BeautyList: BeautyList.concat(data),
                         refreshState: RefreshState.Idle,
                     }, () => {
-                        if (this.state.VineyardList.length === this.dataLength) {
+                        if (BeautyList.length === this.dataLength) {
                             this.setState({refreshState: RefreshState.NoMoreData})
                         }
                     });
@@ -136,81 +134,114 @@ export default class BeautyScene extends PureComponent<Props> {
                     })
                 });
 
-        try {
-            this.setState({refreshState: RefreshState.HeaderRefreshing});
-
-            let dataList = [];
-
-            if (this.props.navigation.state.params.siteId === 'f996cb01-6b0c-4dfa-9687-78e59df6d0b1') {
-                let response = await fetch(api.findLocations);
-                let json = await response.json();
-
-                dataList = json.map((info) => {
-                    return {
-                        key: info.Id,
-                        id: info.Id,
-                        imageUrl: 'data:image/png;base64,' + info.Image,
-                        title: info.Description,
-                        subtitle: ((info.StreetAddress != null && info.StreetAddress != 'null') ? info.StreetAddress : '') + ((info.StreetAddress2 != null && info.StreetAddress2 != 'null') ? info.StreetAddress2 : ''),
-                        Latitude: info.Latitude,
-                        Longitude: info.Longitude,
-                        phone: info.phone,
-                        description: info.Description,
-                        firmId: info.firmId,
-                        AdditionalLocationImages: 'data:image/png;base64,' + info.AdditionalLocationImages[0].Image,
-                    }
-                });
-            } else {
-
-                let json2 = testData.testData;
-                dataList = json2.map((info2) => {
-                    return {
-                        key: info2.Id,
-                        id: info2.Id,
-                        imageUrl: info2.icon.uri,
-                        title: info2.title,
-                        subtitle: info2.address,
-                        phone: info2.phone,
-                        // price: info2.price,
-                        Latitude: info2.LatLng.latitude,
-                        Longitude: info2.LatLng.longitude,
-                        AdditionalLocationImages: info2.icon.uri,
-                        firmId: info2.firmId,
-                    }
-                });
-
-            }
-
-
-            // let dataList = json.data.map((info) => {
-            //     return {
-            //         id: info.id,
-            //         imageUrl: info.squareimgurl,
-            //         title: info.mname,
-            //         subtitle: `[${info.range}]${info.title}`,
-            //         price: info.price
-            //     }
-            // })
-
-            //数据打乱
-            dataList.sort(() => {
-                return 0.5 - Math.random()
-            });
-
-            this.setState({
-                data: dataList,
-                refreshState: RefreshState.NoMoreData,
-            })
-        } catch (error) {
-            this.setState({
-                refreshState: RefreshState.Failure,
-            })
-        }
+        // try {
+        //     this.setState({refreshState: RefreshState.HeaderRefreshing});
+        //
+        //     let dataList = [];
+        //
+        //     if (this.props.navigation.state.params.siteId === 'f996cb01-6b0c-4dfa-9687-78e59df6d0b1') {
+        //         let response = await fetch(api.findLocations);
+        //         let json = await response.json();
+        //
+        //         dataList = json.map((info) => {
+        //             return {
+        //                 key: info.Id,
+        //                 id: info.Id,
+        //                 imageUrl: 'data:image/png;base64,' + info.Image,
+        //                 title: info.Description,
+        //                 subtitle: ((info.StreetAddress != null && info.StreetAddress != 'null') ? info.StreetAddress : '') + ((info.StreetAddress2 != null && info.StreetAddress2 != 'null') ? info.StreetAddress2 : ''),
+        //                 Latitude: info.Latitude,
+        //                 Longitude: info.Longitude,
+        //                 phone: info.phone,
+        //                 description: info.Description,
+        //                 firmId: info.firmId,
+        //                 AdditionalLocationImages: 'data:image/png;base64,' + info.AdditionalLocationImages[0].Image,
+        //             }
+        //         });
+        //     } else {
+        //
+        //         let json2 = testData.testData;
+        //         dataList = json2.map((info2) => {
+        //             return {
+        //                 key: info2.Id,
+        //                 id: info2.Id,
+        //                 imageUrl: info2.icon.uri,
+        //                 title: info2.title,
+        //                 subtitle: info2.address,
+        //                 phone: info2.phone,
+        //                 // price: info2.price,
+        //                 Latitude: info2.LatLng.latitude,
+        //                 Longitude: info2.LatLng.longitude,
+        //                 AdditionalLocationImages: info2.icon.uri,
+        //                 firmId: info2.firmId,
+        //             }
+        //         });
+        //
+        //     }
+        //
+        //
+        //     // let dataList = json.data.map((info) => {
+        //     //     return {
+        //     //         id: info.id,
+        //     //         imageUrl: info.squareimgurl,
+        //     //         title: info.mname,
+        //     //         subtitle: `[${info.range}]${info.title}`,
+        //     //         price: info.price
+        //     //     }
+        //     // })
+        //
+        //     //数据打乱
+        //     dataList.sort(() => {
+        //         return 0.5 - Math.random()
+        //     });
+        //
+        //     this.setState({
+        //         data: dataList,
+        //         refreshState: RefreshState.NoMoreData,
+        //     })
+        // } catch (error) {
+        //     this.setState({
+        //         refreshState: RefreshState.Failure,
+        //     })
+        // }
     };
 
     keyExtractor = (item: Object, index: number) => {
         return item.id
     };
+    componentWillMount() {
+        try {
+            AsyncStorage.getItem(
+                'LatLngLog',
+                (error,result)=>{
+                    if (error||result==null){
+                        console.log('取值失败');
+                    }else{
+                        let LatLngLog=JSON.parse(result);
+                        this.setState({
+                            center: {
+                                latitude:LatLngLog[0],
+                                longitude:LatLngLog[1]
+                            }
+                        });
+                        console.log('成功'+result);
+                    }
+                }
+            );
+            // AsyncStorage.getItem(
+            //     'LocationSearchKey',
+            //     (error,result)=>{
+            //         if (error){
+            //             // alert('取值失败:'+error);
+            //         }else{
+            //             address = result;
+            //         }
+            //     }
+            // )
+        }catch(error){
+            console.warn('获取历史经纬度失败,重新获取当前位置经纬度'+error);
+        }
+    }
     renderCell = (rowData: any) => {
         return (
             <View>
@@ -220,20 +251,37 @@ export default class BeautyScene extends PureComponent<Props> {
                 {/*duration={500}*/}
                 {/*startOnDidMount={true}*/}
                 {/*>*/}
-                <GroupPurchaseCell
+                <BeautyCell
                     info={rowData.item}
+                    latLng={this.state.center}
                     onPress={() => {
                         // StatusBar.setBarStyle('default', false);
-                        this.props.navigation.navigate('CommodityDetails', {info: rowData.item})//跳到商品详情
+                        this.props.navigation.navigate('BeautyDetail', {info: rowData.item})//跳到商品详情
                     }}
                 />
                 {/*</TranslateYAndOpacity>*/}
             </View>
         )
     };
-
+    showLoading() {
+        return (
+            <View style={{alignItems:'center'}}>
+                <ActivityIndicator size="large" color="#EDDEFF" />
+            </View>
+        )
+    }
+    showNoSearchMsg() {
+        return (
+            <View style={{alignItems:'center',
+            backgroundColor: 'transparent'}}>
+                <Text style={{color: '#fff', fontSize: 13, fontFamily: 'arial',paddingTop:5}}>
+                    Please enter keywords to search.
+                </Text>
+            </View>
+        )
+    }
     render() {
-        let {searchKey,LocationSearchKey} =this.state;
+        let {searchKey,LocationSearchKey,isLoading} =this.state;
         return (
             <LinearGradient colors={colorTemp}
                             start={{x: 0, y: 0}}
@@ -261,6 +309,7 @@ export default class BeautyScene extends PureComponent<Props> {
                             position: 'absolute',
                             left: 0,
                             right: 0,
+                            backgroundColor: 'transparent'
                         }}>
                             <Text style={{
                                 color: '#ffffff',
@@ -280,8 +329,18 @@ export default class BeautyScene extends PureComponent<Props> {
                                 //跳转到地图定位页面
                                 this.props.navigation.navigate('AMapSelect',
                                     {
-                                        callbackLocationOfMap: (msg) => {
-                                            this.setState({LocationSearchKey: msg})
+                                        callbackLocationOfMap: (address,latitude,longitude,name) => {
+                                            this.setState({
+                                                BeautyList:[],
+                                                LocationSearchKey: address,
+                                                center:{
+                                                    latitude:latitude,
+                                                    longitude:longitude
+                                                },
+                                                radius:100
+                                            },()=>{
+                                                this.requestData()
+                                            });
                                         }
                                     }
                                 );
@@ -291,11 +350,22 @@ export default class BeautyScene extends PureComponent<Props> {
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity style={commonStyle.searchBar} underlineColorAndroid='white' onPress={() => {
-                        this.props.navigation.navigate('SearchAnythingInfoScene'
+                        this.props.navigation.navigate('Beauty2SearchScene'
                             , {
+                                // callback: (msg) => {
+                                //     this.setState({searchKey: msg})
+                                // }
                                 callback: (msg) => {
-
-                                    this.setState({searchKey: msg})
+                                    if (this.state.refreshState === RefreshState.NoMoreData) {
+                                        this.page = 0
+                                    }
+                                    this.setState({
+                                        searchKey: msg,
+                                        BeautyList: [],
+                                        radius:5
+                                    },()=>{
+                                        this.requestData();
+                                    });
                                 }
                             });
                     }}>
@@ -321,12 +391,21 @@ export default class BeautyScene extends PureComponent<Props> {
                     <TouchableOpacity style={commonStyle.searchBar} underlineColorAndroid='white' onPress={() => {
                         this.props.navigation.navigate('ExploreRangeScene'
                             , {
-                                callbackLocation: (msg) => {
+                                callbackLocation: (address, latitude, longitude, name, radius, locationSearchKey) => {
+                                    // console.log('latitude',latitude,'longitude',longitude);
                                     this.setState({
-                                        LocationSearchKey: msg,
-
-                                    })
+                                        BeautyList: [],
+                                        LocationSearchKey: address,
+                                        center: {
+                                            latitude: latitude,
+                                            longitude: longitude
+                                        },
+                                        radius: radius
+                                    }, () => {
+                                        this.requestData()
+                                    });
                                 },
+                                category: 'Beauty',
                                 siteId: this.props.navigation.state.params.siteId,
                             });
                     }}>
@@ -351,7 +430,8 @@ export default class BeautyScene extends PureComponent<Props> {
                     </TouchableOpacity>
                 </View>
                 {/*<View style={{backgroundColor:'#ffffff00',padding:5,width:screen.width}}/>*/}
-                {this.GetExploreList()}
+                {/*{isLoading?this.showLoading():this.GetExploreList()}*/}
+                {!this.state.onSearch?this.showNoSearchMsg():this.GetExploreList()}
             </LinearGradient>
         )
     }
@@ -374,7 +454,7 @@ export default class BeautyScene extends PureComponent<Props> {
             this.getPosition();
         }
 
-        this.setState({isLoading: true});
+        // this.setState({isLoading: true});
         // this.requestData()
     }
 

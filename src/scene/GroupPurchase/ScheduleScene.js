@@ -8,6 +8,8 @@ import testAppointmentsData from '../../testAppointmentsData'
 import CommodityCell from "./CommodityCell";
 import Panel from '../Common/Panel'
 import ScheduleSceneChild from "./ScheduleSceneChild";
+import {ServiceItems} from "../../api";
+import BeautyDataUtils from "../Explore/Beauty/BeautyDataUtils";
 
 export default class ScheduleScene extends React.Component {
     static navigationOptions = () => ({
@@ -40,11 +42,11 @@ export default class ScheduleScene extends React.Component {
     }
 
     getColor(typeName) {
-        return this.state.selectedType == typeName ? '#f4cad8' : '#ffffff'
+        return this.state.selectedType === typeName ? '#f4cad8' : '#ffffff'
     }
 
     getBackgroundColor(typeName) {
-        return this.state.selectedType == typeName ? '#4A4C7D' : '#4A4C7D00'
+        return this.state.selectedType === typeName ? '#4A4C7D' : '#4A4C7D00'
     }
 
     renderCell = (rowData: any) => {
@@ -111,72 +113,99 @@ export default class ScheduleScene extends React.Component {
     }
 
     renderAppointmentsCell = (rowData: any) => {
-        let childrenList = rowData.item.children.map((info) => {
-            return (
-                <TouchableOpacity
-                    activeOpacity={0.8}
+        console.log(rowData)
+        let info = rowData.item;
+        //let childrenList = rowData.item.children.map((info) => {
+        return (
+            <TouchableOpacity
+                activeOpacity={0.8}
+                style={{
+                    backgroundColor: '#eeeeee',
+                    height: 45,
+                    paddingLeft: 5,
+                    margin: 5,
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                }}
+                onPress={() => {
+                    this.props.navigation.navigate('ScheduleSceneChild'
+                        , {
+                            commodityInfo: this.props.navigation.state.params.commodityInfo,
+                            service: info,
+                        });
+                }}
+            >
+                <Text
                     style={{
-                        backgroundColor: '#eeeeee',
-                        height: 45,
-                        paddingLeft: 5,
-                        margin: 5,
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                    }}
-                    onPress={() => {
-                        this.props.navigation.navigate('ScheduleSceneChild'
-                            , {
-                                commodityInfo: this.props.navigation.state.params.commodityInfo,
-                                service: info,
-                            });
+                        fontSize: 12,
+                        fontFamily: 'arial',
+                        color: '#262626',
+                        fontWeight: '200'
                     }}
                 >
-                    <Text
-                        style={{
-                            fontSize: 12,
-                            fontFamily: 'arial',
-                            color: '#262626',
-                            fontWeight: '200'
-                        }}
-                    >
-                        {info.title}
-                    </Text>
-                    {info.tip &&
-                    <Text style={{width: screen.width * 0.95 - 60, color: '#5a5a5a', fontSize: 12, fontFamily: 'arial'}}
-                          numberOfLines={1}>{info.tip}</Text>}
-                </TouchableOpacity>
-            )
-        });
-        return (
-            <Panel title={rowData.item.typeTitle} expanded={false}>
-                {childrenList}
-            </Panel>
-        )
+                    {info.title}
+                </Text>
+                {info.Price &&
+                <Text style={{width: screen.width * 0.95 - 60, color: '#5a5a5a', fontSize: 12, fontFamily: 'arial'}}
+                      numberOfLines={1}>${info.Price}</Text>}
+            </TouchableOpacity>
+        );
+        //  });
+
+        //  return (
+        //<Panel title={rowData.item.typeTitle} expanded={false}>
+        //   {childrenList}
+        //</Panel>
+        // )
     };
+    dataLength = 0;
     requestAppointmentsData = async () => {
+        let info = this.props.navigation.state.params.commodityInfo;
+        let {appointmentsData} = this.state;
         try {
             this.setState({refreshState: RefreshState.HeaderRefreshing});
+            await ServiceItems(info.SiteId)
+                .then((msg) => {
+                    this.dataLength = appointmentsData.length;
+                    let data = BeautyDataUtils.requestBeautyService(msg);
+                    data.length > 0 ? this.setState({NoData: false}) : this.setState({NoData: true});
+                    this.setState({
+                        isLoading:false,
+                        appointmentsData: appointmentsData.concat(data),
+                        refreshState: RefreshState.Idle,
+                    }, () => {
+                        if (appointmentsData.length === this.dataLength) {
+                            this.setState({refreshState: RefreshState.NoMoreData})
+                        }
+                    });
+                })
+                .catch((e) => {
+                    console.warn(e);
+                    this.setState({
+                        refreshState: RefreshState.Failure,
+                    })
+                });
 
-            var dataList = [];
-            let json2 = testAppointmentsData.testAppointmentsData;
-            dataList = json2.map((info2) => {
-                return {
-                    key: info2.Id,
-                    id: info2.Id,
-                    typeTitle: info2.typeTitle,
-                    children: info2.children,
-                }
-            });
-
-            //数据打乱
-            dataList.sort(() => {
-                return 0.5 - Math.random()
-            });
-
-            this.setState({
-                appointmentsData: dataList,
-                refreshState: RefreshState.NoMoreData,
-            })
+            // var dataList = [];
+            // let json2 = testAppointmentsData.testAppointmentsData;
+            // dataList = json2.map((info2) => {
+            //     return {
+            //         key: info2.Id,
+            //         id: info2.Id,
+            //         typeTitle: info2.typeTitle,
+            //         children: info2.children,
+            //     }
+            // });
+            //
+            // //数据打乱
+            // dataList.sort(() => {
+            //     return 0.5 - Math.random()
+            // });
+            //
+            // this.setState({
+            //     appointmentsData: dataList,
+            //     refreshState: RefreshState.NoMoreData,
+            // })
         } catch (error) {
             this.setState({
                 refreshState: RefreshState.Failure,

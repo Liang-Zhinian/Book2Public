@@ -151,105 +151,105 @@ class ExploreScene extends PureComponent<Props> {
         } else {
             return (
                 [
-                    <View ref='f0' style={commonStyle.surface}>
-                        <ImageBackground source={require('../../img/home/CubeImages-Beauty.png')}
-                                         style={commonStyle.pageImg}>
-                            <View style={{flexDirection: 'column', alignItems: 'stretch'}}>
-                                <Text style={{
-                                    paddingTop: screen.width / 3,
-                                    fontSize: 25,
-                                    color: '#fff',
-                                    fontFamily: 'arial'
-                                }}>
-                                    EXPLORE
-                                </Text>
-                                <Text style={{
-                                    fontSize: 40,
-                                    color: '#fff',
-                                    fontFamily: 'arial'
-                                }}>
-                                    Discover beauty {"\n"}
-                                    shops near you
-                                </Text>
-                            </View>
-                        </ImageBackground>
-                    </View>,
-                    <View ref='f1' style={commonStyle.surface}>
-                        <ImageBackground source={require('../../img/home/CubeImages-AllGoodDeals.png')}
-                                         style={commonStyle.pageImg}>
-                            <View style={{flexDirection: 'column', alignItems: 'stretch'}}>
-                                <Text style={{
-                                    paddingTop: screen.width / 3,
-                                    fontSize: 25,
-                                    color: '#fff',
-                                    fontFamily: 'arial'
-                                }}>
-                                    SPECIAL OFFERS
-                                </Text>
-                                <Text style={{
-                                    fontSize: 40,
-                                    color: '#fff',
-                                    fontFamily: 'arial'
-                                }}>
-                                    Good deals for you {"\n"}
-                                </Text>
-                                <Text style={{
-                                    fontSize: 15,
-                                    color: '#fff',
-                                    fontFamily: 'arial'
-                                }}>
-                                    Find great offers from the best locations in{"\n"}
-                                    fitness,wellness and beauty.
-                                </Text>
-                            </View>
-                        </ImageBackground>
-                    </View>,
-                    <View ref='f2' style={commonStyle.surface}>
-                        <ImageBackground source={require('../../img/home/CubeImages-Fitness.png')}
-                                         style={commonStyle.pageImg}>
-                            <View style={{flexDirection: 'column', alignItems: 'stretch'}}>
-                                <Text style={{
-                                    paddingTop: screen.width / 3,
-                                    fontSize: 25,
-                                    color: '#fff',
-                                    fontFamily: 'arial'
-                                }}>
-                                    EXPLORE
-                                </Text>
-                                <Text style={{
-                                    fontSize: 40,
-                                    color: '#fff',
-                                    fontFamily: 'arial'
-                                }}>
-                                    Discover fitness {"\n"}
-                                    classes near you{"\n"}
-                                </Text>
-                            </View>
-                        </ImageBackground>
-                    </View>,
-                    <View ref='f3' style={commonStyle.surface}>
-                        <ImageBackground source={require('../../img/home/CubeImages-Wellness.png')}
-                                         style={commonStyle.pageImg}>
-                            <View style={{flexDirection: 'column', alignItems: 'stretch'}}>
-                                <Text style={{
-                                    paddingTop: screen.width / 3,
-                                    fontSize: 25,
-                                    color: '#fff',
-                                    fontFamily: 'arial'
-                                }}>
-                                    EXPLORE
-                                </Text>
-                                <Text style={{
-                                    fontSize: 40,
-                                    color: '#fff',
-                                    fontFamily: 'arial'
-                                }}>
-                                    Discover wellness {"\n"}
-                                    classes near you{"\n"}
-                                </Text>
-                            </View>
-                        </ImageBackground>
-                    </View>
+                //     <View ref='f0' style={commonStyle.surface}>
+                //         <ImageBackground source={require('../../img/home/CubeImages-Beauty.png')}
+                //                          style={commonStyle.pageImg}>
+                //             <View style={{flexDirection: 'column', alignItems: 'stretch'}}>
+                //                 <Text style={{
+                //                     paddingTop: screen.width / 3,
+                //                     fontSize: 25,
+                //                     color: '#fff',
+                //                     fontFamily: 'arial'
+                //                 }}>
+                //                     EXPLORE
+                //                 </Text>
+                //                 <Text style={{
+                //                     fontSize: 40,
+                //                     color: '#fff',
+                //                     fontFamily: 'arial'
+                //                 }}>
+                //                     Discover beauty {"\n"}
+                //                     shops near you
+                //                 </Text>
+                //             </View>
+                //         </ImageBackground>
+                //     </View>,
+                //     <View ref='f1' style={commonStyle.surface}>
+                //         <ImageBackground source={require('../../img/home/CubeImages-AllGoodDeals.png')}
+                //                          style={commonStyle.pageImg}>
+                //             <View style={{flexDirection: 'column', alignItems: 'stretch'}}>
+                //                 <Text style={{
+                //                     paddingTop: screen.width / 3,
+                //                     fontSize: 25,
+                //                     color: '#fff',
+                //                     fontFamily: 'arial'
+                //                 }}>
+                //                     SPECIAL OFFERS
+                //                 </Text>
+                //                 <Text style={{
+                //                     fontSize: 40,
+                //                     color: '#fff',
+                //                     fontFamily: 'arial'
+                //                 }}>
+                //                     Good deals for you {"\n"}
+                //                 </Text>
+                //                 <Text style={{
+                //                     fontSize: 15,
+                //                     color: '#fff',
+                //                     fontFamily: 'arial'
+                //                 }}>
+                //                     Find great offers from the best locations in{"\n"}
+                //                     fitness,wellness and beauty.
+                //                 </Text>
+                //             </View>
+                //         </ImageBackground>
+                //     </View>,
+                //     <View ref='f2' style={commonStyle.surface}>
+                //         <ImageBackground source={require('../../img/home/CubeImages-Fitness.png')}
+                //                          style={commonStyle.pageImg}>
+                //             <View style={{flexDirection: 'column', alignItems: 'stretch'}}>
+                //                 <Text style={{
+                //                     paddingTop: screen.width / 3,
+                //                     fontSize: 25,
+                //                     color: '#fff',
+                //                     fontFamily: 'arial'
+                //                 }}>
+                //                     EXPLORE
+                //                 </Text>
+                //                 <Text style={{
+                //                     fontSize: 40,
+                //                     color: '#fff',
+                //                     fontFamily: 'arial'
+                //                 }}>
+                //                     Discover fitness {"\n"}
+                //                     classes near you{"\n"}
+                //                 </Text>
+                //             </View>
+                //         </ImageBackground>
+                //     </View>,
+                //     <View ref='f3' style={commonStyle.surface}>
+                //         <ImageBackground source={require('../../img/home/CubeImages-Wellness.png')}
+                //                          style={commonStyle.pageImg}>
+                //             <View style={{flexDirection: 'column', alignItems: 'stretch'}}>
+                //                 <Text style={{
+                //                     paddingTop: screen.width / 3,
+                //                     fontSize: 25,
+                //                     color: '#fff',
+                //                     fontFamily: 'arial'
+                //                 }}>
+                //                     EXPLORE
+                //                 </Text>
+                //                 <Text style={{
+                //                     fontSize: 40,
+                //                     color: '#fff',
+                //                     fontFamily: 'arial'
+                //                 }}>
+                //                     Discover wellness {"\n"}
+                //                     classes near you{"\n"}
+                //                 </Text>
+                //             </View>
+                //         </ImageBackground>
+                //     </View>
                 ]
             );
         }

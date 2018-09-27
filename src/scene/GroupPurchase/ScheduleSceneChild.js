@@ -195,10 +195,10 @@ class ScheduleSceneChild extends PureComponent<Props, State> {
 
                 <View style={{backgroundColor: '#fff', flex: 1}}>
                     <ScrollView>
-                        {this.companyView(this.props.navigation.state.params.commodityInfo.id)}
-                        <View style={styles.tipHeader}>
-                            <Heading3>Pick a Staff</Heading3>
-                        </View>
+                        {/*{this.companyView(this.props.navigation.state.params.commodityInfo.id)}*/}
+                        {/*<View style={styles.tipHeader}>*/}
+                            {/*<Heading3>Pick a Staff</Heading3>*/}
+                        {/*</View>*/}
                         <TouchableOpacity
                             activeOpacity={0.9}
                             style={{
