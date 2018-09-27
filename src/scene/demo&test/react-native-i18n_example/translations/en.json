@@ -1,0 +1,52 @@
+{
+  //  下面标题栏
+  "HOME": "HOME",
+  "EXPLORE":"EXPLORE",
+  "EVENTS":"EVENTS",
+  "LOVE":"LOVE",
+  "PROFILE":"PROFILE",
+  //类别栏
+  "BEAUTY":"BEAUTY",
+  "WELLNESS":"WELLNESS",
+  "FITNESS":"FITNESS",
+  "DRINK":"DRINK",
+  "CLASS":"CLASS",
+  "BUSINESSES":"BUSINESSES",
+  "WINE":"WINE",
+  "BEVERAGE":"BEVERAGE",
+  //输入框内容
+  "Search for":"Search for",
+  "Businesses":"Businesses",
+
+  "What to":"What to",
+  "search":"search",
+  "Select the":"Select the",
+  "area":"area",
+
+  "What to search?":"What to search?",
+
+  "STUDIO DETAIL":"STUDIO DETAIL",
+  "View Schedule":"View Schedule",
+  "View Price":"View Price",
+  "CONTACT":"CONTACT",
+
+  "About the Studio":"About the Studio",
+  "SCHEDULE":"SCHEDULE",
+
+  "CLASSES":"CLASSES",
+  "APPOINTMENTS":"APPOINTMENTS",
+
+  "Pick a Staff":"Pick a Staff",
+
+  "VIEW SCHEDULE":"VIEW SCHEDULE",
+  "APPOINTMENT BOOKING":"APPOINTMENT BOOKING",
+
+  "NEXT":"NEXT",
+
+  "Setting":"Setting",
+  "Chat with us":"Chat with us",
+  "FAQ":"FAQ",
+  "Contact":"Contact",
+  "Log out":"Log out"
+  //  "Setting":"设置"
+}

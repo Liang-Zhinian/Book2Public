@@ -1,0 +1,52 @@
+{
+//  下面标题栏
+  "HOME": "首页",
+  "EXPLORE":"附近",
+  "EVENTS":"我的日程",
+  "LOVE":"收藏",
+  "PROFILE":"我的",
+//类别栏
+  "BEAUTY":"美容",
+  "WELLNESS":"健康生活",
+  "FITNESS":"健身",
+  "CLASS":"课程",
+  "BUSINESSES":"商家",
+  "DRINK":"美酒",
+  "WINE":"葡萄酒",
+  "BEVERAGE":"饮品",
+  //输入框内容
+  "Search for":"",
+  "Businesses":"",
+
+  "What to":"",
+  "search":"",
+  "Select the":"附近",
+  "area":"",
+
+  "What to search?":"",
+
+  "STUDIO DETAIL":"商家详情",
+  "View Schedule":"查看日程",
+  "View Price":"查看价格",
+  "CONTACT":"联系",
+
+  "About the Studio":"关于",
+  "SCHEDULE":"日程",
+
+  "CLASSES":"课程",
+  "APPOINTMENTS":"预约",
+
+  "Pick a Staff":"选择技师",
+
+  "VIEW SCHEDULE":"查看日程",
+  "APPOINTMENT BOOKING":"正在预约",
+
+  "NEXT":"下一步",
+
+  "Setting":"设置",
+  "Chat with us":"联系我们",
+  "FAQ":"常见问题",
+  "Contact":"联系",
+  "Log out":"退出"
+//  "Setting":"设置"
+}

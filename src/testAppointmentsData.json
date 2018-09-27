@@ -1,0 +1,198 @@
+{
+  "testAppointmentsData": [
+    {
+      "Id": "B0FFI0R2IK",
+      "typeTitle": "Acupuncture with Dr Eddy",
+      "children": [
+        {
+          "id": "ABC123",
+          "title": "Acupuncture -60",
+          "tip":null
+        },
+        {
+          "id": "ABC124",
+          "title": "Acupuncture New Patient",
+          "tip":null
+        }
+      ]
+    },
+    {
+      "Id": "B0FFH0HKVP",
+      "typeTitle": "Acupuncture with Dr. Nancy",
+      "children": [
+        {
+          "id": "ABC125",
+          "title": "Acupuncture -60",
+          "tip":null
+        }
+      ]
+    },
+    {
+      "Id": "B0FFGYW0JV",
+      "typeTitle": "Chiropractor Adjustment",
+      "children": [
+        {
+          "id": "ABC126",
+          "title": "Chiropractor Visit - Established",
+          "tip": "follow up chiropractic patient visits for clients who have already had a new patient exam and are established as a patient at ElleWell"
+        },
+        {
+          "id": "ABC127",
+          "title": "New Chiro Patient",
+          "tip":null
+        }
+      ]
+    },
+    {
+      "Id": "B0FFI0C3FO",
+      "typeTitle": "ElleWellness Program",
+      "children": [
+        {
+          "id": "ABC128",
+          "title": "Month 1 (Pres or Medicare)",
+          "tip": "follow up chiropractic patient visits for clients who have already had a new patient exam and are established as a patient at ElleWell"
+        }
+      ]
+    },
+    {
+      "Id": "B0FFGZUHXL",
+      "typeTitle": "Integrative Health Coaching",
+      "children": [
+        {
+          "id": "ABC129",
+          "title": "Health Coach Check-in",
+          "tip": "These sessions are our time for us to figure out what is working,what isn't working, and what you need in the way of support in order to reach your health goals."
+        },
+        {
+          "id": "ABC130",
+          "title": "Initial Assessment",
+          "tip": "What isn't working, and what you need in the way of support in order to reach your health goals."
+        }
+      ]
+    },
+    {
+      "Id": "B0FFFOY0Q3",
+      "typeTitle": "Massage",
+      "children": [
+        {
+          "id": "ABC131",
+          "title": "Health Coach Check-in",
+          "tip":null
+        },
+        {
+          "id": "ABC124",
+          "title": "Acupuncture New Patient",
+          "tip":null
+        },
+        {
+          "id": "ABC127",
+          "title": "New Chiro Patient",
+          "tip":null
+        },
+        {
+          "id": "ABC123",
+          "title": "Acupuncture -60",
+          "tip":null
+        }
+      ]
+    },
+    {
+      "Id": "B0FFGZF7A2",
+      "typeTitle": "Movement Therapy",
+      "children": [
+        {
+          "id": "ABC132",
+          "title": "Functional Yoga 30 min",
+          "tip":null
+        },
+        {
+          "id": "ABC133",
+          "title": "Two or More Yoga",
+          "tip":null
+        }
+      ]
+    }
+  ],
+  "testAppointmentsDataTimePoint":[
+    {
+        "id":"abc123123",
+        "staffId":"",
+        "serviceItemId":"ABC123",
+        "startTime":"2018-08-10 08:30",
+        "endTime":"2018-08-10 09:30"
+    },{
+        "id":"abc123124",
+        "staffId":"",
+        "serviceItemId":"ABC123",
+        "startTime":"2018-08-10 09:00",
+        "endTime":"2018-08-10 10:30"
+    },{
+        "id":"abc123125",
+        "staffId":"",
+        "serviceItemId":"ABC123",
+        "startTime":"2018-08-10 12:30",
+        "endTime":"2018-08-10 13:30"
+    },{
+        "id":"abc123126",
+        "staffId":"",
+        "serviceItemId":"ABC123",
+        "startTime":"2018-08-10 16:30",
+        "endTime":"2018-08-10 17:30"
+    },{
+      "id":"abc123126",
+      "staffId":"",
+      "serviceItemId":"ABC123",
+      "startTime":"2018-08-10 17:00",
+      "endTime":"2018-08-10 18:00"
+    },{
+      "id":"abc123126",
+      "staffId":"",
+      "serviceItemId":"ABC123",
+      "startTime":"2018-08-10 18:30",
+      "endTime":"2018-08-10 20:30"
+    },{
+      "id":"abc123126",
+      "staffId":"",
+      "serviceItemId":"ABC123",
+      "startTime":"2018-08-10 19:30",
+      "endTime":"2018-08-10 20:30"
+    },{
+      "id":"abc123126",
+      "staffId":"",
+      "serviceItemId":"ABC123",
+      "startTime":"2018-08-10 20:30",
+      "endTime":"2018-08-10 20:30"
+    },{
+      "id":"abc123126",
+      "staffId":"",
+      "serviceItemId":"ABC123",
+      "startTime":"2018-08-10 21:00",
+      "endTime":"2018-08-10 22:00"
+    },{
+      "id":"abc123126",
+      "staffId":"",
+      "serviceItemId":"ABC123",
+      "startTime":"2018-08-10 21:30",
+      "endTime":"2018-08-10 20:00"
+    },{
+      "id":"abc123126",
+      "staffId":"",
+      "serviceItemId":"ABC123",
+      "startTime":"2018-08-10 22:30",
+      "endTime":"2018-08-10 20:30"
+    },{
+      "id":"abc123126",
+      "staffId":"",
+      "serviceItemId":"ABC123",
+      "startTime":"2018-08-10 22:45",
+      "endTime":"2018-08-10 20:30"
+    },{
+      "id":"abc123126",
+      "staffId":"",
+      "serviceItemId":"ABC123",
+      "startTime":"2018-08-10 22:50",
+      "endTime":"2018-08-10 20:30"
+    }
+
+  ]
+}
