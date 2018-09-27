@@ -311,7 +311,8 @@ export default class ProducerScene extends Component {
     // }
     showNoDataMsg() {
         return (
-            <View style={{alignItems:'center'}}>
+            <View style={{alignItems:'center',
+            backgroundColor:'#0000'}}>
                 <Text style={{color: '#fff', fontSize: 13, fontFamily: 'arial'}}>
                     No matched search result is returned.
                 </Text>
@@ -320,7 +321,8 @@ export default class ProducerScene extends Component {
     }
     showNoSearchMsg() {
         return (
-            <View style={{alignItems:'center'}}>
+            <View style={{alignItems:'center',
+            backgroundColor:'#0000'}}>
                 <Text style={{color: '#fff', fontSize: 13, fontFamily: 'arial',paddingTop:5}}>
                     Please enter keywords to search.
                 </Text>
@@ -433,6 +435,7 @@ export default class ProducerScene extends Component {
                                 position: 'absolute',
                                 left: 0,
                                 right: 0,
+                                backgroundColor:'#0000'
                             }}>
                             <Text style={{
                                 color: '#ffffff',
