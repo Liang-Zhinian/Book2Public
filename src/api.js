@@ -374,7 +374,8 @@ export function getExploreSceneTestBEAUTY(){
     homePage= [
         {id:'f996cb01-6b0c-4dfa-9687-78e59df6d0b1',siteId:'f996cb01-6b0c-4dfa-9687-78e59df6d0b1',sign:true,type:'Wellness',category:'Face_Treatments',tag: 'EXPLORE',title:'',prompt:'', img: require('./img/home/Beauty/1-Face_Treatments_EN.png')},
         {id:'b2',siteId:'b2',sign:true,type:'Beauty',category:'Hair_Salon_and_Treatments',tag: 'SPECIAL OFFERS',title:'BEAUTY 2 for you ',prompt:'Find great ', img: require('./img/home/Beauty/2-Hair_Salon_Treatments_EN.png')},
-        {id:'b3',siteId:'b3',sign:true,type:'Beauty',category:'Makeup_Lashes_Brows',tag: 'EXPLORE',title:'BEAUTY 3 classes near you',prompt:'', img: require('./img/home/Beauty/3-MAKEUP_LASHES_BROWS_EN.png')},
+        {id:'b3',siteId:'b3',sign:true,type:'Beauty',category:'Makeup_Lashes_Brows',tag: 'EXPLORE',title:'BEAUTY 3 classes near you',prompt:'', 
+        img: require('./img/home/Beauty/3-MAKEUP_LASHES_BROWS_EN.png')},
         {id:'b4',siteId:'',sign:true,type:'Beauty',category:'Nails',tag: 'EXPLORE',title:'BEAUTY 4 classes near you',prompt:'', img: require('./img/home/Beauty/4-Nails_EN.png')},
         {id:'b5',siteId:'',sign:true,type:'Beauty',category:'Tanning',tag: 'EXPLORE',title:'BEAUTY 5 classes near you',prompt:'', img: require('./img/home/Beauty/5-Tanning_EN.png')},
         {id:'b6',siteId:'',sign:true,type:'Beauty',category:'Tattoo_Pierce',tag: 'EXPLORE',title:'BEAUTY 6 classes near you',prompt:'', img: require('./img/home/Beauty/6-Tattoo_Piercing_EN.png')},

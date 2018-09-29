@@ -2,11 +2,21 @@
 #import "AMapView.h"
 #import "AMapMarker.h"
 #import "AMapOverlay.h"
+#import "ReGeocodeAnnotation.h"
+#import "CommonUtility.h"
+#import "ErrorInfoUtility.h"
+#import <AMapFoundationKit/AMapFoundationKit.h>
+#import <AMapSearchKit/AMapSearchKit.h>
 
 #pragma ide diagnostic ignored "OCUnusedClassInspection"
 #pragma ide diagnostic ignored "-Woverriding-method-mismatch"
 
-@interface AMapViewManager : RCTViewManager <MAMapViewDelegate>
+@interface AMapViewManager : RCTViewManager <MAMapViewDelegate, AMapSearchDelegate>
+
+@property (nonatomic, assign) BOOL isDragging;
+@property (nonatomic, assign) BOOL isSearchFromDragging;
+@property (nonatomic, strong) AMapSearchAPI *search;
+
 @end
 
 @implementation AMapViewManager
@@ -18,6 +28,10 @@ RCT_EXPORT_MODULE()
     mapView.centerCoordinate = CLLocationCoordinate2DMake(39.9242, 116.3979);
     mapView.zoomLevel = 10;
     mapView.delegate = self;
+    
+    self.search = [[AMapSearchAPI alloc] init];
+    self.search.delegate = self;
+    
     return mapView;
 }
 
@@ -43,12 +57,14 @@ RCT_EXPORT_VIEW_PROPERTY(tilt, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(rotation, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(distanceFilter, CLLocationDistance)
 RCT_EXPORT_VIEW_PROPERTY(locationStyle, LocationStyle)
+RCT_EXPORT_VIEW_PROPERTY(language, NSInteger)
 
 RCT_EXPORT_VIEW_PROPERTY(onPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onLongPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onLocation, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onStatusChange, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onStatusChangeComplete, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onReGeocodeComplete, RCTBubblingEventBlock)
 
 RCT_EXPORT_METHOD(animateTo:(nonnull NSNumber *)reactTag params:(NSDictionary *)params duration:(NSInteger)duration) {
     [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
@@ -73,6 +89,16 @@ RCT_EXPORT_METHOD(animateTo:(nonnull NSNumber *)reactTag params:(NSDictionary *)
     }];
 }
 
+- (void)searchReGeocodeWithCoordinate:(CLLocationCoordinate2D)coordinate
+{
+    AMapReGeocodeSearchRequest *regeo = [[AMapReGeocodeSearchRequest alloc] init];
+    
+    regeo.location                    = [AMapGeoPoint locationWithLatitude:coordinate.latitude longitude:coordinate.longitude];
+    regeo.requireExtension            = YES;
+    
+    [self.search AMapReGoecodeSearch:regeo];
+}
+
 - (void)mapView:(AMapView *)mapView didSingleTappedAtCoordinate:(CLLocationCoordinate2D)coordinate {
     if (mapView.onPress) {
         mapView.onPress(@{
@@ -88,6 +114,8 @@ RCT_EXPORT_METHOD(animateTo:(nonnull NSNumber *)reactTag params:(NSDictionary *)
                 @"latitude": @(coordinate.latitude),
                 @"longitude": @(coordinate.longitude),
         });
+        
+        [self searchReGeocodeWithCoordinate:coordinate];
     }
 }
 
@@ -189,5 +217,26 @@ RCT_EXPORT_METHOD(animateTo:(nonnull NSNumber *)reactTag params:(NSDictionary *)
         mapView.region = mapView.initialRegion;
     }
 }
+
+#pragma mark - AMapSearchDelegate
+- (void)AMapSearchRequest:(id)request didFailWithError:(NSError *)error
+{
+    NSLog(@"Error: %@ - %@", error, [ErrorInfoUtility errorDescriptionWithCode:error.code]);
+}
+
+/* 逆地理编码回调. */
+- (void)onReGeocodeSearchDone:(AMapReGeocodeSearchRequest *)request response:(AMapReGeocodeSearchResponse *)response
+{
+    if (response.regeocode != nil && _isSearchFromDragging == NO)
+    {
+        CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(request.location.latitude, request.location.longitude);
+        ReGeocodeAnnotation *reGeocodeAnnotation = [[ReGeocodeAnnotation alloc] initWithCoordinate:coordinate
+                                                                                         reGeocode:response.regeocode];
+        
+//        [self addAnnotation:reGeocodeAnnotation];
+//        [self selectAnnotation:reGeocodeAnnotation animated:YES];
+    }
+}
+#pragma mark - AMapSearchDelegate
 
 @end

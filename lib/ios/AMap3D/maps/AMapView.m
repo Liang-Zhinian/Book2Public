@@ -14,6 +14,8 @@
 - (instancetype)init {
     _markers = [NSMutableDictionary new];
     self = [super init];
+    
+    super.showsWorldMap = [NSNumber numberWithBool:true];
     return self;
 }
 
@@ -92,6 +94,11 @@
 
 - (AMapMarker *)getMarker:(id <MAAnnotation>)annotation {
     return _markers[[@(annotation.hash) stringValue]];
+}
+
+// code: 0代表中文，1代表英文
+- (void)setLanguage:(NSInteger)language{
+    [self performSelector:NSSelectorFromString(@"setMapLanguage:") withObject:@(language)];
 }
 
 @end

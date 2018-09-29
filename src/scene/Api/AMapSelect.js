@@ -189,6 +189,7 @@ export default class AMapSelect extends PureComponent<Props, State> {
         AsyncStorage.setItem('LatLngLog', JSON.stringify([center.latitude, center.longitude]));
     }
     loadAMap(){
+        debugger;
         return (
             <View style={styles.sliderStyle}>
                 <AMap3D

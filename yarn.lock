@@ -3929,9 +3929,8 @@ react-naive-highly-customizable-action-sheet@^1.1.2:
   version "1.1.2"
   resolved "http://registry.npm.taobao.org/react-naive-highly-customizable-action-sheet/download/react-naive-highly-customizable-action-sheet-1.1.2.tgz#3736fcafa850d5e59e89d3de99a48a63f46b110d"
 
-react-native-amap3d@^1.0.1:
-  version "1.0.1"
-  resolved "http://registry.npm.taobao.org/react-native-amap3d/download/react-native-amap3d-1.0.1.tgz#ffc7fe84f9c323b6dcd8315fa893eeb7551b9076"
+"react-native-amap3d@file:./lib/js":
+  version "0.0.0"
 
 react-native-android-geolocation@^1.0.3:
   version "1.0.3"

@@ -1,6 +1,6 @@
 PODS:
-  - AMap3DMap (6.3.1):
-    - AMapFoundation (~> 1.5)
+  - AMap3DMap (6.1.0):
+    - AMapFoundation (~> 1.4)
   - AMapFoundation (1.5.4)
   - boost (1.59.0):
     - boost/graph-includes (= 1.59.0)
@@ -30,8 +30,8 @@ PODS:
     - React
   - React (0.50.1):
     - React/Core (= 0.50.1)
-  - react-native-amap3d (1.0.1):
-    - AMap3DMap (~> 6.3.0)
+  - react-native-amap3d (1.0.0):
+    - AMap3DMap (~> 6.1.0)
     - React
   - react-native-fast-image (5.0.3):
     - FLAnimatedImage
@@ -97,7 +97,7 @@ DEPENDENCIES:
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - GLog (from `../node_modules/react-native/third-party-podspecs/GLog.podspec`)
   - Picker (from `../node_modules/react-native-picker`)
-  - react-native-amap3d (from `../node_modules/react-native-amap3d/lib/ios`)
+  - react-native-amap3d (from `../lib/ios`)
   - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - React/Core (from `../node_modules/react-native`)
@@ -135,7 +135,7 @@ EXTERNAL SOURCES:
   React:
     :path: "../node_modules/react-native"
   react-native-amap3d:
-    :path: "../node_modules/react-native-amap3d/lib/ios"
+    :path: "../lib/ios"
   react-native-fast-image:
     :path: "../node_modules/react-native-fast-image"
   react-native-splash-screen:
@@ -156,7 +156,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  AMap3DMap: 7e1b2f2a1628a584f085d7f158d7c9835837e8c2
+  AMap3DMap: 2cf8028884fc66c7e051f5e8818808949eff290d
   AMapFoundation: bff8688722e886feda4edd77f1443746ddd7e2e2
   boost: 30a15ffb6d9aa4646dd3caffc960753f4cb4ca4e
   DoubleConversion: ebb6747c5b66026ad4f97b789c3ceac6f18e57a6
@@ -165,7 +165,7 @@ SPEC CHECKSUMS:
   GLog: 3e4e4ae9746ce6bf6e9420c7fc1e08ad59c8ba1a
   Picker: 67a2566d9ff6b141d505d88b9177f905aaa5f1a6
   React: 541ba768b9855e10cdc76f55427a5cd0653ca806
-  react-native-amap3d: 755c7ff25953e2f45b952dac9afc572e87e73877
+  react-native-amap3d: ce3747a3f825caea3cb76a1f3deb38c359b02600
   react-native-fast-image: cba3d9bf9c2cf8ddb643d887a686c53a5dd90a2c
   react-native-splash-screen: 8e3f866dc79bfe533baeffd0a38c33f7a7eae7f8
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
@@ -177,6 +177,6 @@ SPEC CHECKSUMS:
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
   yoga: 17521bbb0dd54a47c0b3ac43253e78cdac7488e0
 
-PODFILE CHECKSUM: 0982cf7c47f549422ddcfd6bebe3cb1caec258c2
+PODFILE CHECKSUM: c0ff3f6eef35ba2a6a01777f69d3b3e41f11e28b
 
 COCOAPODS: 1.5.3

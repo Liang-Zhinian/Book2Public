@@ -71,6 +71,7 @@ export default class AMap3D extends Component {
   };
 
   selectedAddress = '';
+  language = 'EN'; // or 'CN'
 
   componentDidMount() {
 
@@ -131,8 +132,16 @@ export default class AMap3D extends Component {
       <Spinner />
     }
 
+    let languageCode = 1
+    let language = this.props.language || this.language
+    if(language.toUpperCase() == 'CN'){
+      languageCode = 0
+    }
+
     return (
+
         <MapView style={StyleSheet.absoluteFill}
+                language={languageCode}
                  coordinate={this.props.coordinate}
                  locationInterval={10000}
                  zoomLevel={this.props.zoomLevel}

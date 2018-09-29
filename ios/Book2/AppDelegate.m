@@ -13,11 +13,14 @@
 #import <React/RCTRootView.h>
 #import <AMapFoundationKit/AMapFoundationKit.h>
 
+#import <AMapSearchKit/AMapSearchKit.h>
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   [AMapServices sharedServices].apiKey = @"67be50719e82fca9506084895ecc1dd9";
+//  [AMapSearchServices sharedServices].apiKey = @"67be50719e82fca9506084895ecc1dd9";
   
   NSURL *jsCodeLocation;
 

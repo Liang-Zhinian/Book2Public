@@ -17,6 +17,7 @@
   },
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
+    "bundle:ios": "react-native bundle --entry-file index.js --platform ios --dev false --reset-cache --bundle-output ./ios/main.jsbundle --assets-dest ./ios/release/main.jsbundle",
     "test": "jest",
     "ios": "react-native run-ios",
     "android": "react-native run-android"
@@ -33,7 +34,7 @@
     "react": "16.0.0",
     "react-naive-highly-customizable-action-sheet": "^1.1.2",
     "react-native": "^0.50.1",
-    "react-native-amap3d": "^1.0.1",
+    "react-native-amap3d": "file:./lib/js",
     "react-native-android-geolocation": "^1.0.3",
     "react-native-calendars": "^1.20.0",
     "react-native-datepicker": "^1.7.2",
