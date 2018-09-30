@@ -77,7 +77,6 @@ class ExploreRangeMarkerList extends PureComponent<Props, State>  {
                 }else{
                     dataListTemp=dataList
                 }
-                console.log(dataListTemp);
                 this.setState({data: dataListTemp});
                 this.props.loadMarker(dataListTemp)
             })

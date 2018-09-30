@@ -1,7 +1,9 @@
 PODS:
-  - AMap3DMap (6.1.0):
-    - AMapFoundation (~> 1.4)
+  - AMap3DMap (6.3.1):
+    - AMapFoundation (~> 1.5)
   - AMapFoundation (1.5.4)
+  - AMapSearch (6.1.1):
+    - AMapFoundation (~> 1.4)
   - boost (1.59.0):
     - boost/graph-includes (= 1.59.0)
     - boost/math-includes (= 1.59.0)
@@ -28,10 +30,10 @@ PODS:
     - Picker/Core (= 4.3.7)
   - Picker/Core (4.3.7):
     - React
-  - React (0.50.1):
-    - React/Core (= 0.50.1)
-  - react-native-amap3d (1.0.0):
-    - AMap3DMap (~> 6.1.0)
+  - React (0.50.4):
+    - React/Core (= 0.50.4)
+  - react-native-amap3d (0.0.1):
+    - AMap3DMap (~> 6.3.1)
     - React
   - react-native-fast-image (5.0.3):
     - FLAnimatedImage
@@ -40,40 +42,40 @@ PODS:
     - SDWebImage/GIF
   - react-native-splash-screen (3.1.1):
     - React
-  - React/Core (0.50.1):
-    - yoga (= 0.50.1.React)
-  - React/CxxBridge (0.50.1):
+  - React/Core (0.50.4):
+    - yoga (= 0.50.4.React)
+  - React/CxxBridge (0.50.4):
     - Folly (= 2016.09.26.00)
     - React/Core
     - React/cxxreact
-  - React/cxxreact (0.50.1):
+  - React/cxxreact (0.50.4):
     - boost
     - Folly (= 2016.09.26.00)
     - React/jschelpers
-  - React/DevSupport (0.50.1):
+  - React/DevSupport (0.50.4):
     - React/Core
     - React/RCTWebSocket
-  - React/fishhook (0.50.1)
-  - React/jschelpers (0.50.1):
+  - React/fishhook (0.50.4)
+  - React/jschelpers (0.50.4):
     - Folly (= 2016.09.26.00)
     - React/PrivateDatabase
-  - React/PrivateDatabase (0.50.1)
-  - React/RCTBlob (0.50.1):
+  - React/PrivateDatabase (0.50.4)
+  - React/RCTBlob (0.50.4):
     - React/Core
-  - React/RCTImage (0.50.1):
+  - React/RCTImage (0.50.4):
     - React/Core
     - React/RCTNetwork
-  - React/RCTNetwork (0.50.1):
+  - React/RCTNetwork (0.50.4):
     - React/Core
-  - React/RCTText (0.50.1):
+  - React/RCTText (0.50.4):
     - React/Core
-  - React/RCTWebSocket (0.50.1):
+  - React/RCTWebSocket (0.50.4):
     - React/Core
     - React/fishhook
     - React/RCTBlob
   - ReactNativePermissions (1.1.1):
     - React
-  - RNFS (2.10.14):
+  - RNFS (2.11.15):
     - React
   - RNSensors (3.0.0):
     - React
@@ -82,7 +84,7 @@ PODS:
     - RNSound/Core (= 0.10.9)
   - RNSound/Core (0.10.9):
     - React/Core
-  - RNSVG (6.3.1):
+  - RNSVG (6.4.1):
     - React
   - RNVectorIcons (5.0.0):
     - React
@@ -90,14 +92,15 @@ PODS:
   - SDWebImage/GIF (4.4.2):
     - FLAnimatedImage (~> 1.0)
     - SDWebImage/Core
-  - yoga (0.50.1.React)
+  - yoga (0.50.4.React)
 
 DEPENDENCIES:
+  - AMapSearch
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - GLog (from `../node_modules/react-native/third-party-podspecs/GLog.podspec`)
   - Picker (from `../node_modules/react-native-picker`)
-  - react-native-amap3d (from `../lib/ios`)
+  - react-native-amap3d (from `../lib/react-native-amap3d/lib/ios`)
   - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - React/Core (from `../node_modules/react-native`)
@@ -119,6 +122,7 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AMap3DMap
     - AMapFoundation
+    - AMapSearch
     - boost
     - FLAnimatedImage
     - SDWebImage
@@ -135,7 +139,7 @@ EXTERNAL SOURCES:
   React:
     :path: "../node_modules/react-native"
   react-native-amap3d:
-    :path: "../lib/ios"
+    :path: "../lib/react-native-amap3d/lib/ios"
   react-native-fast-image:
     :path: "../node_modules/react-native-fast-image"
   react-native-splash-screen:
@@ -156,8 +160,9 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  AMap3DMap: 2cf8028884fc66c7e051f5e8818808949eff290d
+  AMap3DMap: 7e1b2f2a1628a584f085d7f158d7c9835837e8c2
   AMapFoundation: bff8688722e886feda4edd77f1443746ddd7e2e2
+  AMapSearch: 3dcbf85c403a2a0fe0eda5318caabc272b31f5e1
   boost: 30a15ffb6d9aa4646dd3caffc960753f4cb4ca4e
   DoubleConversion: ebb6747c5b66026ad4f97b789c3ceac6f18e57a6
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
@@ -165,7 +170,7 @@ SPEC CHECKSUMS:
   GLog: 3e4e4ae9746ce6bf6e9420c7fc1e08ad59c8ba1a
   Picker: 67a2566d9ff6b141d505d88b9177f905aaa5f1a6
   React: 541ba768b9855e10cdc76f55427a5cd0653ca806
-  react-native-amap3d: ce3747a3f825caea3cb76a1f3deb38c359b02600
+  react-native-amap3d: 07c96cb35c9719a98d8552dfd95791f01ffea701
   react-native-fast-image: cba3d9bf9c2cf8ddb643d887a686c53a5dd90a2c
   react-native-splash-screen: 8e3f866dc79bfe533baeffd0a38c33f7a7eae7f8
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
@@ -177,6 +182,6 @@ SPEC CHECKSUMS:
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
   yoga: 17521bbb0dd54a47c0b3ac43253e78cdac7488e0
 
-PODFILE CHECKSUM: c0ff3f6eef35ba2a6a01777f69d3b3e41f11e28b
+PODFILE CHECKSUM: 2d1c5defb6fecb9cf418e8a252ec486ef4e1c32b
 
 COCOAPODS: 1.5.3

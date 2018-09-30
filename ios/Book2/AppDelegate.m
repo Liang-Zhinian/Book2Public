@@ -13,7 +13,7 @@
 #import <React/RCTRootView.h>
 #import <AMapFoundationKit/AMapFoundationKit.h>
 
-#import <AMapSearchKit/AMapSearchKit.h>
+//#import <AMapSearchKit/AMapSearchKit.h>
 
 @implementation AppDelegate
 

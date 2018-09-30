@@ -155,12 +155,12 @@ export default class BeautyCube extends React.Component {
     });
 
     animate() {
-        this.animatedValue.setValue(0)
+        this.animatedValue.setValue(0);
         Animated.timing(
             this.animatedValue,
             {
                 toValue: 1,
-                duration: 2000,
+                duration: 5000,
                 easing: Easing.linear
             }
         ).start(
@@ -177,14 +177,16 @@ export default class BeautyCube extends React.Component {
             return (
                 <View style={[commonStyle.tabViewStylePage, {
                     width: screen.width * 0.95,
-                    height: 30,
+                    // height: 30,
                     backgroundColor: '#e52a0000',
                     justifyContent: 'space-between',
                     position: 'absolute',
                     bottom: 10,
                 }]}
                       {...this.responder.panHandlers}>
-                    <TouchableOpacity activeOpacity={0.6} onPress={() => {
+                    <TouchableOpacity
+                        style={{paddingRight:30}}
+                        activeOpacity={0.6} onPress={() => {
                         page <= 1 ? page = 1 : page--;
                         this.refs['swiper'].flipLeftIndex(0);
                         this.setState({allPageList: allPageList[page - 1]});
@@ -197,21 +199,22 @@ export default class BeautyCube extends React.Component {
                             style={{opacity,}}
                         >
                             <ImageBackground source={require('../../img/nearby/lastPage.png')}
-                                             style={{width: 25, height: 25}}/>
+                                             style={{width: 30, height: 30}}/>
                         </Animated.View>
 
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.9}
-                                      style={{
-                                          paddingTop: 10,
-                                          paddingBottom: 10,
-                                          paddingLeft: 20,
-                                          paddingRight: 20,
-                                          width: screen.width * 0.8,
-                                      }}
-                                      onPress={() => {
-                                          this.animate()
-                                      }}>
+                    <TouchableOpacity
+                        activeOpacity={0.9}
+                        style={{
+                            // paddingTop: 10,
+                            // paddingBottom: 10,
+                            // paddingLeft: 20,
+                            // paddingRight: 20,
+                            // width: screen.width * 0.8,
+                        }}
+                        onPress={() => {
+                            this.animate()
+                        }}>
                         <PageControl
                             numberOfPages={allPageList.length}
                             currentPage={page - 1}
@@ -220,7 +223,9 @@ export default class BeautyCube extends React.Component {
                             currentPageIndicatorTintColor={'#000000'}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.6} onPress={() => {
+                    <TouchableOpacity
+                        style={{paddingLeft:30}}
+                        activeOpacity={0.6} onPress={() => {
                         page >= allPageList.length ? page = allPageList.length : page++;
                         this.refs['swiper'].flipLeftIndex(0);
                         this.setState({allPageList: allPageList[page - 1]});
@@ -233,9 +238,8 @@ export default class BeautyCube extends React.Component {
                             style={{opacity,}}
                         >
                             <ImageBackground source={require('../../img/nearby/nextPage.png')}
-                                             style={{width: 25, height: 25}}/>
+                                             style={{width: 30, height: 30}}/>
                         </Animated.View>
-
                     </TouchableOpacity>
                 </View>
             )
@@ -246,7 +250,7 @@ export default class BeautyCube extends React.Component {
 
     render() {
         return (
-            <View style={[commonStyle.cubeStyle,]}>
+            <View style={[commonStyle.cubeStyle,commonStyle.center]}>
                 <Cube ref='swiper'
                       reduceface={() => {
                           //上一个页面, right

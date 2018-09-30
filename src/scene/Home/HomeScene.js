@@ -25,6 +25,7 @@ import frCA from  '../../scene/demo&test/react-native-i18n_example/translations/
 import cn from  '../../scene/demo&test/react-native-i18n_example/translations/cn'
 import {NavigationActions} from "react-navigation";
 import {android} from "../../common/Device";
+import {commonStyle} from "../../widget/commonStyle";
 
 type
 Props = {
@@ -374,9 +375,9 @@ export default class HomeScene extends PureComponent<Props, State> {
                </View>
 
 
-               <View style={[styles.cubeStyle,]}>
+               <View style={[styles.cubeStyle,commonStyle.center]}>
                    <Cube ref='swiper'
-                       // style={styles.cubeStyle}
+                       //style={styles.cubeStyle}
                          position={this.state.face}
                          touchState={() => {
                              // this.setState({touchState: true});

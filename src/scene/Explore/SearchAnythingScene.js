@@ -208,26 +208,20 @@ export default class SearchAnythingScene extends PureComponent<Props> {
                     justifyContent: 'center',
                     alignItems: 'center',
                     alignSelf: 'center',}]}>
-                    <View style={{alignItems: 'center', flexDirection: 'row',width:screen.width,marginTop:5,justifyContent:'space-between'}}>
+                    <View style={commonStyle.Bar}>
                         <TouchableOpacity style={{
                             zIndex: 999,
                             paddingBottom: 10,
                             paddingTop: 10,
                             paddingRight: 50,
-                            paddingLeft:screen.width*0.025
+                            paddingLeft: screen.width * 0.025
                         }} onPress={() => {
                             this.props.navigation.goBack();//返回按钮图片
                         }}>
                             <Image source={require('../../img/mine/icon_homepage_left_arrow.png')}
                                    style={[commonStyle.searchIcon, {}]}/>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{
-                            alignItems: 'center',
-                            position:'absolute',
-                            left:0,
-                            right:0,
-                            backgroundColor: 'transparent'
-                        }}>
+                        <TouchableOpacity style={commonStyle.BarTitle}>
                             <Text style={{
                                 color: '#ffffff',
                                 fontSize: 16,
@@ -239,7 +233,7 @@ export default class SearchAnythingScene extends PureComponent<Props> {
                             paddingBottom: 10,
                             paddingTop: 10,
                             paddingLeft: 50,
-                            paddingRight:screen.width*0.025,
+                            paddingRight: screen.width * 0.025,
                         }} onPress={() => {
                             //跳转到地图定位页面
                             this.props.navigation.navigate('AMapSelect',
@@ -263,23 +257,9 @@ export default class SearchAnythingScene extends PureComponent<Props> {
                             });
                     }}>
                         <Image source={require('../../img/nearby/Search.png')} style={commonStyle.searchIcon}/>
-                        <Text style={{
-                            paddingLeft: 10,
-                            fontSize: 14,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            alignSelf: 'center',
-                            color: '#e5e5e5'
-                        }}>{(searchKey === null || searchKey === '')?'What to':searchKey} </Text>
+                        <Text style={commonStyle.searchText}>{(searchKey === null || searchKey === '')?'What to':searchKey} </Text>
                         {(searchKey === null || searchKey === '') ?
-                            <Text style={{
-                                fontSize: 14,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                alignSelf: 'center',
-                                fontWeight: 'bold',
-                                color: '#ffffff'
-                            }}>search?</Text> : <Text/>}
+                            <Text style={commonStyle.searchText2}>search?</Text> : <Text/>}
                     </TouchableOpacity>
                     <TouchableOpacity style={commonStyle.searchBar} underlineColorAndroid='white' onPress={() => {
                         this.props.navigation.navigate('ExploreRangeScene'
@@ -294,25 +274,10 @@ export default class SearchAnythingScene extends PureComponent<Props> {
                         <Image source={require('../../img/nearby/locationB.png')} style={commonStyle.searchIcon}/>
                         <Text
                             numberOfLines={1}
-                            style={{
-                                paddingLeft: 10,
-                                width:lo?null:screen.width*0.8,
-                                fontSize: 14,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                alignSelf: 'center',
-                                color: '#e5e5e5',
-                            }}
+                            style={[{width:lo?null:screen.width*0.8,},commonStyle.searchText]}
                         >{lo?'Select the':LocationSearchKey} </Text>
                         {lo ?
-                            <Text style={{
-                                fontSize: 14,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                alignSelf: 'center',
-                                fontWeight: 'bold',
-                                color: '#ffffff'
-                            }}>area</Text> : <Text/>}
+                            <Text style={commonStyle.searchText2}>area</Text> : <Text/>}
                             {/*Unnamed Road, Ngọc Trí, Kim Hoa, Mê Linh, Hà Nội, 越南*/}
                     </TouchableOpacity>
                 </View>

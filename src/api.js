@@ -254,7 +254,7 @@ export function GetBusinessLocationsWithinRadius(latitude,longitude,radius,searc
         + '&searchText=' + searchText
         + '&pageSize=' + pageSize
         + '&pageIndex=' + pageIndex;
-    console.log(url);
+    // console.log(url);
     return fetch(url, {
         method: 'GET',
     })

@@ -266,19 +266,9 @@ export default class QRDetailScene extends Component {
                             start={{x: 0, y: 0}}
                             end={{x: 1, y: 1}}
                             style={[commonStyle.linearGradient, {}]}>
-                <View style={[{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    alignSelf: 'center',
-                }]}>
-                    <View style={{alignItems: 'center', flexDirection: 'row', width: screen.width, marginTop: 5}}>
-                        <TouchableOpacity style={{
-                            zIndex: 999,
-                            paddingBottom: 10,
-                            paddingTop: 10,
-                            paddingRight: 50,
-                            paddingLeft: screen.width * 0.025
-                        }} onPress={() => {
+                <View style={[commonStyle.center]}>
+                    <View style={commonStyle.Bar}>
+                        <TouchableOpacity style={commonStyle.BarLeftIcon} onPress={() => {
                             this.onBackAndroid();
                             this.props.navigation.goBack();//返回按钮图片
                         }}>

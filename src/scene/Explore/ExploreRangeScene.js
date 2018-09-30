@@ -105,10 +105,10 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
         let {center,radius,zoom,locationSearchKey} = this.state;
         // console.log(center.latitude,center.longitude,radius);
         this.props.navigation.state.params.callbackLocation(address,center.latitude,center.longitude,'',radius,locationSearchKey);
-        AsyncStorage.setItem('LatLngLog',JSON.stringify([ center.latitude,center.longitude,radius,zoom]));
+        AsyncStorage.setItem('LocationSearchKey', address);
+        AsyncStorage.setItem('LatLngLog',JSON.stringify([ center.latitude,center.longitude,(radius / 5).toString(),zoom.toString()]));
     }
     componentDidMount() {
-
         StatusBar.setBackgroundColor('#0000005e');
         this.setState({ isLoading: true });
         let {center,radius} = this.state;
@@ -125,14 +125,12 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
 
     _retrieveData = async () => {
         try {
-
             const value = await AsyncStorage.getItem('LatLngLog');
             if (value !== null) {
                 // We have data!!
                 // console.log(value);
             }
         } catch (error) {
-            alert(222)
             // Error retrieving data
         }
     };
@@ -142,26 +140,19 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
             AsyncStorage.getItem(
                 'LatLngLog',
                 (error,result)=>{
-
                     if (error||result==null){
-                        // alert('取值失败:'+error);
-                        console.log('取值失败');
                         this.getPosition();
                     }else{
-                        // console.warn('成功'+result);
                         let LatLngLog=JSON.parse(result);
-                        // this.regeocodeLocation(LatLngLog[1],LatLngLog[0]);
-                        console.log('LatLngLog',LatLngLog);
                         this.setState({
                             center: {
-                                latitude:LatLngLog[0],
-                                longitude:LatLngLog[1]
+                                latitude:parseFloat(LatLngLog[0]),
+                                longitude:parseFloat(LatLngLog[1])
                             },
-                            // radius:LatLngLog[2],
-                            // zoom:LatLngLog[3]
+                            radius:parseFloat(LatLngLog[2]*5),
+                            zoom:parseFloat(LatLngLog[3])
                         });
                         this.UpdateMarkerList();
-                        console.log('成功'+result);
                     }
                 }
             );
@@ -169,7 +160,6 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                 'LocationSearchKey',
                 (error,result)=>{
                     if (error){
-                        // alert('取值失败:'+error);
                     }else{
                         address = result;
                     }
@@ -177,23 +167,7 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
             )
         }catch(error){
             console.warn('获取历史经纬度失败,重新获取当前位置经纬度'+error);
-            // this.getPosition();
         }
-
-        // this._getMarkerByGPS();
-
-        // if (this.props.navigation.state.params.category === 'f996cb01-6b0c-4dfa-9687-78e59df6d0b1') {
-        //     fetch(api.findLocations)
-        //         .then((response) => response.json())
-        //         .then((responseJson) => {
-        //             this.setState({ data: responseJson });
-        //         })
-        //         .catch((error) => {
-        //         });
-        // } else {
-        //     this.setState({ data: testData })
-        // }
-
     }
 
 
@@ -251,6 +225,8 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                             latitude: latitude+Math.random()/10000,
                             longitude: longitude
                         }
+                    },()=>{
+                        this.UpdateMarkerList();
                     });
                     // AsyncStorage.setItem('LatLngLog',JSON.stringify([latitude,longitude]));
                 })
@@ -268,6 +244,8 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                         longitude: 116.404,
                         latitude: 39.915
                     }
+                },()=>{
+                    this.UpdateMarkerList();
                 })
             },5000);
         });
@@ -371,7 +349,6 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                 ref={component => this._amap = component}
                 // onFormattedAddressReceived={this.onFormattedAddressReceived}
                 onLongPressEvent={(e) => {
-                    console.log('onLongPressEvent Delta', e)
                     this.setState({
                         center: {
                             latitude: e.latitude,
@@ -732,12 +709,12 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
         return arr;
     }
     /////////////////////////////////
-    onFormattedAddressReceived = (formatted_address) => {
-        address = formatted_address;
-        AsyncStorage.setItem('LocationSearchKey',formatted_address);
-        this.props.navigation.state.params.callbackLocation(address);
-        // AsyncStorage.removeItem('LatLngLog')
-    }
+    // onFormattedAddressReceived = (formatted_address) => {
+    //     address = formatted_address;
+    //     AsyncStorage.setItem('LocationSearchKey',formatted_address);
+    //     this.props.navigation.state.params.callbackLocation(address);
+    //     // AsyncStorage.removeItem('LatLngLog')
+    // }
 }
 
 

@@ -46,11 +46,10 @@ export default class VineyardScene extends Component {
             subareaId:null,
             openMenuOffset:screen.width*(2/3),
             onSearch:false,
+            waiting: false,//防多次点击
         };
         this.toggle = this._toggle.bind(this)
     }
-
-
 
     componentWillUnmount() {
     }
@@ -63,7 +62,7 @@ export default class VineyardScene extends Component {
     }
     showNoDataMsg() {
         return (
-            <View style={{alignItems:'center'}}>
+            <View style={{alignItems:'center', backgroundColor: 'transparent'}}>
                 <Text style={{color: '#fff', fontSize: 13, fontFamily: 'arial'}}>
                     No matched search result is returned.
                 </Text>
@@ -128,8 +127,6 @@ export default class VineyardScene extends Component {
         });
     }
 
-
-
     _getVineyardBySubAreaId = async (vid) => {
         this.setState({isLoading:true});
         await  getVineyardBySubAreaId(vid,this.page,this.size)
@@ -167,7 +164,8 @@ export default class VineyardScene extends Component {
     _getVineyardByName = async (name) => {
         this.setState({
             onSearch:true,
-            isLoading:true});
+            isLoading:true
+        });
         await  getVineyardByName('ByA',name, this.page, this.size)
             .then((msg) => {
                 this.dataLength = this.state.VineyardList.length;
@@ -195,9 +193,10 @@ export default class VineyardScene extends Component {
     };
     _getVineyardByGPS = async (latitude,longitude,radius) => {
         this.setState({
-            onSearch:true,
-            isLoading:true});
-        await  getVineyardByGPS(latitude,longitude,radius)
+            onSearch: true,
+            isLoading: true
+        });
+        await getVineyardByGPS(latitude,longitude,radius)
             .then((msg) => {
                 this.dataLength = this.state.VineyardList.length;
                 let data = DrinkDetailDataUtils.requestData(msg);
@@ -212,9 +211,7 @@ export default class VineyardScene extends Component {
                     }
                 });
             })
-            .catch((error) => {
-
-            })
+            .catch((error) => {})
     };
 
     componentWillMount() {
@@ -225,13 +222,17 @@ export default class VineyardScene extends Component {
 
 
     renderCell = (rowData: any) => {
+        let {waiting}  = this.state;
         return (
             <View>
                 <VineyardCell
+                    disabled={waiting}
                     info={rowData.item}
                     onPress={() => {
                         //跳到商品详情
-                        this.props.navigation.navigate('VineyardDetail', {info: rowData.item})//跳到商品详情
+                        this.setState({waiting: true});
+                        this.props.navigation.navigate('VineyardDetail', {info: rowData.item});//跳到商品详情
+                        this.toWait();
                     }}
                 />
             </View>
@@ -239,25 +240,28 @@ export default class VineyardScene extends Component {
     };
     renderVineyardList() {
         return (
-            this.state.VineyardList.length > 0 ?<RefreshListView
-                style={{
-                    width: screen.width,
-                    marginTop:5,
-                    backgroundColor: '#ffffff00'
-                }}
-                initialListSize={2}
-                data={this.state.VineyardList}
-                renderItem={this.renderCell}
-                refreshState={this.state.refreshState}
-                onHeaderRefresh={this.requestData}//下拉刷新回调方法 refreshState参数值为RefreshState.HeaderRefreshing
-                onFooterRefresh={this.nextPage}//上拉翻页回调方法 refreshState参数值为RefreshState.FooterRefreshing
-                footerTextStyle={{color: '#ffffff'}}
-                footerRefreshingText={'loading...'}
-                footerFailureText={'click refresh'}
-                footerNoMoreDataText={'no more data'}
-                footerEmptyDataText={'empty data'}
-            />:(this.state.isLoading?this.showLoading(): (this.state.NoData && this.showNoDataMsg()) )
-
+            this.state.VineyardList.length > 0
+                ? <RefreshListView
+                    style={{
+                        width: screen.width,
+                        marginTop: 5,
+                        backgroundColor: '#ffffff00'
+                    }}
+                    initialListSize={2}
+                    data={this.state.VineyardList}
+                    renderItem={this.renderCell}
+                    refreshState={this.state.refreshState}
+                    onHeaderRefresh={this.requestData}//下拉刷新回调方法 refreshState参数值为RefreshState.HeaderRefreshing
+                    onFooterRefresh={this.nextPage}//上拉翻页回调方法 refreshState参数值为RefreshState.FooterRefreshing
+                    footerTextStyle={{color: '#ffffff'}}
+                    footerRefreshingText={'loading...'}
+                    footerFailureText={'click refresh'}
+                    footerNoMoreDataText={'no more data'}
+                    footerEmptyDataText={'empty data'}
+                />
+                : (this.state.isLoading
+                ? this.showLoading()
+                : (this.state.NoData && this.showNoDataMsg()))
         )
     }
 
@@ -305,8 +309,13 @@ export default class VineyardScene extends Component {
             this.state.isOpen ? this.refs.menu.close() : this.refs.menu.open()
         }
     }
+    toWait(){
+        setTimeout(()=> {
+            this.setState({waiting: false})
+        }, 1500);//设置的时间间隔由你决定
+    }
     render() {
-        let {searchKey,openMenuOffset,LocationSearchKey,isOpen} =  this.state;
+        let {searchKey,openMenuOffset,LocationSearchKey,isOpen,waiting} =  this.state;
         const menu =
             <CountryListScene
                 _toggle={this._toggle.bind(this)}
@@ -314,43 +323,33 @@ export default class VineyardScene extends Component {
             />;
         return (
             <SideMenu
-                // style={{opacity:isOpen?1:1}}
                 menu={menu}
                 openMenuOffset={screen.width}
                 isOpen={isOpen}
                 onChange={isOpen => this.updateMenuState(isOpen)}
                 menuPosition={'right'}
             >
-                {/*<ContentView/>*/}
-           <LinearGradient colors={colorTemp}
+                <LinearGradient colors={colorTemp}
                                 start={{x: 0, y: 0}}
                                 end={{x: 1, y: 1}}
                                 style={[commonStyle.linearGradient, {}]}>
-                    <View style={[{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        alignSelf: 'center',}]}>
-                        <View style={{justifyContent:'space-between',alignItems: 'center', flexDirection: 'row',width:screen.width,marginTop:5}}>
-                            <TouchableOpacity style={{
-                                zIndex: 999,
-                                paddingBottom: 10,
-                                paddingTop: 10,
-                                paddingRight: 50,
-                                paddingLeft:screen.width*0.025
-                            }} onPress={() => {
-                                this.props.navigation.goBack();//返回按钮图片
-                            }}>
+                    <View style={[commonStyle.center]}>
+                        <View style={commonStyle.Bar}>
+                            <TouchableOpacity
+                                disabled={waiting}
+                                style={commonStyle.BarLeftIcon}
+                                onPress={() => {
+                                    this.setState({waiting: true});
+                                    this.props.navigation.goBack();//返回按钮图片
+                                    this.toWait();
+                                }}>
                                 <Image source={require('../../../../img/mine/icon_homepage_left_arrow.png')}
                                        style={[commonStyle.searchIcon, {}]}/>
                             </TouchableOpacity>
                             <TouchableOpacity
+                                disabled={waiting}
                                 activeOpacity={0.8}
-                                style={{
-                                    alignItems: 'center',
-                                    position: 'absolute',
-                                    left: 0,
-                                    right: 0,
-                                }}>
+                                style={commonStyle.BarTitle}>
                                 <Text style={{
                                     color: '#ffffff',
                                     fontSize: 16,
@@ -358,104 +357,88 @@ export default class VineyardScene extends Component {
                                 }}>Vineyard</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={{
-                                    paddingBottom: 10,
-                                    paddingTop: 10,
-                                    paddingLeft: 50,
-                                    paddingRight: screen.width * 0.025,
+                                disabled={waiting}
+                                style={commonStyle.BarRightIcon}
+                                onPress={() => {
+                                    this.setState({waiting: true});
+                                    this._toggle();
+                                    this.toWait();
                                 }}
-                                onPress={this.toggle}
                             >
                                 <Image source={require('../../../../img/nearby/country.png')}
-
                                        style={{
-                                           tintColor:'#fff',
-                                           // backgroundColor: '#ffaaaa',
+                                           tintColor: '#fff',
                                            width: 25,
                                            height: 25,
                                            alignSelf: 'flex-end',
                                        }}/>
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={[commonStyle.searchBar,{}]} underlineColorAndroid='white' onPress={() => {
-                            this.props.navigation.navigate('Drink2SearchScene'
-                                , {
-                                    callback: (msg) => {
-                                        this.setState({
-                                                searchKey: msg,
-                                                LocationSearchKey:null
-                                            },
-                                            () => {
-                                                this._clearData();
-                                                this._resetPage();
-                                                this._getVineyardByName(msg);
-                                            });
-                                    },
-                                    searchKey:searchKey
-                                });
-                        }}>
-                            <Image source={require('../../../../img/nearby/Search.png')} style={commonStyle.searchIcon}/>
-                            <Text style={{
-                                paddingLeft: 10,
-                                fontSize: 14,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                alignSelf: 'center',
-                                color: '#e5e5e5'
-                            }}>{(searchKey === null || searchKey === '')?'What to':searchKey} </Text>
+                        <TouchableOpacity
+                            disabled={waiting}
+                            style={[commonStyle.searchBar, {}]} underlineColorAndroid='white'
+                            onPress={() => {
+                                this.setState({waiting: true});
+                                this.props.navigation.navigate('Drink2SearchScene'
+                                    , {
+                                        callback: (msg) => {
+                                            this.setState({
+                                                    searchKey: msg,
+                                                    LocationSearchKey: null
+                                                },
+                                                () => {
+                                                    this._clearData();
+                                                    this._resetPage();
+                                                    this._getVineyardByName(msg);
+                                                });
+                                        },
+                                        searchKey: searchKey
+                                    });
+                                this.toWait();
+                            }}>
+                            <Image source={require('../../../../img/nearby/Search.png')}
+                                   style={commonStyle.searchIcon}/>
+                            <Text
+                                style={commonStyle.searchText}>{(searchKey === null || searchKey === '') ? 'What to' : searchKey} </Text>
                             {(searchKey === null || searchKey === '') ?
-                                <Text style={{
-                                    fontSize: 14,
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    alignSelf: 'center',
-                                    fontWeight: 'bold',
-                                    color: '#fff'
-                                }}>search?</Text> : <Text/>}
+                                <Text style={commonStyle.searchText2}>search?</Text> : <Text/>}
                         </TouchableOpacity>
-                        <TouchableOpacity style={commonStyle.searchBar} underlineColorAndroid='white' onPress={() => {
-                            this.props.navigation.navigate('ExploreRangeScene'
-                                , {
-                                    callbackLocation: (address,latitude,longitude,name,radius) => {
-                                        this.setState({
-                                            BeautyList:[],
-                                            LocationSearchKey: address,
-                                            searchKey:null,
-                                            center:{
-                                                latitude:latitude,
-                                                longitude:longitude
-                                            },
-                                            radius:radius
-                                        },()=>{
-                                            this.requestData()
-                                        });
-
-                                    },
-                                    category:'Vineyard',
-                                    siteId: this.props.navigation.state.params.siteId,
-                                });
-                        }}>
-                            <Image source={require('../../../../img/nearby/locationB.png')} style={commonStyle.searchIcon}/>
-                            <Text style={{
-                                paddingLeft: 10,
-                                fontSize: 14,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                alignSelf: 'center',
-                                color: '#e5e5e5'
-                            }}>{LocationSearchKey === null ? 'Select the' : LocationSearchKey} </Text>
+                        <TouchableOpacity
+                            disabled={waiting}
+                            style={commonStyle.searchBar} underlineColorAndroid='white'
+                            onPress={() => {
+                                this.setState({waiting: true});
+                                this.props.navigation.navigate('ExploreRangeScene'
+                                    , {
+                                        callbackLocation: (address, latitude, longitude, name, radius) => {
+                                            this.setState({
+                                                BeautyList: [],
+                                                LocationSearchKey: address,
+                                                searchKey: null,
+                                                center: {
+                                                    latitude: latitude,
+                                                    longitude: longitude
+                                                },
+                                                radius: radius
+                                            }, () => {
+                                                this.requestData()
+                                            });
+                                        },
+                                        category: 'Vineyard',
+                                        siteId: this.props.navigation.state.params.siteId,
+                                    });
+                                this.toWait();
+                            }}
+                        >
+                            <Image source={require('../../../../img/nearby/locationB.png')}
+                                   style={commonStyle.searchIcon}/>
+                            <Text
+                                style={commonStyle.searchText}>{LocationSearchKey === null ? 'Select the' : LocationSearchKey} </Text>
                             {LocationSearchKey === null &&
-                            <Text style={{
-                                fontSize: 14,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                alignSelf: 'center',
-                                fontWeight: 'bold',
-                                color: '#ffffff'
-                            }}>area</Text>}
+                            <Text style={commonStyle.searchText2}>area</Text>}
                         </TouchableOpacity>
                     </View>
-                    {!this.state.onSearch?this.showNoSearchMsg():this.renderVineyardList()}
+                    {!this.state.onSearch ? this.showNoSearchMsg() : this.renderVineyardList()}
                 </LinearGradient>
             </SideMenu>
         );

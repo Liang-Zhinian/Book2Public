@@ -13,32 +13,36 @@ type Props = {
 
 export default  class BeautyCell extends PureComponent<Props> {
 
-    subString(str){
-        if (str.length*13>screen.width*0.9-80){
-            str = str.substring(0,Math.round((screen.width)/13))+'... ';
+    subString(str) {
+        if (str.length * 13 > screen.width * 0.9 - 80) {
+            str = str.substring(0, Math.round((screen.width) / 13)) + '... ';
         }
         return str;
     }
+
     onStarRatingPress(value) {
         console.log('Rated ' + value + ' stars!');
     }
-     getDistance(lat1, lng1, lat2, lng2) {
-       let dis = 0;
-       let radLat1 = toRadians(lat1);
-       let radLat2 = toRadians(lat2);
-       let deltaLat = radLat1 - radLat2;
-       let deltaLng = toRadians(lng1) - toRadians(lng2);
+
+    getDistance(lat1, lng1, lat2, lng2) {
+        let dis = 0;
+        let radLat1 = toRadians(lat1);
+        let radLat2 = toRadians(lat2);
+        let deltaLat = radLat1 - radLat2;
+        let deltaLng = toRadians(lng1) - toRadians(lng2);
         dis = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(deltaLng / 2), 2)));
         return dis * 6378137;
 
-        function toRadians(d) {  return d * Math.PI / 180;}
+        function toRadians(d) {
+            return d * Math.PI / 180;
+        }
     }
 
     render() {
-        let {info,latLng} = this.props;
+        let {info, latLng} = this.props;
         // let imageUrl = info.imageUrl.replace('w.h', '160.0')
-        let distance = this.getDistance(latLng.latitude,latLng.longitude,info.Latitude,info.Longitude);
-        distance = Math.floor(distance/1000)>0?Math.floor(distance/1000)+'KM':Math.floor(distance)+'M';
+        let distance = this.getDistance(latLng.latitude, latLng.longitude, info.Latitude, info.Longitude);
+        distance = Math.floor(distance / 1000) > 0 ? Math.floor(distance / 1000) + 'KM' : Math.floor(distance) + 'M';
         return (
             <TouchableOpacity
                 activeOpacity={0.9}
@@ -46,12 +50,12 @@ export default  class BeautyCell extends PureComponent<Props> {
                 onPress={() => this.props.onPress(info)}>
 
                 <View style={styles.rightContainer}>
-                    <Heading2 style={{paddingTop:5}}>{info.title}</Heading2>
+                    <Heading2 style={{paddingTop: 5}}>{info.title}</Heading2>
                     <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                         <Paragraph numberOfLines={0} style={{
                             marginTop: 5,
                             width: screen.width * 0.9 - 80
-                        }}>{info.subtitle!==null?this.subString(info.subtitle):'This is a fixed demo data, including telephone and comment.'} - {distance}</Paragraph>
+                        }}>{info.subtitle !== null ? this.subString(info.subtitle) : 'This is a fixed demo data, including telephone and comment.'} - {distance}</Paragraph>
 
                     </View>
                     <TouchableOpacity activeOpacity={0.8}
@@ -59,8 +63,8 @@ export default  class BeautyCell extends PureComponent<Props> {
                     >
                         <Image style={{}} source={require('../../../img/public/phone.png')}/>
                         <Text style={{marginLeft: 5, textDecorationLine: 'underline '}} onPress={() => {
-                            Linking.openURL('tel:'+info.phone!==null?info.phone:'888888888')
-                        }}>{info.phone!==null?info.phone:'852-888888888'}</Text>
+                            Linking.openURL('tel:' + info.phone !== null ? info.phone : '888888888')
+                        }}>{info.phone !== null ? info.phone : '852-888888888'}</Text>
                     </TouchableOpacity>
                     <View style={{flexDirection: 'row', marginTop: 0, marginBottom: 10}}>
                         <StarRating
@@ -71,7 +75,7 @@ export default  class BeautyCell extends PureComponent<Props> {
                             starSize={15}
                             onStarChange={(value) => this.onStarRatingPress(value)}
                         />
-                        <Text style={{paddingLeft:10,fontSize:12}}>456 reviews</Text>
+                        <Text style={{paddingLeft: 10, fontSize: 12}}>456 reviews</Text>
                     </View>
                 </View>
                 <View style={{flexDirection: 'column',}}>
@@ -92,9 +96,6 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         width:screen.width*0.95,
         alignSelf:'center',
-        // alignItems:'center',
-        // marginLeft:screen.width*0.05,
-        // marginRight:screen.width*0.05,
         marginBottom:10,
         borderBottomWidth: screen.onePixel,
         borderColor: color.border,
@@ -104,12 +105,6 @@ const styles = StyleSheet.create({
     icon: {
         width: 50,
         paddingBottom:100,
-        // height: 50,
-        // borderRadius: 5,
-        // justifyContent: 'flex-start',
-        // alignItems: 'flex-start',
-        // alignItems: 'center',
-        // alignSelf: 'flex-start',
         backgroundColor:"#9e9e9e00",
         resizeMode:'contain'
     },

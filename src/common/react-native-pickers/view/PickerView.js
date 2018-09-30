@@ -1,5 +1,4 @@
-
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 import {
     View,
@@ -56,8 +55,10 @@ class PickerView extends BaseComponent {
         this.parentTopY = this.mScreenHeight - props.itemHeight * 3 - this.getSize(15);
         this.parentBottomY = this.mScreenHeight - this.getSize(15);
     }
-    confirmData=[];
-    confirmData(confirmData){
+
+    confirmData = [];
+
+    confirmData(confirmData) {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -67,7 +68,7 @@ class PickerView extends BaseComponent {
             //         list = [''].concat(item).concat(['']);
             //     });
             // } else {
-                list = [''/*, ''*/].concat(nextProps.list).concat([''/*, ''*/]);
+            list = [''/*, ''*/].concat(nextProps.list).concat([''/*, ''*/]);
             // }
             listChange = JSON.stringify(list) != JSON.stringify(this.state.list);
             indexChange = nextProps.selectedIndex != this.state.selectedIndex;
@@ -162,7 +163,7 @@ class PickerView extends BaseComponent {
             if (isNaN(toValue)) {
             } else {
                 //onSeleted
-                Animated.timing(this.path, { toValue: toValue, duration: 200 }).start(() => {
+                Animated.timing(this.path, {toValue: toValue, duration: 200}).start(() => {
                     this.onSeleted(Math.abs(toValue / this.props.itemHeight - 1));
                 });
             }
@@ -204,14 +205,14 @@ class PickerView extends BaseComponent {
                 if (listener.value < this.maxBottom && this.pathListener) {
                     this.path.removeListener(this.pathListener);
                     this.pathListener = null;
-                    Animated.timing(this.path, { toValue: this.maxBottom }).start(() => {
+                    Animated.timing(this.path, {toValue: this.maxBottom}).start(() => {
                         //onSeleted
                         this.onSeleted(Math.abs(this.maxBottom / this.props.itemHeight - 1));
                     });
                 } else if (listener.value > this.maxTop - this.props.itemHeight && this.pathListener) {
                     this.path.removeListener(this.pathListener);
                     this.pathListener = null;
-                    Animated.timing(this.path, { toValue: this.maxTop }).start(() => {
+                    Animated.timing(this.path, {toValue: this.maxTop}).start(() => {
                         //onSeleted
                         this.onSeleted(Math.abs(this.maxTop / this.props.itemHeight - 1));
                     });
@@ -280,7 +281,9 @@ class PickerView extends BaseComponent {
                 {...this._panResponder.panHandlers}
                 style={{
                     overflow: 'hidden',
-                    width: this.props.itemWidth, height: this.props.itemHeight * 3 + this.getSize(15), backgroundColor: '#ffffff'
+                    width: this.props.itemWidth,
+                    height: this.props.itemHeight * 3 + this.getSize(15),
+                    backgroundColor: '#ffffff'
                 }}>
                 <Animated.View
                     style={{
@@ -293,8 +296,20 @@ class PickerView extends BaseComponent {
                 >
                     {this.renderList()}
                 </Animated.View>
-                <View style={{ position: 'absolute', width: this.props.itemWidth, height: this.mOnePixel, top: this.props.itemHeight * 4 / 2, backgroundColor: '#E8EEF0' }} />
-                <View style={{ position: 'absolute', width: this.props.itemWidth, height: this.mOnePixel, top: this.props.itemHeight * 6 / 2, backgroundColor: '#E8EEF0' }} />
+                <View style={{
+                    position: 'absolute',
+                    width: this.props.itemWidth,
+                    height: this.mOnePixel,
+                    top: this.props.itemHeight * 4 / 2,
+                    backgroundColor: '#E8EEF0'
+                }}/>
+                <View style={{
+                    position: 'absolute',
+                    width: this.props.itemWidth,
+                    height: this.mOnePixel,
+                    top: this.props.itemHeight * 6 / 2,
+                    backgroundColor: '#E8EEF0'
+                }}/>
                 <Svg
                     onStartShouldSetResponder={() => {
                         return false;
@@ -302,13 +317,13 @@ class PickerView extends BaseComponent {
                     onResponderStart={() => {
                         return false;
                     }}
-                    style={{ position: 'absolute', top: 0 }}
+                    style={{position: 'absolute', top: 0}}
                     height={this.props.itemHeight * 1}
                     width={this.props.itemWidth}
                 >
                     <LinearGradient id="grad" x1="0" y1={this.props.itemHeight * 1} x2={0} y2="0">
-                        <Stop offset="0" stopColor="#ffffff" stopOpacity="0.2" />
-                        <Stop offset="1" stopColor="#ffffff" stopOpacity="1" />
+                        <Stop offset="0" stopColor="#ffffff" stopOpacity="0.2"/>
+                        <Stop offset="1" stopColor="#ffffff" stopOpacity="1"/>
                     </LinearGradient>
                     <Rect
                         x="0"
@@ -327,13 +342,13 @@ class PickerView extends BaseComponent {
                     onResponderStart={() => {
                         return false;
                     }}
-                    style={{ position: 'absolute', bottom: this.getSize(15) }}
+                    style={{position: 'absolute', bottom: this.getSize(15)}}
                     height={this.props.itemHeight * 1}
                     width={this.props.itemWidth}
                 >
                     <LinearGradient id="grad" x1="0" y1={this.props.itemHeight * 1} x2={0} y2="0">
-                        <Stop offset="0" stopColor="#ffffff" stopOpacity="1" />
-                        <Stop offset="1" stopColor="#ffffff" stopOpacity="0.4" />
+                        <Stop offset="0" stopColor="#ffffff" stopOpacity="1"/>
+                        <Stop offset="1" stopColor="#ffffff" stopOpacity="0.4"/>
                     </LinearGradient>
                     <Rect
                         x="0"
@@ -344,7 +359,13 @@ class PickerView extends BaseComponent {
                         clipPath="url(#clip)"
                     />
                 </Svg>
-                <View style={{ width: this.mScreenWidth, height: this.getSize(15), bottom: 0, backgroundColor: '#ffffff', position: 'absolute' }} />
+                <View style={{
+                    width: this.mScreenWidth,
+                    height: this.getSize(15),
+                    bottom: 0,
+                    backgroundColor: '#ffffff',
+                    position: 'absolute'
+                }}/>
             </View>
 
         </View>

@@ -267,7 +267,7 @@ export default class Cube extends Component {
             transform = {
                 transform: [
                     {perspective: 850},
-                    {scale:0.75},
+                    {scale:0.70},
                     {rotateY: '90deg'},
                     {translateX: r},
                     {rotateY: '-90deg'},
@@ -286,7 +286,7 @@ export default class Cube extends Component {
             transform = {
                 transform: [
                     {perspective: 850},
-                    {scale:0.75},
+                    {scale:0.70},
                     {rotateX: '90deg'},
                     {translateY: -r},
                     {rotateX: '-90deg'},

@@ -5,33 +5,26 @@ import {
     Easing,
     ImageBackground,
     PanResponder,
-    StyleSheet,
     Switch,
     Text,
-    ScrollView,
-    Image,
     TouchableOpacity,
     Vibration,
     View,
 } from 'react-native';
 
 import {screen} from '../../common';
-import {getExploreSceneTestWINE} from '../../api';
+import {getArea, getExploreSceneTestWINE} from '../../api';
 import Cube from '../Cube/Cube';
 import CubeContentItem from "../Cube/CubeContentItem";
 import PageControl from 'react-native-page-control'
 import {commonStyle} from "../../widget/commonStyle";
-import Icon from 'react-native-vector-icons/Ionicons';
-import ActionButton from '../Common/action-button/ActionButton';
 
-import  {getArea} from '../../api'
-
-import I18n, { getLanguages } from 'react-native-i18n';
-import en from  '../../scene/demo&test/react-native-i18n_example/translations/en'
-import es from  '../../scene/demo&test/react-native-i18n_example/translations/es'
-import fr from  '../../scene/demo&test/react-native-i18n_example/translations/fr'
-import frCA from  '../../scene/demo&test/react-native-i18n_example/translations/fr-CA'
-import cn from  '../../scene/demo&test/react-native-i18n_example/translations/cn'
+import I18n, {getLanguages} from 'react-native-i18n';
+import en from '../../scene/demo&test/react-native-i18n_example/translations/en'
+import es from '../../scene/demo&test/react-native-i18n_example/translations/es'
+import fr from '../../scene/demo&test/react-native-i18n_example/translations/fr'
+import frCA from '../../scene/demo&test/react-native-i18n_example/translations/fr-CA'
+import cn from '../../scene/demo&test/react-native-i18n_example/translations/cn'
 
 
 var allPageList=[];
@@ -49,16 +42,11 @@ I18n.translations = {
 export default class DrinkCube extends React.Component {
     static navigationOptions = ({navigation}: any) => ({
         header: null,
-    })
+    });
     constructor(props: Props) {
         super(props);
 
         this.state = {
-            country:'+',
-            region:'+',
-            subregion:'+',
-            area:'+',
-            subarea:'+',
 
             countryObj:{},
             regionObj:{},
@@ -79,7 +67,7 @@ export default class DrinkCube extends React.Component {
             pageList:[],
 
             showDrinkAndBeverage:false,
-            triangleType:'Alphabetical Listing',
+            // triangleType:'Alphabetical Listing',
             falseSwitchIsOn_2: false,
         };
         this.animatedValue = new Animated.Value(0);
@@ -212,12 +200,12 @@ export default class DrinkCube extends React.Component {
         }
     });
     animate () {
-        this.animatedValue.setValue(0)
+        this.animatedValue.setValue(0);
         Animated.timing(
             this.animatedValue,
             {
                 toValue: 1,
-                duration: 2000,
+                duration: 5000,
                 easing: Easing.linear
             }
         ).start(
@@ -228,20 +216,22 @@ export default class DrinkCube extends React.Component {
         const opacity = this.animatedValue.interpolate({
             inputRange: [0, 0.5, 1],
             outputRange: [0, 1, 0]
-        })
+        });
         if (typeof allPageList!=='undefined'&&allPageList.length > 1) {
 
             return (
                 <View style={[commonStyle.tabViewStylePage, {
                     width: screen.width * 0.95,
-                    height: 30,
+                    // height: 30,
                     backgroundColor: '#e52a0000',
                     justifyContent: 'space-between',
                     position: 'absolute',
                     bottom: 10,
                 }]}
                       {...this.responder.panHandlers}>
-                    <TouchableOpacity activeOpacity={0.6} onPress={() => {
+                    <TouchableOpacity
+                        style={{paddingRight:30}}
+                        activeOpacity={0.6} onPress={() => {
                         page <= 1 ? page = 1 : page--;
                         this.refs['swiper'].flipLeftIndex(0);
                         this.setState({allPageList: allPageList[page - 1]});
@@ -254,21 +244,22 @@ export default class DrinkCube extends React.Component {
                             style={{opacity,}}
                         >
                             <ImageBackground source={require('../../img/nearby/lastPage.png')}
-                                             style={{width: 25, height: 25}}/>
+                                             style={{width: 30, height: 30}}/>
                         </Animated.View>
 
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.9}
-                                      style={{
-                                          paddingTop: 10,
-                                          paddingBottom: 10,
-                                          paddingLeft: 20,
-                                          paddingRight: 20,
-                                          width: screen.width * 0.8,
-                                      }}
-                                      onPress={() => {
-                                          this.animate()
-                                      }}>
+                    <TouchableOpacity
+                        activeOpacity={0.9}
+                        style={{
+                            // paddingTop: 10,
+                            // paddingBottom: 10,
+                            // paddingLeft: 20,
+                            // paddingRight: 20,
+                            // width: screen.width * 0.8,
+                        }}
+                        onPress={() => {
+                            this.animate()
+                        }}>
                         <PageControl
                             numberOfPages={allPageList.length}
                             currentPage={page - 1}
@@ -277,7 +268,9 @@ export default class DrinkCube extends React.Component {
                             currentPageIndicatorTintColor={'#000000'}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.6} onPress={() => {
+                    <TouchableOpacity
+                        style={{paddingLeft:30}}
+                        activeOpacity={0.6} onPress={() => {
                         page >= allPageList.length ? page = allPageList.length : page++;
                         this.refs['swiper'].flipLeftIndex(0);
                         this.setState({allPageList: allPageList[page - 1]});
@@ -290,7 +283,7 @@ export default class DrinkCube extends React.Component {
                             style={{opacity,}}
                         >
                             <ImageBackground source={require('../../img/nearby/nextPage.png')}
-                                             style={{width: 25, height: 25}}/>
+                                             style={{width: 30, height: 30}}/>
                         </Animated.View>
 
                     </TouchableOpacity>
@@ -330,6 +323,9 @@ export default class DrinkCube extends React.Component {
                 paddingRight: screen.width * 0.1,
                 justifyContent: 'center',
                 alignItems: 'center',
+                position: 'absolute',
+                top: 5,
+                zIndex:666
             }}>
                 <TouchableOpacity activeOpacity={0.9}
                                   onPress={() => {
@@ -337,7 +333,7 @@ export default class DrinkCube extends React.Component {
                                       let category = allPageList[page - 1][0].props.category;
                                       this.props.onSwipe(category, this.state.subareaObj,false);
                                       this.setState({
-                                          triangleType: LeftTitle,
+                                          // triangleType: LeftTitle,
                                           falseSwitchIsOn_2: false
                                       });
                                   }}>
@@ -352,10 +348,12 @@ export default class DrinkCube extends React.Component {
                         <Text style={{fontSize: 14, color: this.getchosedTintColor(LeftTitle),}}>{LeftTitle}</Text>
                     </View>
                 </TouchableOpacity>
-                <View style={{
+                <View
+                    style={{
                     width:screen.width*0.3,
                     justifyContent: 'center',
-                    alignItems: 'center',}}>
+                    alignItems: 'center',
+                    }}>
                     <Switch
                         disabled={true}
                         onValueChange={(value) => {
@@ -366,12 +364,12 @@ export default class DrinkCube extends React.Component {
                             this.props.onSwipe(category, this.state.subareaObj,value);
                             if (value) {
                                 this.setState({
-                                    triangleType:RightTitle
+                                    // triangleType:RightTitle
                                 });
                                 this.getchosedTintColor(RightTitle)
                             } else {
                                 this.setState({
-                                    triangleType: LeftTitle
+                                    // triangleType: LeftTitle
                                 });
                                 this.getchosedTintColor(LeftTitle)
                             }
@@ -421,118 +419,118 @@ export default class DrinkCube extends React.Component {
     }
 
 
-    actionButtonItem(type) {
-        let {countryList, regionList, subregionList, areaList, subareaList} = this.state;
-        if (type === 'country') {
-            return this.dataHandle('country',countryList)
-        } else if (type === 'region') {
-            return this.dataHandle('region',regionList)
-        } else if (type === 'subregion') {
-            return this.dataHandle('subregion',subregionList)
-        } else if (type === 'area') {
-            return this.dataHandle('area',areaList)
-        } else if (type === 'subarea') {
-            return this.dataHandle('subarea',subareaList)
-        }
-    }
+    // actionButtonItem(type) {
+    //     let {countryList, regionList, subregionList, areaList, subareaList} = this.state;
+    //     if (type === 'country') {
+    //         return this.dataHandle('country',countryList)
+    //     } else if (type === 'region') {
+    //         return this.dataHandle('region',regionList)
+    //     } else if (type === 'subregion') {
+    //         return this.dataHandle('subregion',subregionList)
+    //     } else if (type === 'area') {
+    //         return this.dataHandle('area',areaList)
+    //     } else if (type === 'subarea') {
+    //         return this.dataHandle('subarea',subareaList)
+    //     }
+    // }
 
-    dataHandle(type,data) {
-        let buttonColorT = ['#9dff71', '#ffd077', '#ff7b8f', '#7a98ff', '#ffd54b', '#3095ff', '#ff4c98', '#57ffb4', '#9ca4ff', '#ffa0b9', '#d6ff82'];
-        let regionListView = [];
-        for (let i = 0; i < data.length; i++) {
-            let roundNum = Math.round(Math.random() * 10);
-            let id = data[i].region_id,
-                name = data[i].regionname.substring(0, 2).toUpperCase();
-            regionListView.push(
-                <ActionButton.Item
-                    buttonColor={buttonColorT[roundNum]}
-                    title={data[i].regionname}
-                    nativeFeedbackRippleColor={'rgba(255,255,255,0)'}
-                    onPress={() => {
-
-                        if (type === 'country') {
-                            this.setState({
-                                countryObj:data[i],country: name,
-                                region:'+',subregion:'+',
-                                area:'+',subarea:'+',
-                                regionObj:{},subregionObj:{},
-                                areaObj:{},subareaObj:{},
-                                subregionList: [],areaList: [],
-                                subareaList: [],
-                            });
-                            this.props.onPressSubareaObj({});
-                            getArea('region', id)
-                                .then((msg) => {
-                                    this.setState({regionList: msg})
-                                });
-                        } else if (type === 'region') {
-                            this.setState({
-                                regionObj:data[i],
-                                region: name,
-                                subregion:'+',
-                                area:'+',
-                                subarea:'+',
-                                subregionObj:{},
-                                areaObj:{},
-                                subareaObj:{},
-                                areaList: [],
-                                subareaList: [],
-                            });
-                            this.props.onPressSubareaObj({});
-                            getArea('subregion', id)
-                                .then((msg) => {
-                                    this.setState({subregionList: msg})
-                                });
-                        } else if (type === 'subregion') {
-                            this.setState({
-                                subregionObj:data[i],
-                                subregion: name,
-                                area:'+',
-                                subarea:'+',
-                                areaObj:{},
-                                subareaObj:{},
-                                subareaList:[],
-                            });
-                            this.props.onPressSubareaObj({});
-                            getArea('area', id)
-                                .then((msg) => {
-                                    this.setState({areaList: msg})
-                                });
-                        } else if (type === 'area') {
-                            this.setState({
-                                areaObj:data[i],
-                                area: name,
-                                subarea:'+',
-                                subareaObj:{},
-                            });
-                            this.props.onPressSubareaObj({});
-                            getArea('subarea', id)
-                                .then((msg) => {
-                                    this.setState({subareaList: msg})
-                                });
-                        } else if (type === 'subarea') {
-                            this.props.onPressSubareaObj(data[i]);
-                            this.setState({
-                                subareaObj:data[i],
-                                subarea: name
-                            })
-                        }
-
-                    }}
-                >
-                    <Text style={{fontSize: 12, color: '#1f1f1f', fontFamily: 'arial'}}>
-                        {name}
-                    </Text>
-                </ActionButton.Item>
-            )
-        }
-
-        return regionListView;
-    }
+    // dataHandle(type,data) {
+    //     let buttonColorT = ['#9dff71', '#ffd077', '#ff7b8f', '#7a98ff', '#ffd54b', '#3095ff', '#ff4c98', '#57ffb4', '#9ca4ff', '#ffa0b9', '#d6ff82'];
+    //     let regionListView = [];
+    //     for (let i = 0; i < data.length; i++) {
+    //         let roundNum = Math.round(Math.random() * 10);
+    //         let id = data[i].region_id,
+    //             name = data[i].regionname.substring(0, 2).toUpperCase();
+    //         regionListView.push(
+    //             <ActionButton.Item
+    //                 buttonColor={buttonColorT[roundNum]}
+    //                 title={data[i].regionname}
+    //                 nativeFeedbackRippleColor={'rgba(255,255,255,0)'}
+    //                 onPress={() => {
+    //
+    //                     if (type === 'country') {
+    //                         this.setState({
+    //                             countryObj:data[i],country: name,
+    //                             region:'+',subregion:'+',
+    //                             area:'+',subarea:'+',
+    //                             regionObj:{},subregionObj:{},
+    //                             areaObj:{},subareaObj:{},
+    //                             subregionList: [],areaList: [],
+    //                             subareaList: [],
+    //                         });
+    //                         this.props.onPressSubareaObj({});
+    //                         getArea('region', id)
+    //                             .then((msg) => {
+    //                                 this.setState({regionList: msg})
+    //                             });
+    //                     } else if (type === 'region') {
+    //                         this.setState({
+    //                             regionObj:data[i],
+    //                             region: name,
+    //                             subregion:'+',
+    //                             area:'+',
+    //                             subarea:'+',
+    //                             subregionObj:{},
+    //                             areaObj:{},
+    //                             subareaObj:{},
+    //                             areaList: [],
+    //                             subareaList: [],
+    //                         });
+    //                         this.props.onPressSubareaObj({});
+    //                         getArea('subregion', id)
+    //                             .then((msg) => {
+    //                                 this.setState({subregionList: msg})
+    //                             });
+    //                     } else if (type === 'subregion') {
+    //                         this.setState({
+    //                             subregionObj:data[i],
+    //                             subregion: name,
+    //                             area:'+',
+    //                             subarea:'+',
+    //                             areaObj:{},
+    //                             subareaObj:{},
+    //                             subareaList:[],
+    //                         });
+    //                         this.props.onPressSubareaObj({});
+    //                         getArea('area', id)
+    //                             .then((msg) => {
+    //                                 this.setState({areaList: msg})
+    //                             });
+    //                     } else if (type === 'area') {
+    //                         this.setState({
+    //                             areaObj:data[i],
+    //                             area: name,
+    //                             subarea:'+',
+    //                             subareaObj:{},
+    //                         });
+    //                         this.props.onPressSubareaObj({});
+    //                         getArea('subarea', id)
+    //                             .then((msg) => {
+    //                                 this.setState({subareaList: msg})
+    //                             });
+    //                     } else if (type === 'subarea') {
+    //                         this.props.onPressSubareaObj(data[i]);
+    //                         this.setState({
+    //                             subareaObj:data[i],
+    //                             subarea: name
+    //                         })
+    //                     }
+    //
+    //                 }}
+    //             >
+    //                 <Text style={{fontSize: 12, color: '#1f1f1f', fontFamily: 'arial'}}>
+    //                     {name}
+    //                 </Text>
+    //             </ActionButton.Item>
+    //         )
+    //     }
+    //
+    //     return regionListView;
+    // }
 
     render() {
         return (
-            <View style={[commonStyle.cubeStyleDrink,]}>
+            <View style={[commonStyle.cubeStyleDrink,commonStyle.center]}>
                 {this.showDrinkAndBeverage()}
                 {/*<ActionButton*/}
                     {/*style={{zIndex: 100}}*/}
@@ -567,8 +565,6 @@ export default class DrinkCube extends React.Component {
                     {/*activeOpacity={0.6}*/}
                 {/*>*/}
                     {/*{this.actionButtonItem('region')}*/}
-
-
                 {/*</ActionButton>*/}
                 {/*<ActionButton*/}
                     {/*style={{zIndex: 100}}*/}
@@ -633,30 +629,24 @@ export default class DrinkCube extends React.Component {
                               face = 4+face;
                           }
                           let category = allPageList[page - 1][face].props.category;
-
                           this.setState({face: face,category:category});
                           this.changeBarTitle(category);
                           this.props.onSwipe( category,this.state.subareaObj,this.state.falseSwitchIsOn_2);
-
                       }}
                       addface={() => {
-
                           let face = ++this.state.face;
                           if (face > 3) {
                               this.animate();
                               face = face-4;
                           }
                           let category = allPageList[page - 1][face].props.category;
-
                           this.setState({face: face, category: category});
                           this.changeBarTitle(category);
                           this.props.onSwipe(category, this.state.subareaObj,this.state.falseSwitchIsOn_2);
-
                       }}
                 >{this.state.allPageList && this.state.allPageList}
                 </Cube>
                 {this.pageTab()}
-
             </View>
         );
     }

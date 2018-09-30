@@ -1,10 +1,9 @@
 import React, {Component} from 'react'
-import {Dimensions, ListView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
+import {Dimensions, ListView, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import {screen} from '../../common';
-import api from "../../api";
-import  md5 from  '../Common/react-native-md5'
-import {Button} from "../../widget";
-import Toast, {DURATION} from '../../../src/scene/demo&test/react-native-city/ToastUtil'
+import md5 from '../Common/react-native-md5'
+import Toast from '../../../src/scene/demo&test/react-native-city/ToastUtil'
+
 export default class LogOutScene extends Component {
 
     constructor(props: Props) {

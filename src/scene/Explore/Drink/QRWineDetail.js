@@ -207,7 +207,6 @@ export default class QRWineDetail extends PureComponent<Props, State> {
 
     renderHeader = () => {
         let info = this.props.navigation.state.params.info;
-        console.log(info);
         return (
             <View>
                 {/*<View>*/}

@@ -112,17 +112,8 @@ export default class WineDetail extends PureComponent<Props, State> {
                                     {info.title}
                                 </Text>
                             </View>
-                            {/*<View style={{}}>*/}
-                            {/*<Text style={{lineHeight: 25}}>*/}
-                            {/*{info.subtitle}*/}
-                            {/*</Text>*/}
-                            {/*<Text>*/}
-                            {/*Expires:14 days after purchase*/}
-                            {/*</Text>*/}
-                            {/*</View>*/}
                             <View style={{flexDirection: 'row', paddingTop: 10}}>
                                 <StarRating
-                                    // style={{marginBottom: 5}}
                                     maxStars={5}
                                     rating={3.5}
                                     disabled={true}

@@ -11,6 +11,7 @@ import TimeUtils from '../utils/TimeUtils';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 let m = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
+
 class DatePicker extends BaseDialog {
 
     static defaultProps = {
@@ -20,7 +21,7 @@ class DatePicker extends BaseDialog {
         onPickerCancel: null,
         onPickerConfirm: null,
         unit: ['年', '月', '日'],
-        selectedValue: [new Date().getFullYear() ,m[new Date().getMonth() + 1] , new Date().getDate() ],
+        selectedValue: [new Date().getFullYear(), m[new Date().getMonth() + 1], new Date().getDate()],
         startYear: 1990,
         endYear: new Date().getFullYear(),
 
@@ -50,7 +51,7 @@ class DatePicker extends BaseDialog {
         this.state = this.getDateList();
     }
 
-    multiSliderValue = [12,18];
+    multiSliderValue = [12, 18];
 
     getDateList() {
 
@@ -60,15 +61,14 @@ class DatePicker extends BaseDialog {
         let days = [];
 
 
-        let w = ["Sun", "Mon", "Tus", "Wed", "Thu", "Fri", "Sat" ];
+        let w = ["Sun", "Mon", "Tus", "Wed", "Thu", "Fri", "Sat"];
 
         let startYear = this.props.startYear;
         let endYear = this.props.endYear;
         for (let i = 0; i < endYear + 1 - startYear; i++) {
             // years.push(i + startYear + unit[0]);
-            years.push(i + startYear );
+            years.push(i + startYear);
         }
-
 
 
         let selectedYear = years[0];
@@ -77,19 +77,19 @@ class DatePicker extends BaseDialog {
         }
         // selectedYear = selectedYear.substr(0, selectedYear.length - unit[0].length);
         // selectedYear = selectedYear.substr(0, selectedYear.length);
-        for (let i = 1; i < 13-m.indexOf(this.props.startMonth); i++) {
+        for (let i = 1; i < 13 - m.indexOf(this.props.startMonth); i++) {
             // months.push(i+this.props.startMonth + unit[1]);
-            months.push(m[i+m.indexOf(this.props.startMonth)-1]);
+            months.push(m[i + m.indexOf(this.props.startMonth) - 1]);
         }
 
-        let selectedMonth =months[0];
+        let selectedMonth = months[0];
         if (this.props.selectedValue) {
-            selectedMonth =this.props.selectedValue[1];
+            selectedMonth = this.props.selectedValue[1];
         }
         // selectedMonth = selectedMonth.substr(0, selectedMonth.length - unit[1].length);
         // selectedMonth = selectedMonth.substr(0, selectedMonth.length);
 
-        let dayCount = TimeUtils.getDaysInOneMonth(selectedYear, m.indexOf(selectedMonth)+1);
+        let dayCount = TimeUtils.getDaysInOneMonth(selectedYear, m.indexOf(selectedMonth) + 1);
         if (m.indexOf(selectedMonth).toString() === (m.indexOf(this.props.startMonth)).toString()) {
             for (let i = 1; i <= dayCount - this.props.startDate; i++) {
                 // days.push(i + this.props.startDate + unit[2]);
@@ -121,7 +121,9 @@ class DatePicker extends BaseDialog {
             months.indexOf(selectedMonth),
             days.indexOf(selectedDay) == -1 ? days.length - 1 : days.indexOf(selectedDay)];
 
-        if (selectedIndex[2] != 0){this.props.selectedValue[2] = days[selectedIndex[2]];}
+        if (selectedIndex[2] != 0) {
+            this.props.selectedValue[2] = days[selectedIndex[2]];
+        }
 
         // if (this.state.selectedIndex!=undefined){
         //     this.props.selectedValue[1] = this.state.selectedIndex[1];
@@ -136,24 +138,23 @@ class DatePicker extends BaseDialog {
     }
 
     _getContentPosition() {
-        return { justifyContent: 'flex-end', alignItems: 'center' }
+        return {justifyContent: 'flex-end', alignItems: 'center'}
     }
 
-    setSelectedValue(value){
-        debugger;
-        for (var i=0; i<value.length; i++) {
+    setSelectedValue(value) {
+        for (var i = 0; i < value.length; i++) {
             this.props.selectedValue[i] = value[i];
         }
     }
 
-    changeState(){
-        this.setState({ ...this.getDateList() });
+    changeState() {
+        this.setState({...this.getDateList()});
     }
 
     renderPicker() {
         return this.state.pickerData.map((item, pickerId) => {
 
-            if (item&&pickerId!==0) {
+            if (item && pickerId !== 0) {
                 return <PickerView
                     key={'picker' + pickerId}
                     itemTextColor={this.props.itemTextColor}
@@ -162,19 +163,19 @@ class DatePicker extends BaseDialog {
                     onPickerSelected={(toValue) => {
                         // debugger;
                         //是否联动的实现位置
-                        Vibration.vibrate( [0, 20,0, 0]);
+                        Vibration.vibrate([0, 20, 0, 0]);
                         this.props.selectedValue[pickerId] = toValue;
 
                         // this.props.onPickerSelected(pickerId,toValue);
-                        this.setState({ ...this.getDateList() });
+                        this.setState({...this.getDateList()});
                         this.setState({
                             multiSliderValue:
                                 [this.props.SliderValue.start, this.props.SliderValue.end]
                         });
                     }}
-                    selectedIndex={this.state.selectedIndex[pickerId]*1}
+                    selectedIndex={this.state.selectedIndex[pickerId] * 1}
                     fontSize={this.getSize(14)}
-                    itemWidth={this.mScreenWidth/2 / this.state.pickerData.length}
+                    itemWidth={this.mScreenWidth / 2 / this.state.pickerData.length}
                     itemHeight={this.props.itemHeight}
                     ref={'PickerViewRef' + pickerId}
                 />
@@ -183,27 +184,28 @@ class DatePicker extends BaseDialog {
     }
 
     multiSliderValuesChange = (values) => {
-      Vibration.vibrate( [0, 10,0, 0]);
-        this.multiSliderValue=[ this.props.SliderValue.start, this.props.SliderValue.end];
+        Vibration.vibrate([0, 10, 0, 0]);
+        this.multiSliderValue = [this.props.SliderValue.start, this.props.SliderValue.end];
         this.setState({
             multiSliderValue: values,
         });
 
     };
     timeListTemp = [];
+
     timeList() {
         let timeList = [];
         var t = new Date();
         t.setHours(0);
         t.setMinutes(0);
         for (var i = 0; i < 48; i++) {
-            var tm = t.getMinutes()<10?'':':'+t.getMinutes().toString();
+            var tm = t.getMinutes() < 10 ? '' : ':' + t.getMinutes().toString();
 
-            var tt = t.getHours()<12?t.getHours().toString()+tm+'am':t.getHours()===12?t.getHours()+'pm':(t.getHours() % 12).toString()+tm+'pm';
+            var tt = t.getHours() < 12 ? t.getHours().toString() + tm + 'am' : t.getHours() === 12 ? t.getHours() + 'pm' : (t.getHours() % 12).toString() + tm + 'pm';
             timeList.push(tt);
             t.setMinutes(t.getMinutes() + 30)
         }
-        this.timeListTemp=timeList;
+        this.timeListTemp = timeList;
     }
 
     componentWillMount() {
@@ -218,33 +220,39 @@ class DatePicker extends BaseDialog {
         this.getDateList();
         return <View
             style={{
-                backgroundColor:'#fff',
+                backgroundColor: '#fff',
                 justifyContent: 'flex-end', alignItems: 'center',
                 height: this.props.itemHeight * 3 + this.getSize(15) + this.getSize(44), width: this.mScreenWidth,
             }}>
-            <View style={{ width: this.mScreenWidth, height: this.props.itemHeight * 3 + this.getSize(15), flexDirection: 'row', position: 'absolute', bottom: 0 }}>
+            <View style={{
+                width: this.mScreenWidth,
+                height: this.props.itemHeight * 3 + this.getSize(15),
+                flexDirection: 'row',
+                position: 'absolute',
+                bottom: 0
+            }}>
                 {this.renderPicker()}
-                <View style={{backgroundColor:'#fff',}}>
-                    <View style={{flexDirection:'row',justifyContent:'space-between',padding:10}}>
+                <View style={{backgroundColor: '#fff',}}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', padding: 10}}>
                         <Text style={{}}>start:{this.timeListTemp[this.state.multiSliderValue[0]]}</Text>
                         <Text style={{}}>end:{this.timeListTemp[this.state.multiSliderValue[1]]}</Text>
                     </View>
-                    <View style={{marginLeft:10,marginRight:10}}>
-                    <MultiSlider
-                        values={[this.props.SliderValue.start,this.props.SliderValue.end]}
-                        // values={[this.props.SliderValue.start,this.props.SliderValue.end]}
-                        sliderLength={this.mScreenWidth*0.63}
-                        onValuesChange={this.multiSliderValuesChange}
-                        min={0}
-                        max={47}
-                        step={1}
-                        allowOverlap
-                        snapped
-                        markerStyle={{padding:8,backgroundColor:'#095FFF',}}
-                        // pressedMarkerStyle={{padding:8,backgroundColor:'#96ff63',}}
-                        selectedStyle={{backgroundColor:'#5882ff'}}
-                        trackStyle={{marginBottom:5}}
-                    />
+                    <View style={{marginLeft: 10, marginRight: 10}}>
+                        <MultiSlider
+                            values={[this.props.SliderValue.start, this.props.SliderValue.end]}
+                            // values={[this.props.SliderValue.start,this.props.SliderValue.end]}
+                            sliderLength={this.mScreenWidth * 0.63}
+                            onValuesChange={this.multiSliderValuesChange}
+                            min={0}
+                            max={47}
+                            step={1}
+                            allowOverlap
+                            snapped
+                            markerStyle={{padding: 8, backgroundColor: '#095FFF',}}
+                            // pressedMarkerStyle={{padding:8,backgroundColor:'#96ff63',}}
+                            selectedStyle={{backgroundColor: '#5882ff'}}
+                            trackStyle={{marginBottom: 5}}
+                        />
                     </View>
                 </View>
 
@@ -258,8 +266,17 @@ class DatePicker extends BaseDialog {
                     onPress={() => {
                         this.dismiss(() => this.props.onPickerCancel && this.props.onPickerCancel(this.props.selectedValue));
                     }}
-                    style={{ width: this.getSize(60), height: this.getSize(44), justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ fontSize: this.props.cancelTextSize, fontWeight: '400', color: this.props.cancelTextColor }}>{this.props.cancelText}</Text>
+                    style={{
+                        width: this.getSize(60),
+                        height: this.getSize(44),
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                    <Text style={{
+                        fontSize: this.props.cancelTextSize,
+                        fontWeight: '400',
+                        color: this.props.cancelTextColor
+                    }}>{this.props.cancelText}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
@@ -272,8 +289,17 @@ class DatePicker extends BaseDialog {
                         }));
                         // this.refs['PickerViewRef1'].confirmData(this.state.pickerData);
                     }}
-                    style={{ width: this.getSize(60), height: this.getSize(44), justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ fontSize: this.props.confirmTextSize, fontWeight: '400', color: this.props.confirmTextColor }}>{this.props.confirmText}</Text>
+                    style={{
+                        width: this.getSize(60),
+                        height: this.getSize(44),
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                    <Text style={{
+                        fontSize: this.props.confirmTextSize,
+                        fontWeight: '400',
+                        color: this.props.confirmTextColor
+                    }}>{this.props.confirmText}</Text>
                 </TouchableOpacity>
             </View>
         </View>

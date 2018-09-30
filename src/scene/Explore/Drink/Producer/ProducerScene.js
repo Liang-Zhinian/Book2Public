@@ -42,9 +42,9 @@ export default class ProducerScene extends Component {
             letterSelect:true,
             onSearch:false,
             LocationSearchKey:null,
-            center:null
+            center:null,
+            waiting:false,
         }
-
     }
 
 
@@ -79,9 +79,7 @@ export default class ProducerScene extends Component {
             .then((msg) => {
                 this.dataLength = this.state.ProducerList.length;
                 let data = DrinkDetailDataUtils.requestProducerData(msg);
-                // console.log(data);
                 data.length>0?this.setState({NoData:false}):this.setState({NoData:true});
-                // data.pop();
                 this.setState({
                     isLoading:false,
                     ProducerList:this.state.ProducerList.concat(data),
@@ -220,22 +218,28 @@ export default class ProducerScene extends Component {
     //     return resultStr.join("");
     // }
 
-    componentDidMount(){
-
-
+    componentDidMount() {
         // BackHandler.addEventListener('hardwareBackPress',  ()=> {
         //     // this.props.navigation.goBack()
         //     return true;
         // });
     }
-
+    toWait(){
+        setTimeout(()=> {
+            this.setState({waiting: false})
+        }, 1500);//设置的时间间隔由你决定
+    }
     renderCell = (rowData: any) => {
+        let {waiting} = this.state;
         return (
             <TouchableOpacity
+                disabled={waiting}
                 activeOpacity={0.9}
                 style={styles.container2}
                 onPress={() => {
-                    this.props.navigation.navigate('ProducerDetail', {info: rowData.item})//跳到商品详情
+                    this.setState({waiting: true});
+                    this.props.navigation.navigate('ProducerDetail', {info: rowData.item});//跳到商品详情
+                    this.toWait();
                 }}
             >
                 <View style={styles.rightContainer}>
@@ -278,9 +282,6 @@ export default class ProducerScene extends Component {
                 this._getProducerByName(searchKey);
             }
         }
-        // this._getProducerByName(this.state.searchKey);
-        // this._getAllProducer()
-        // this._getWine();
     };
     nextPage=async()=>{
         ++this.page;
@@ -359,7 +360,6 @@ export default class ProducerScene extends Component {
                         renderItem={this.renderCell}
                         refreshState={this.state.refreshState}
                         onHeaderRefresh={this.requestData}//下拉刷新回调方法 refreshState参数值为RefreshState.HeaderRefreshing
-
                         onFooterRefresh={this.nextPage}//上拉翻页回调方法 refreshState参数值为RefreshState.FooterRefreshing
                         footerTextStyle={{color: '#ffffff'}}
                         footerRefreshingText={'loading...'}
@@ -373,7 +373,6 @@ export default class ProducerScene extends Component {
                         //     //     refreshState:RefreshState.EmptyData
                         //     // });
                         // }}
-
                     />
                     : (this.state.isLoading ? this.showLoading() : (this.state.NoData && this.showNoDataMsg()))
             )
@@ -404,204 +403,99 @@ export default class ProducerScene extends Component {
     //     );
     // }
     render = () => {
-        let {searchKey,LocationSearchKey} =this.state;
+        let {searchKey,LocationSearchKey,waiting} =this.state;
         return (
             <LinearGradient colors={screen.colorTemp}
                             start={{x: 0, y: 0}}
                             end={{x: 1, y: 1}}
-                            style={[commonStyle.linearGradient, {}]}>
-                <View style={[{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    alignSelf: 'center',
-                }]}>
-                    <View style={{justifyContent:'space-between',alignItems: 'center', flexDirection: 'row',width:screen.width,marginTop:5}}>
-                        <TouchableOpacity style={{
-                            zIndex: 999,
-                            paddingBottom: 10,
-                            paddingTop: 10,
-                            paddingRight: 50,
-                            paddingLeft:screen.width*0.025
-                        }} onPress={() => {
-                            this.props.navigation.goBack();//返回按钮图片
-                        }}>
+                            style={[commonStyle.linearGradient]}>
+                <View style={[commonStyle.center]}>
+                    <View style={commonStyle.Bar}>
+                        <TouchableOpacity
+                            disabled={waiting}
+                            style={commonStyle.BarLeftIcon}
+                            onPress={() => {
+                                this.setState({waiting: true});
+                                this.props.navigation.goBack();//返回按钮图片
+                                this.toWait();
+                            }}
+                        >
                             <Image source={require('../../../../img/mine/icon_homepage_left_arrow.png')}
                                    style={[commonStyle.searchIcon, {}]}/>
                         </TouchableOpacity>
                         <TouchableOpacity
+                            disabled={waiting}
                             activeOpacity={0.8}
-                            style={{
-                                alignItems: 'center',
-                                position: 'absolute',
-                                left: 0,
-                                right: 0,
-                                backgroundColor:'#0000'
-                            }}>
+                            style={commonStyle.BarTitle}>
                             <Text style={{
                                 color: '#ffffff',
                                 fontSize: 16,
                                 fontFamily: 'arial',
                             }}>Producers</Text>
                         </TouchableOpacity>
-
                     </View>
                     <TouchableOpacity
+                        disabled={waiting}
                         activeOpacity={0.9}
-                        style={[commonStyle.searchBar, {}]}
+                        style={[commonStyle.searchBar]}
                         underlineColorAndroid='white'
                         onPress={() => {
+                            this.setState({waiting: true});
                             this.props.navigation.navigate('Drink2SearchScene'
                                 , {
                                     callback: (msg) => {
-
                                         if (this.state.refreshState === RefreshState.NoMoreData) {
                                             this.page = 1
                                         }
                                         this.setState({
                                             searchKey: msg,
                                             ProducerList: [],
-                                            LocationSearchKey:null
+                                            LocationSearchKey: null
                                         });
                                         this._getProducerByName(msg);
                                     }
                                 });
+                            this.toWait();
                         }}
                     >
                         <Image source={require('../../../../img/nearby/Search.png')} style={commonStyle.searchIcon}/>
-                        <Text style={{
-                            paddingLeft: 10,
-                            fontSize: 14,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            alignSelf: 'center',
-                            color: '#e5e5e5'
-                        }}>{(searchKey === null || searchKey === '')?'What to':searchKey} </Text>
-                        {(searchKey === null || searchKey === '') ?
-                            <Text style={{
-                                fontSize: 14,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                alignSelf: 'center',
-                                fontWeight: 'bold',
-                                color: '#fff'
-                            }}>search?</Text> : <Text/>}
+                        <Text style={commonStyle.searchText}>{(searchKey === null || searchKey === '') ? 'What to' : searchKey} </Text>
+                        {(searchKey === null || searchKey === '') ?<Text style={commonStyle.searchText2}>search?</Text> : <Text/>}
                     </TouchableOpacity>
-                    <TouchableOpacity style={commonStyle.searchBar} underlineColorAndroid='white' onPress={() => {
-                        this.props.navigation.navigate('ExploreRangeScene'
-                            , {
-                                callbackLocation: (address,latitude,longitude,name,radius) => {
-                                    this.setState({
-                                        ProducerList:[],
-                                        LocationSearchKey: address,
-                                        searchKey:null,
-                                        center:{
-                                            latitude:latitude,
-                                            longitude:longitude
-                                        },
-                                        radius:radius
-                                    },()=>{
-                                        this._getProducerByGPS(latitude,longitude,radius);
-                                    });
-
-                                },
-                                category:'Producer',
-                                // siteId: this.props.navigation.state.params.siteId,
-                            }
+                    <TouchableOpacity
+                        disabled={waiting}
+                        style={commonStyle.searchBar}
+                        underlineColorAndroid='white'
+                        onPress={() => {
+                            this.setState({waiting: true});
+                            this.props.navigation.navigate('ExploreRangeScene'
+                                , {
+                                    callbackLocation: (address, latitude, longitude, name, radius) => {
+                                        this.setState({
+                                            ProducerList: [],
+                                            LocationSearchKey: address,
+                                            searchKey: null,
+                                            center: {
+                                                latitude: latitude,
+                                                longitude: longitude
+                                            },
+                                            radius: radius
+                                        }, () => {
+                                            this._getProducerByGPS(latitude, longitude, radius);
+                                        });
+                                    },
+                                    category: 'Producer',
+                                }
                             );
-                    }}>
+                            this.toWait();
+                        }}
+                    >
                         <Image source={require('../../../../img/nearby/locationB.png')} style={commonStyle.searchIcon}/>
-                        <Text style={{
-                            paddingLeft: 10,
-                            fontSize: 14,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            alignSelf: 'center',
-                            color: '#e5e5e5'
-                        }}>{LocationSearchKey === null ? 'Select the' : LocationSearchKey} </Text>
-                        {LocationSearchKey === null &&
-                        <Text style={{
-                            fontSize: 14,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            alignSelf: 'center',
-                            fontWeight: 'bold',
-                            color: '#ffffff'
-                        }}>area</Text>}
+                        <Text style={commonStyle.searchText}>{LocationSearchKey === null ? 'Select the' : LocationSearchKey} </Text>
+                        {LocationSearchKey === null && <Text style={commonStyle.searchText2}>area</Text>}
                     </TouchableOpacity>
-                    {/*<View style={styles.letters}>*/}
-                    {/*{this.state.letters.map((letter, index) => this._renderRightLetters(letter, index))}*/}
-                    {/*</View>*/}
                 </View>
-                {/*<View*/}
-                    {/*style={{*/}
-                        {/*flexDirection:'row',*/}
-                        {/*justifyContent:'space-between',*/}
-                        {/*paddingLeft:10,*/}
-                        {/*paddingRight:10,*/}
-                        {/*alignItems:'center'*/}
-                    {/*}}*/}
-                {/*>*/}
-                    {/*<View style={{}}>*/}
-                        {/*<Text style={{color: '#fff', fontSize: 14, fontFamily: 'arial'}}>*/}
-                            {/*Please scroll to left to select a letter to search...*/}
-                        {/*</Text>*/}
-                    {/*</View>*/}
-                    {/*<View>*/}
-                    {/*<TouchableOpacity*/}
-                        {/*activeOpacity={0.9}*/}
-                        {/*style={{*/}
-                            {/*justifyContent: 'flex-end',*/}
-                            {/*backgroundColor: '#ffffff00',*/}
-                            {/*borderRadius: 3,*/}
-                            {/*marginRight: 10,*/}
-                            {/*padding:3*/}
-                        {/*}}*/}
-                        {/*onPress={() => {*/}
-                            {/*this.setState({*/}
-                                {/*ProducerList: [],*/}
-                                {/*searchKey: 'What to',*/}
-                                {/*letterSelect:false,*/}
-                                {/*refreshState:RefreshState.Idle*/}
-                            {/*});*/}
-                            {/*this.requestData();*/}
-                        {/*}}*/}
-                    {/*>*/}
-                        {/*<Text style={{color: '#ffb706', fontSize: 14, fontFamily: 'arial',}}>*/}
-                            {/*Search*/}
-                        {/*</Text>*/}
-                    {/*</TouchableOpacity>*/}
-                    {/*</View>*/}
-                {/*</View>*/}
-                {/*<View style={styles.pickerContainer}>*/}
-                    {/*<HorizontalPicker*/}
-                        {/*style={styles.picker}*/}
-                        {/*itemWidth={40}*/}
-                        {/*selectedValue={this.state.picker2Value}*/}
-                        {/*foregroundColor='#7c7c7c'*/}
-                        {/*foregroundWeight={'bold'}*/}
-                        {/*onChange={i => {*/}
-                            {/*// this.refs.toast.show(i);*/}
-                            {/*this.setState({*/}
-                                {/*picker2Value: i,*/}
-                                {/*letter: i,*/}
-                                {/*refreshState: RefreshState.FooterRefreshing,*/}
-                                {/*// ProducerList: [],*/}
-                                {/*searchKey: 'What to',*/}
-                            {/*}, () => {*/}
-                                {/*// this.requestData()*/}
-                            {/*});*/}
-                        {/*}}>*/}
-                        {/*{this.state.letters.map(item =>*/}
-                            {/*<HorizontalPicker.Item key={item} label={`${item}`} value={item}/>*/}
-                        {/*)}*/}
-                    {/*</HorizontalPicker>*/}
-                {/*</View>*/}
-                {/*this.state.letterSelect
-                    ? this.showNoSelectLetter()
-                    :*/}
-                {!this.state.onSearch?this.showNoSearchMsg():this.renderProducerList()}
-                {/*<Toast ref="toast" position='center' positionValue={200} fadeInDuration={750} fadeOutDuration={1000}*/}
-                       {/*opacity={0.8}/>*/}
+                {!this.state.onSearch ? this.showNoSearchMsg() : this.renderProducerList()}
             </LinearGradient>
         )
     }

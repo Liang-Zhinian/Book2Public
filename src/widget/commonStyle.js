@@ -2,8 +2,11 @@ import {StyleSheet} from "react-native";
 import {screen} from "../common";
 
 export const commonStyle = {
-    //Explore-----------------------------------------------------
-    //4Cube---
+    center:{
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+    },
     tabViewStylePage: {
         paddingTop: 5,
         flexDirection: 'row',
@@ -18,32 +21,69 @@ export const commonStyle = {
     },
     cubeStyleDrink: {
         flex: 1,
-        flexDirection: 'column',
-        alignItems: 'center',
-
+        // flexDirection: 'column',
+        // alignItems: 'center',
     },
-    //SearchAnythingScene----
     searchIcon: {
         width: 20,
         height: 20,
-        // alignSelf: 'flex-start',
+    },
+    searchText: {
+        paddingLeft: 10,
+        fontSize: 14,
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+        color: '#e5e5e5',
+        fontFamily:'arial'
+    },
+    searchText2: {
+        fontSize: 14,
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+        fontWeight: 'bold',
+        color: '#ffffff'
     },
     searchBar: {
-
         width: screen.width *0.95,
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderBottomColor: '#ffffff50',
         flexDirection: 'row',
         backgroundColor: 'transparent',
-        // paddingLeft: 10,
         marginTop:5,
         paddingTop: 10,
         paddingBottom: 10,
     },
+    BarLeftIcon:{
+        zIndex: 999,
+        paddingBottom: 10,
+        paddingTop: 10,
+        paddingRight: 50,
+        paddingLeft: screen.width * 0.025
+    },
+    BarRightIcon:{
+        paddingBottom: 10,
+        paddingTop: 10,
+        paddingLeft: 50,
+        paddingRight: screen.width * 0.025,
+    },
+    BarTitle:{
+        alignItems: 'center',
+        position: 'absolute',
+        left: 0,
+        right: 0,
+                                backgroundColor:'#0000'
+    },
+    Bar:{
+        alignItems: 'center',
+        flexDirection: 'row',
+        width: screen.width,
+        marginTop: 5,
+        justifyContent: 'space-between'
+    },
     linearGradient: {
         paddingTop: screen.statusBarHeight,
-        // justifyContent: 'center',
-        // alignItems: 'center',
         alignSelf: 'center',
         flex: 1,
         width: screen.width,
@@ -53,7 +93,6 @@ export const commonStyle = {
         backgroundColor:'#ffffff00'
     },
 
-    //CommodityDetails----
     callbackIcon: {
         width: 20,
         height: 20,
@@ -87,7 +126,6 @@ export const commonStyle = {
         tintColor: '#5a5a5a',
     },
 
-    //ExploreScene---
     surface: {
         width: screen.width,
         height: screen.width,
@@ -127,21 +165,6 @@ export const commonStyle = {
         width: screen.width * 0.95,
         flexDirection: 'row',
     },
-    // searchIcon: {
-    //     backgroundColor: 'transparent',
-    //     width: 15,
-    //     height: 15,
-    //     alignSelf: 'flex-start',
-    // },
-    // searchBar: {
-    //     width: screen.width * 0.95,
-    //     borderBottomWidth:StyleSheet.hairlineWidth,
-    //     borderBottomColor: '#ffffff50',
-    //     flexDirection: 'row',
-    //     backgroundColor: 'transparent',
-    //     paddingTop:10,
-    //     paddingBottom:10,
-    // },
 
     containerExplore: { //有重复
         flex: 1,
@@ -152,19 +175,8 @@ export const commonStyle = {
         alignSelf: 'center',
     },
 
-    /*SearchAnythingInfoScene*/
     searchBox: {//搜索框
         width: screen.width * 0.95,
-        // height: 40,
-        // borderBottomWidth: 0.3,
-        // borderBottomColor: 'white',
         flexDirection: 'row',
-        // backgroundColor: '#7c3fff',
     },
-    //Explore-----------------------------------------------------
-
-    //Home-----------------------------------------------------
-
-
-    //Home-----------------------------------------------------
 };

@@ -9,7 +9,7 @@ import {
     Animated,
     Vibration,
     LayoutAnimation,
-    Dimensions, PanResponder,
+    Dimensions, PanResponder, AsyncStorage,
 } from 'react-native';
 import {screen} from '../../common/index'
 const width = screen.width*0.9;
@@ -39,16 +39,29 @@ export default class Slider extends React.Component {
     componentDidMount() {
         this.calculationProps()
     }
-    // shouldComponentUpdate(newProps, newState) {
-    //     return false
-    // }
-    componentWillMount () {
-        this.setState({
-            initialValue:this.props.initialValue,
-        },()=>{
-            this.calculationProps()
-        });
+    getLatLngLog(){
+        try {
+            AsyncStorage.getItem(
+                'LatLngLog',
+                (error,result)=>{
+                    if (error||result==null){
 
+                    }else{
+                        let LatLngLog=JSON.parse(result);
+                        let temp = parseFloat(LatLngLog[2])===0?0.25:parseFloat(LatLngLog[2]);
+                        this.setState({
+                            initialValue: temp,
+                        });
+                    }
+                    this.calculationProps()
+                }
+            );
+        }catch(error){
+            console.warn('获取历史经纬度失败,重新获取当前位置经纬度'+error);
+        }
+    }
+    componentWillMount () {
+        this.getLatLngLog();
     }
 
     componentWillUnmount() {

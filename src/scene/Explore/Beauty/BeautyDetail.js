@@ -55,7 +55,6 @@ export default class BeautyDetail extends PureComponent<Props, State> {
                 latitude: 39.915
             },
             mapImgUrl: ''
-
         }
     }
 
@@ -67,7 +66,6 @@ export default class BeautyDetail extends PureComponent<Props, State> {
         InteractionManager.runAfterInteractions(() => {
             this.requestData()
         })
-
     }
 
     requestData = () => {
@@ -77,7 +75,6 @@ export default class BeautyDetail extends PureComponent<Props, State> {
     requestRecommend = async () => {
         try {
             this.setState({refreshState: true});
-
             let info = this.props.navigation.state.params.info;
             let response = await fetch(recommendUrlWithId(info.id));
             let json = await response.json();
@@ -90,8 +87,6 @@ export default class BeautyDetail extends PureComponent<Props, State> {
                     // price: info.price
                 }
             });
-
-
             this.setState({
                 data: dataList,
                 refreshState: false,
@@ -101,7 +96,6 @@ export default class BeautyDetail extends PureComponent<Props, State> {
                 refreshState: true,
             })
         }
-
     };
 
     keyExtractor = (item: Object, index: number) => {
@@ -116,7 +110,7 @@ export default class BeautyDetail extends PureComponent<Props, State> {
 
 //  拷贝商家地址
     clickedCopyAddress() {
-        let info = this.props.navigation.state.params.info
+        let info = this.props.navigation.state.params.info;
         Clipboard.setString(info.title);
     }
 
@@ -161,7 +155,6 @@ export default class BeautyDetail extends PureComponent<Props, State> {
                     {(info.AdditionalLocationImages[0].ImageUri !== null && info.AdditionalLocationImages[0].ImageUri !== 'null') ?
                         <Image source={{uri: info.AdditionalLocationImages[0].ImageUri}} style={commonStyle.banner}/>
                         : <Image source={require('../../../img/public/What2Book.png')} style={commonStyle.banner}/>}
-
                     <View style={{flexDirection: 'row', paddingTop: 20, paddingBottom: 20}}>
                         <View style={{flexDirection: 'column', width: screen.width * 0.2}}>
                             <View style={{alignItems: 'center'}}>
@@ -219,7 +212,6 @@ export default class BeautyDetail extends PureComponent<Props, State> {
                         </View>
                     </View>
                     <Separator/>
-
                 </View>
                 <AMapAndroid
                     style={commonStyle.mapImageStyle}
@@ -260,9 +252,6 @@ export default class BeautyDetail extends PureComponent<Props, State> {
                         <Image style={commonStyle.arrow} source={require('../../../img/public/right_arrow.png')}/>
                     </View>
                 </TouchableOpacity>
-
-                {/*<SpacingView />*/}
-
                 <View style={commonStyle.tipHeader}>
                     <Heading3>About the Studio</Heading3>
                 </View>
@@ -277,9 +266,7 @@ export default class BeautyDetail extends PureComponent<Props, State> {
                         }}>{info.phone}</Text>
                     </View>
                 </View>
-
                 {info.firmId !== null ? this.companyView(info) : <View/>}
-
             </View>
         )
     }

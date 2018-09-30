@@ -376,7 +376,7 @@ class ExploreScene extends PureComponent<Props> {
 
     render() {
         return (
-            <LinearGradient style={[commonStyle.containerExplore,{}]} colors={colorTemp}
+            <LinearGradient style={[commonStyle.containerExplore, {justifyContent: 'space-between'}]} colors={colorTemp}
                             start={{x: 0, y: 0}}
                             end={{x: 1, y: 1}}
             >
@@ -385,78 +385,30 @@ class ExploreScene extends PureComponent<Props> {
                     alignItems: 'center',
                 }]}>
                     <TouchableOpacity
-                        style={[commonStyle.searchBar,{justifyContent: 'space-between', }]}
+                        style={[commonStyle.searchBar, {justifyContent: 'space-between',}]}
                         underlineColorAndroid='white'
                         onPress={() => {
-                        this.searchBarOnPress()
-                    }}>
-                        <View style={{flexDirection:'row',alignSelf:'flex-start'}}>
-                        <Image source={require('../../img/nearby/Search.png')} style={commonStyle.searchIcon}/>
+                            this.searchBarOnPress()
+                        }}>
+                        <View style={{flexDirection: 'row', alignSelf: 'flex-start'}}>
+                            <Image source={require('../../img/nearby/Search.png')} style={commonStyle.searchIcon}/>
                             <Text
-                                style={{
-                                    paddingLeft: 10,
-                                    fontSize: 14,
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    alignSelf: 'center',
-                                    color: '#e5e5e5',
-                                    fontFamily: 'arial'
-                                }}
+                                style={commonStyle.searchText}
                             >{this.state.searchKey} </Text>
                             {this.state.searchKey === 'What to' ? <Text
-                                style={{
-                                    fontSize: 14,
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    alignSelf: 'center',
-                                    fontWeight: 'bold',
-                                    color: '#ffffff',
-                                    fontFamily: 'arial'
-                                }}
+                                style={commonStyle.searchText2}
                             >search?</Text> : <Text/>}
                         </View>
-                        {/*<TouchableOpacity*/}
-                            {/*onPress={() => {*/}
-                                {/*this.props.navigation.navigate('PrintInteractionScreen',{type:SelectTypeTemp})//跳到扫码页面*/}
-                        {/*}}>*/}
-                            {/*<Image source={require('../../img/nearby/QR.png')}*/}
-                                   {/*style={[commonStyle.searchIcon,*/}
-                                       {/*{*/}
-                                           {/*paddingLeft: 10,*/}
-                                           {/*paddingRight: 10,*/}
-                                           {/*zIndex: 666,*/}
-                                           {/*width: 20,*/}
-                                           {/*height: 20,*/}
-                                           {/*tintColor: '#fff'*/}
-                                       {/*}]}*/}
-
-                            {/*/>*/}
-                        {/*</TouchableOpacity>*/}
                     </TouchableOpacity>
-
                     <TouchableOpacity style={commonStyle.searchBar} underlineColorAndroid='white' onPress={(mm) => {
                         this.searchBarOnPress();
                     }}>
                         <Image source={require('../../img/nearby/locationB.png')} style={commonStyle.searchIcon}/>
                         <Text
-                            style={{
-                                paddingLeft: 10,
-                                fontSize: 14,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                alignSelf: 'center',
-                                color: '#e5e5e5'
-                            }}
+                            style={commonStyle.searchText}
                         >Select the </Text>
                         <Text
-                            style={{
-                                fontSize: 14,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                alignSelf: 'center',
-                                fontWeight: 'bold',
-                                color: '#ffffff'
-                            }}
+                            style={commonStyle.searchText2}
                         >area</Text>
                     </TouchableOpacity>
                 </View>
@@ -467,7 +419,6 @@ class ExploreScene extends PureComponent<Props> {
                     {this.topNavigation('Drink', I18n.t('DRINK'))}
                 </View>
                 {this.SelectView()}
-
             </LinearGradient>
         )
     }

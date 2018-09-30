@@ -77,7 +77,7 @@ export default class VineyardDetail extends PureComponent<Props, State> {
             refreshing:false,
             title:'',
             isLoading:false,
-
+            waiting: false
         }
     }
 
@@ -157,19 +157,24 @@ export default class VineyardDetail extends PureComponent<Props, State> {
     _onPressContent = (item) => {
         // this.props.navigation.navigate('WineDetail', {item});
     };
-    _renderItem = ({item}) => {
-        //null
-        // firmId : 1
-        // id : 1
-        // imageUrl : null
-        // key : 1
-        // title : "Domaine de Cazaban Hors Serie N°1"
+    toWait(){
+        setTimeout(()=> {
+            this.setState({waiting: false})
+        }, 1500);//设置的时间间隔由你决定
+    }
 
+    _renderItem = ({item}) => {
         const itemHeight = this._getHeightForItem({item});
+        let {waiting} = this.state;
         return (
             <TouchableOpacity
                 activeOpacity={0.7}
-                onPress={() => this._onPressContent(item)}
+                disabled={waiting}
+                onPress={() => {
+                    this.setState({waiting: true});
+                    this._onPressContent(item);
+                    this.toWait();
+                }}
                 style={styles.item}>
                 <PlacehoderImage
                     source={require('../../../../img/public/What2Book.png')}
@@ -209,14 +214,17 @@ export default class VineyardDetail extends PureComponent<Props, State> {
 
     _getWineItem(){
         let info = this.props.navigation.state.params.info;
-        let {WinedList} = this.state;
+        let {WinedList,waiting} = this.state;
         let WineItem = WinedList.map((item) => {
             return <View style={{paddingTop:5,flexDirection:'row',width:screen.width*0.95,justifyContent:'space-between'}}>
                 <TouchableOpacity
+                    disabled={waiting}
                     activeOpacity={0.9}
                     style={styles.container2}
                     onPress={() => {
+                        this.setState({waiting: true});
                         this.props.navigation.navigate('WineDetail', {info :item});//跳到商品详情
+                        this.toWait();
                     }}
                 >
                     <View style={styles.rightContainer}>
@@ -248,9 +256,11 @@ export default class VineyardDetail extends PureComponent<Props, State> {
             <VineyardCell
                 info={rowData.item}
                 onPress={() => {
-                    console.log(rowData.item)
+                    this.setState({waiting: true});
+                    console.log(rowData.item);
                     // let scene = this.state.title+'Scene';
                     // this.props.navigation.navigate(scene, {info: rowData.item})//跳到商品详情
+                    this.toWait();
                 }}
             />
         )
@@ -293,7 +303,7 @@ export default class VineyardDetail extends PureComponent<Props, State> {
     renderHeader = () => {
         let info = this.props.navigation.state.params.info;
         this.setState({title:info.title});
-        let {isLoading} = this.state;
+        let {isLoading,waiting} = this.state;
         return (
             <View>
                 <View>
@@ -351,7 +361,7 @@ export default class VineyardDetail extends PureComponent<Props, State> {
                             </View>
                         </View>
                         <View style={{flexDirection: 'column', width: screen.width * 0.1}}>
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                            <TouchableOpacity   disabled={waiting} activeOpacity={0.8} onPress={() => {
                                 this.setState({
                                     loveTintColor: this.state.loveTintColor === '#696969' ? '#ff4b1a' : '#696969'
                                 })
@@ -395,7 +405,7 @@ export default class VineyardDetail extends PureComponent<Props, State> {
     };
 
     render() {
-        let {title} = this.state;
+        let {title,waiting} = this.state;
         return (
             <View style={[commonStyle.container,{backgroundColor:'#fff'}]}>
                 <View style={{
@@ -408,24 +418,32 @@ export default class VineyardDetail extends PureComponent<Props, State> {
                     width: screen.width,
                     backgroundColor: this.state.handerBgc,
                 }}>
-                    <TouchableOpacity activeOpacity={0.5} onPress={() => {
+                    <TouchableOpacity activeOpacity={0.5}   disabled={waiting} onPress={() => {
+                        this.setState({waiting: true});
                         this.props.navigation.goBack();
+                        this.toWait();
                     }}>
                         <Image source={require('../../../../img/mine/icon_homepage_left_arrow.png')}
+                               disabled={waiting}
                                style={[commonStyle.callbackIcon, {}]}
                                onPress={() => {
+                                   this.setState({waiting: true});
                                    this.props.navigation.goBack();
+                                   this.toWait();
                                }}
                         />
                     </TouchableOpacity>
                     <View style={{width:screen.width*0.8,alignItems:'center'}}>
                         <Text numberOfLines={1} style={{fontWeight: '400', fontSize: 15,fontFamily:'arial',color:'#fff'}}>{title.toUpperCase()}</Text>
                     </View>
-                    <TouchableOpacity activeOpacity={0.5} onPress={() => {
+                    <TouchableOpacity activeOpacity={0.5}   disabled={waiting} onPress={() => {
+                        this.setState({waiting: true});
                         this.props.navigation.goBack();
+                        this.toWait()
                     }}>
                         <Image source={require('../../../../img/public/share.png')}
                                style={[commonStyle.callbackIcon, {}]}
+                               disabled={waiting}
                                onPress={() => {
                                    // this.props.navigation.goBack();
                                }}

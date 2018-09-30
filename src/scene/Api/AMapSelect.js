@@ -42,7 +42,8 @@ export default class AMapSelect extends PureComponent<Props, State> {
         super(props);
         this.state = {
             center: null,
-            zoom: 18,
+            zoom:12.5,
+            radius: 5,
             locationSelect: '地图上选点'
         }
     }
@@ -66,46 +67,44 @@ export default class AMapSelect extends PureComponent<Props, State> {
         });
     }
 
-    componentWillMount() {
-        // if (Platform.OS === 'android') {
-        //     BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
-        // }
-        // this.getPosition();
+    getLatLngLog() {
         try {
             AsyncStorage.getItem(
                 'LatLngLog',
-                (error,result)=>{
-                    if (error||result==null){
-                        console.warn('取值失败')
+                (error, result) => {
+                    if (error || result == null) {
                         this.getPosition();
-                    }else{
-                        console.warn('成功'+result);
-                        let LatLngLog=JSON.parse(result);
-                        // this.regeocodeLocation(LatLngLog[1],LatLngLog[0])
+                    } else {
+                        let LatLngLog = JSON.parse(result);
                         this.setState({
                             center: {
-                                latitude:LatLngLog[0],
-                                longitude:LatLngLog[1]
-                            }
+                                latitude: parseFloat(LatLngLog[0]),
+                                longitude: parseFloat(LatLngLog[1])
+                            },
+                            radius: parseFloat(LatLngLog[2] * 5),
+                            zoom: parseFloat(LatLngLog[3])
                         });
-
                     }
                 }
             );
             AsyncStorage.getItem(
                 'LocationSearchKey',
-                (error,result)=>{
-                    if (error){
-                        // alert('取值失败:'+error);
-                    }else{
+                (error, result) => {
+                    if (error) {
+                    } else {
                         address = result;
                     }
                 }
             )
-        }catch(error){
-            console.warn('获取历史经纬度失败,重新获取当前位置经纬度'+error);
-            this.getPosition();
+        } catch (error) {
+            console.warn('获取历史经纬度失败,重新获取当前位置经纬度' + error);
         }
+    }
+    componentWillMount() {
+        // if (Platform.OS === 'android') {
+        //     BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
+        // }
+        this.getLatLngLog();
     }
 
     componentWillUnmount() {
@@ -184,12 +183,11 @@ export default class AMapSelect extends PureComponent<Props, State> {
 
 
     onLongPressEvent(){
-        let {center} = this.state;
+        let {center,radius,zoom} = this.state;
         this.props.navigation.state.params.callbackLocationOfMap(address,center.latitude,center.longitude,'');
-        AsyncStorage.setItem('LatLngLog', JSON.stringify([center.latitude, center.longitude]));
+        AsyncStorage.setItem('LatLngLog',JSON.stringify([ center.latitude,center.longitude,(radius / 5).toString(),zoom.toString()]));
     }
     loadAMap(){
-        debugger;
         return (
             <View style={styles.sliderStyle}>
                 <AMap3D
@@ -250,13 +248,13 @@ export default class AMapSelect extends PureComponent<Props, State> {
                         {/*</TouchableOpacity>*/}
                     {/*</View>*/}
                 {/*</View>*/}
-                <View style={{alignItems: 'center', flexDirection: 'row',width:screen.width,marginTop:5,justifyContent:'space-between'}}>
+                <View style={commonStyle.Bar}>
                     <TouchableOpacity style={{
                         zIndex: 999,
                         paddingBottom: 10,
                         paddingTop: 10,
                         paddingRight: 50,
-                        paddingLeft:screen.width*0.025
+                        paddingLeft: screen.width * 0.025
                     }} onPress={() => {
                         this.props.navigation.goBack();//返回按钮图片
                     }}>
@@ -264,16 +262,16 @@ export default class AMapSelect extends PureComponent<Props, State> {
                                style={[commonStyle.searchIcon, {}]}/>
                     </TouchableOpacity>
                     {/*<TouchableOpacity style={{*/}
-                        {/*alignItems: 'center',*/}
-                        {/*position: 'absolute',*/}
-                        {/*left: 0,*/}
-                        {/*right: 0,*/}
+                    {/*alignItems: 'center',*/}
+                    {/*position: 'absolute',*/}
+                    {/*left: 0,*/}
+                    {/*right: 0,*/}
                     {/*}}>*/}
-                        {/*<Text style={{*/}
-                            {/*color: '#ffffff',*/}
-                            {/*fontSize: 16,*/}
-                            {/*fontFamily: 'arial',*/}
-                        {/*}}>BUSINESSES</Text>*/}
+                    {/*<Text style={{*/}
+                    {/*color: '#ffffff',*/}
+                    {/*fontSize: 16,*/}
+                    {/*fontFamily: 'arial',*/}
+                    {/*}}>BUSINESSES</Text>*/}
                     {/*</TouchableOpacity>*/}
                     <TouchableOpacity
                         style={{
@@ -284,12 +282,12 @@ export default class AMapSelect extends PureComponent<Props, State> {
                             paddingRight: screen.width * 0.025,
                         }}
                         onPress={() => {
-                            this.props.navigation.state.params.callbackLocationOfMap(address,center.latitude,center.longitude,'');
+                            this.props.navigation.state.params.callbackLocationOfMap(address, center.latitude, center.longitude, '');
                             this.onLongPressEvent();
                             this.props.navigation.goBack();
                         }}>
                         <Image source={require('../../img/mine/ico_true.png')}
-                               style={[commonStyle.searchIcon, {tintColor:'#fff'}]}/>
+                               style={[commonStyle.searchIcon, {tintColor: '#fff'}]}/>
                     </TouchableOpacity>
                 </View>
                 <View

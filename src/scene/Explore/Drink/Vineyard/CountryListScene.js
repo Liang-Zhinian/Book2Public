@@ -222,7 +222,7 @@ export default class CountryListScene extends Component {
                             this.setState({waiting: true});
                             setTimeout(()=> {
                                 this.setState({waiting: false})
-                            }, 1000);//设置的时间间隔由你决定
+                            }, 1500);//设置的时间间隔由你决定
                         }}
                     >
                         <View style={[styles.content, this.props.style]}>
@@ -285,7 +285,7 @@ export default class CountryListScene extends Component {
                                 this.setState({waiting: true});
                                 setTimeout(()=> {
                                     this.setState({waiting: false})
-                                }, 2000);//设置的时间间隔由你决定
+                                }, 1500);//设置的时间间隔由你决定
                             }}>
                             <Image source={require('../../../../img/mine/icon_homepage_left_arrow.png')}
                                    style={[styles.callbackIcon, {}]}

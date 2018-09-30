@@ -105,9 +105,9 @@ export default class ToastUtil extends Component {
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
+        alignItems: 'center',
         left: 0,
         right: 0,
-        alignItems: 'center',
     },
     content: {
         backgroundColor: 'black',

@@ -77,7 +77,7 @@ export default class ProducerDetail extends PureComponent<Props, State> {
             refreshing:false,
             title:'',
             isLoading:false,
-
+            waiting:false,
         }
     }
 
@@ -158,18 +158,17 @@ export default class ProducerDetail extends PureComponent<Props, State> {
         // this.props.navigation.navigate('WineDetail', {item});
     };
     _renderItem = ({item}) => {
-        //null
-        // firmId : 1
-        // id : 1
-        // imageUrl : null
-        // key : 1
-        // title : "Domaine de Cazaban Hors Serie N°1"
-
         const itemHeight = this._getHeightForItem({item});
+        let {waiting} =this.state;
         return (
             <TouchableOpacity
+                disabled={waiting}
                 activeOpacity={0.7}
-                onPress={() => this._onPressContent(item)}
+                onPress={() => {
+                    this.setState({waiting:true});
+                    this._onPressContent(item);
+                    this.toWait();
+                }}
                 style={styles.item}>
                 <PlacehoderImage
                     source={require('../../../../img/public/What2Book.png')}
@@ -189,13 +188,13 @@ export default class ProducerDetail extends PureComponent<Props, State> {
 
 
     _getWine = async () => {
-        this.setState({isLoading:true});
+        this.setState({isLoading: true});
         let {title} = this.props.navigation.state.params.info;
-        await getWineByProducer(title,1,100)
+        await getWineByProducer(title, 1, 100)
             .then((msg) => {
                 this.setState({
                     refreshing: false,
-                    isLoading:false,
+                    isLoading: false,
                     WinedList: DrinkDetailDataUtils.requestWineData(msg),
                     refreshStateRe: RefreshState.NoMoreData,
                 });
@@ -205,22 +204,45 @@ export default class ProducerDetail extends PureComponent<Props, State> {
             });
     };
 
+    toWait() {
+        setTimeout(() => {
+            this.setState({waiting: false})
+        }, 1500);//设置的时间间隔由你决定
+    }
     _getWineItem(){
-        let {WinedList} = this.state;
+        let {WinedList,waiting} = this.state;
         let info = this.props.navigation.state.params.info;
         let WineItem = WinedList.map((item) => {
-            return <View style={{paddingTop:5,flexDirection:'row',width:screen.width*0.95,justifyContent:'space-between'}}>
-                <TouchableOpacity
+            return <TouchableOpacity
+                disabled={waiting}
+                activeOpacity={0.9}
+                onPress={() => {
+                    this.setState({waiting: true});
+                    this.props.navigation.navigate('WineDetail', {info: item});//跳到商品详情
+                    this.toWait();
+                }}
+                style={{
+                    paddingTop: 5,
+                    flexDirection: 'row',
+                    width: screen.width * 0.95,
+                    justifyContent: 'space-between',
+                    // backgroundColor:'#ffc5a6'
+                }}
+            >
+                <View
+                    disabled={waiting}
                     activeOpacity={0.9}
                     style={styles.container2}
-                    onPress={() => {
-                        this.props.navigation.navigate('WineDetail', {info :item});//跳到商品详情
-                    }}
+
                 >
                     <View style={styles.rightContainer}>
                         <Heading2 style={{paddingTop: 5}}>{item.title}</Heading2>
                     </View>
-                    <View style={{flexDirection: 'row', marginTop: 0, marginBottom: 10}}>
+                    <View style={{
+                        flexDirection: 'row',
+                        marginTop: 0,
+                        marginBottom: 10
+                    }}>
                         <StarRating
                             maxStars={5}
                             rating={3.5}
@@ -228,15 +250,18 @@ export default class ProducerDetail extends PureComponent<Props, State> {
                             starSize={15}
                             onStarChange={(value) => this.onStarRatingPress(value)}
                         />
-                        <Text style={{paddingLeft: 10, fontSize: 12}}>456 reviews</Text>
+                        <Text style={{
+                            paddingLeft: 10,
+                            fontSize: 12
+                        }}>456 reviews</Text>
                     </View>
-                </TouchableOpacity>
+                </View>
                 <View style={{flexDirection: 'column',}}>
                     {(info.imageUrl !== null && info.imageUrl !== 'null') ?
                         <Image source={{uri: info.imageUrl}} style={styles.icon}/>
                         : <Image source={require('../../../../img/public/WineIcon.png')} style={styles.icon}/>}
                 </View>
-            </View>
+            </TouchableOpacity>
         });
         return WineItem
     }
@@ -246,7 +271,9 @@ export default class ProducerDetail extends PureComponent<Props, State> {
             <ProducerCell
                 info={rowData.item}
                 onPress={() => {
-                    console.log(rowData.item)
+                    this.setState({waiting:true});
+                    console.log(rowData.item);
+                    this.toWait();
                     // let scene = this.state.title+'Scene';
                     // this.props.navigation.navigate(scene, {info: rowData.item})//跳到商品详情
                 }}
@@ -260,21 +287,16 @@ export default class ProducerDetail extends PureComponent<Props, State> {
             </View>
         )
     }
-    getMapView(){
+
+    getMapView() {
         let info = this.props.navigation.state.params.info;
-        console.log(info)
-      let url =   amapStaticImg();
+        let url = amapStaticImg();
         return (
             <AMapAndroid
                 style={commonStyle.mapImageStyle}
                 ref={component => this._amap = component}
                 options={{
                     centerCoordinate: {
-                        //113.23	23.16
-                        // longitude:113.23,
-                        // latitude:  23.16
-                        // longitude: 0.00005077,
-                        // latitude: 51.50329
                         longitude: parseFloat(info.Longitude),
                         latitude: parseFloat(info.Latitude)
                     },
@@ -294,9 +316,9 @@ export default class ProducerDetail extends PureComponent<Props, State> {
     renderHeader = () => {
         let info = this.props.navigation.state.params.info;
         this.setState({title:info.title});
-        let {isLoading} = this.state;
+        let {isLoading,waiting} = this.state;
         return (
-            <View>
+            <View style={commonStyle.center}>
                 <View>
                     {(info.AdditionalLocationImages !== null && info.AdditionalLocationImages !== 'null')
                         ?<Image source={{uri: info.AdditionalLocationImages}} style={commonStyle.banner}/>
@@ -352,7 +374,7 @@ export default class ProducerDetail extends PureComponent<Props, State> {
                             </View>
                         </View>
                         <View style={{flexDirection: 'column', width: screen.width * 0.1}}>
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                            <TouchableOpacity disabled={waiting} activeOpacity={0.8} onPress={() => {
                                 this.setState({
                                     loveTintColor: this.state.loveTintColor === '#696969' ? '#ff4b1a' : '#696969'
                                 })
@@ -396,7 +418,7 @@ export default class ProducerDetail extends PureComponent<Props, State> {
     };
 
     render() {
-        let {title} = this.state;
+        let {title,waiting} = this.state;
         return (
             <View style={[commonStyle.container,{backgroundColor:'#fff'}]}>
                 <View style={{
@@ -409,26 +431,34 @@ export default class ProducerDetail extends PureComponent<Props, State> {
                     width: screen.width,
                     backgroundColor: this.state.handerBgc,
                 }}>
-                    <TouchableOpacity activeOpacity={0.5} onPress={() => {
+                    <TouchableOpacity disabled={waiting} activeOpacity={0.5} onPress={() => {
+                        this.setState({waiting:true});
                         this.props.navigation.goBack();
+                        this.toWait();
                     }}>
                         <Image source={require('../../../../img/mine/icon_homepage_left_arrow.png')}
                                style={[commonStyle.callbackIcon, {}]}
                                onPress={() => {
+                                   this.setState({waiting:true});
                                    this.props.navigation.goBack();
+                                   this.toWait();
                                }}
                         />
                     </TouchableOpacity>
                     <View style={{width:screen.width*0.8,alignItems:'center'}}>
                         <Text numberOfLines={1} style={{fontWeight: '400', fontSize: 15,fontFamily:'arial',color:'#fff'}}>{title.toUpperCase()}</Text>
                     </View>
-                    <TouchableOpacity activeOpacity={0.5} onPress={() => {
+                    <TouchableOpacity  disabled={waiting} activeOpacity={0.5} onPress={() => {
+                        this.setState({waiting:true});
                         this.props.navigation.goBack();
+                        this.toWait();
                     }}>
                         <Image source={require('../../../../img/public/share.png')}
                                style={[commonStyle.callbackIcon, {}]}
                                onPress={() => {
+                                   this.setState({waiting:true});
                                    // this.props.navigation.goBack();
+                                   this.toWait();
                                }}
                         />
                     </TouchableOpacity>
@@ -498,7 +528,7 @@ const styles = StyleSheet.create({
         marginBottom:10,
         borderBottomWidth: screen.onePixel,
         borderColor: color.border,
-        backgroundColor: 'white',
+        backgroundColor: '#fff',
         borderRadius:3,
     },
     rightContainer: {

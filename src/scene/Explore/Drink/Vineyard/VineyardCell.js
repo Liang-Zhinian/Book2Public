@@ -4,6 +4,7 @@ import {Heading2} from '../../../../widget/Text'
 import {screen} from '../../../../common'
 import {color} from '../../../../widget'
 import StarRating from "../../../Common/StarRating";
+import {RefreshState} from "react-native-refresh-list-view";
 
 let count = 0
 
@@ -14,7 +15,12 @@ type Props = {
 
 
 class VineyardCell extends PureComponent<Props> {
-
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            waiting: false
+        }
+    }
     subString(str){
         if (str.length*13>screen.width*0.9-80){
             str = str.substring(0,Math.round((screen.width)/13))+'... ';
@@ -24,6 +30,11 @@ class VineyardCell extends PureComponent<Props> {
     onStarRatingPress(value) {
         console.log('Rated ' + value + ' stars!');
     }
+    toWait(){
+        setTimeout(()=> {
+            this.setState({waiting: false})
+        }, 1500);//设置的时间间隔由你决定
+    }
     render() {
         let {info} = this.props;
         // let imageUrl = info.imageUrl.replace('w.h', '160.0')
@@ -31,31 +42,15 @@ class VineyardCell extends PureComponent<Props> {
                 <TouchableOpacity
                     activeOpacity={0.9}
                     style={styles.container}
-                    onPress={() => this.props.onPress(info)}>
-                    {/*<ImageBackground*/}
-                        {/*source={require('../../../../img/public/Vineyard.png')}*/}
-                        {/*style={styles.container}*/}
-                    {/*>*/}
+                    onPress={() =>{
+                        this.setState({waiting: true});
+                        this.props.onPress(info);
+                        this.toWait();
+                    }}>
                     <View style={styles.rightContainer}>
                         <Heading2 style={{paddingTop: 5}}>{info.title}</Heading2>
-                        {/*<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>*/}
-                        {/*<Paragraph numberOfLines={0} style={{*/}
-                        {/*marginTop: 5,*/}
-                        {/*width: screen.width * 0.9 - 80*/}
-                        {/*}}>{info.subtitle!==null?this.subString(info.subtitle):'This is a fixed demo data, including telephone and comment.'} - 7.2KM</Paragraph>*/}
-
-                        {/*</View>*/}
-                        {/*<TouchableOpacity activeOpacity={0.8}*/}
-                        {/*style={{flexDirection: 'row', marginTop: 10, marginBottom: 10}}*/}
-                        {/*>*/}
-                        {/*<Image style={{}} source={require('../../img/public/phone.png')}/>*/}
-                        {/*<Text style={{marginLeft: 5, textDecorationLine: 'underline '}} onPress={() => {*/}
-                        {/*Linking.openURL('tel:'+info.phone!==null?info.phone:'020-888888888')*/}
-                        {/*}}>{info.phone!==null?info.phone:'020-888888888'}</Text>*/}
-                        {/*</TouchableOpacity>*/}
                         <View style={{flexDirection: 'row', marginTop: 0, marginBottom: 10}}>
                             <StarRating
-                                // style={{marginBottom: 5}}
                                 maxStars={5}
                                 rating={3.5}
                                 disabled={true}
@@ -70,7 +65,6 @@ class VineyardCell extends PureComponent<Props> {
                             <Image source={{uri: info.imageUrl}} style={styles.icon}/>
                             : <Image source={require('../../../../img/public/VineyardIcon.png')} style={styles.icon}/>}
                     </View>
-                    {/*</ImageBackground>*/}
                 </TouchableOpacity>
         )
     }
@@ -105,7 +99,7 @@ const styles = StyleSheet.create({
     price: {
         color: color.primary
     }
-})
+});
 
 
 export default VineyardCell

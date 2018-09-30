@@ -73,10 +73,12 @@ export default class Drink2SearchScene extends Component<Props, State> {
             picker2Value: 'A',
             defaultValue:null,
             defaultLocationValue:null,
+            placeholderLocationValue:'My Location - 0.25km',
             onScrollChange:false,
             showLetter:true,
             showLocation:false,
             LatLng:{},
+            zoom:12.5,
             SearchBoxKeyValueBGC:'#ffffff50',
             SearchBoxLocationBGC:'#ffffff20'
         }
@@ -93,28 +95,39 @@ export default class Drink2SearchScene extends Component<Props, State> {
         return re.test(str);
     }
     saveAndGoBack(v){
-        if (v===null||this.isNull(v)===true){
-            // this.props.navigation.state.params.callback('');
-
-        }else {
-            this.props.navigation.state.params.callback(v);
-            SearchTemp.push(v);
-            AsyncStorage.setItem('searchLogs',JSON.stringify(SearchTemp));
+        let {defaultValue, sliderValue, LatLng, defaultLocationValue,zoom} = this.state;
+        AsyncStorage.setItem('defaultSliderValue', (this.state.sliderValue / 5).toString());
+        AsyncStorage.setItem('LocationSearchKey', defaultLocationValue);
+        if (LatLng===null){
+            LatLng = {
+                longitude: 116.404,
+                latitude: 39.915
+            }
+        }else{
+            AsyncStorage.setItem('LatLngLog',JSON.stringify([ LatLng.latitude,LatLng.longitude,(this.state.sliderValue / 5).toString(),zoom.toString()]));
         }
+        // AsyncStorage.setItem('LatLngLog',JSON.stringify([ LatLng.latitude,LatLng.longitude,(this.state.sliderValue / 5).toString(),zoom.toString()]));
+        //keyWork  radius LatLng
+        this.props.navigation.state.params.callback(defaultValue, sliderValue, LatLng);
+        SearchTemp.push(defaultValue);
+        AsyncStorage.setItem('searchLogs', JSON.stringify(SearchTemp));
+        SearchLocationTemp.push(defaultLocationValue);
+        AsyncStorage.setItem('searchLocationLogs', JSON.stringify(SearchLocationTemp));
+        // }
         this.props.navigation.goBack();
 
     }
-    saveAndGoBackB(v){
-        AsyncStorage.setItem('defaultSliderValue',(this.state.sliderValue / 5).toString());
-        if (v===null||this.isNull(v)===true){
-            this.props.navigation.state.params.callback('');
-        }else {
-            this.props.navigation.state.params.callback(v);
-            SearchLocationTemp.push(v);
-            AsyncStorage.setItem('searchLocationLogs', JSON.stringify(SearchLocationTemp));
-        }
-        this.props.navigation.goBack();
-    }
+    // saveAndGoBackB(v){
+    //     AsyncStorage.setItem('defaultSliderValue',(this.state.sliderValue / 5).toString());
+    //     if (v===null||this.isNull(v)===true){
+    //         this.props.navigation.state.params.callback('');
+    //     }else {
+    //         this.props.navigation.state.params.callback(v);
+    //         SearchLocationTemp.push(v);
+    //         AsyncStorage.setItem('searchLocationLogs', JSON.stringify(SearchLocationTemp));
+    //     }
+    //     this.props.navigation.goBack();
+    // }
 
     getSearchLogs(){
         try {
@@ -135,31 +148,33 @@ export default class Drink2SearchScene extends Component<Props, State> {
             console.warn('获取历史数据失败'+error);
         }
     }
-    getDefaultSliderValue(){
-        try {
-            AsyncStorage.getItem(
-                'defaultSliderValue',
-                (error,result)=>{
-                    if (error){
-                        // alert('取值失败:'+error);
-                        // console.log(error);
-                    }else{
-                        if (result === null) {
-                            result = 0;
-                            AsyncStorage.setItem('defaultSliderValue', result.toString(),);
-                        }
-                        this.setState({
-                            defaultSliderValue: parseFloat(result),
-                            sliderValue:parseFloat(result)*5
-                        });
-
-                    }
-                }
-            )
-        }catch(error){
-            console.warn('获取历史数据失败'+error);
-        }
-    }
+    // getDefaultSliderValue(){
+    //     try {
+    //         AsyncStorage.getItem(
+    //             'defaultSliderValue',
+    //             (error,result)=>{
+    //                 if (error){
+    //                     // alert('取值失败:'+error);
+    //                     // console.log(error);
+    //                 }else{
+    //                     if (result === null) {
+    //                         result = 0;
+    //                         AsyncStorage.setItem('defaultSliderValue', result.toString(),);
+    //                     }
+    //                     let temp = parseFloat(result)===0?0.25:parseFloat(result);
+    //                     this.setState({
+    //                         defaultSliderValue: temp,
+    //                         sliderValue:temp*5,
+    //                         placeholderLocationValue:'My Location - '+temp*5+'km',
+    //                     });
+    //
+    //                 }
+    //             }
+    //         )
+    //     }catch(error){
+    //         console.warn('获取历史数据失败'+error);
+    //     }
+    // }
     getSearchLocationLogs(){
         try {
             AsyncStorage.getItem(
@@ -179,10 +194,49 @@ export default class Drink2SearchScene extends Component<Props, State> {
             console.warn('获取历史数据失败'+error);
         }
     }
+    getLatLngLog(){
+        try {
+            AsyncStorage.getItem(
+                'LocationSearchKey',
+                (error,result)=>{
+                    if (error){
+                        // alert('取值失败:'+error);
+                    }else{
+                        address = result;
+                        this.setState({defaultLocationValue: result});
+                    }
+                }
+            );
+            AsyncStorage.getItem(
+                'LatLngLog',
+                (error,result)=>{
+                    if (error||result==null){
+                        this.getPosition();
+                    }else{
+                        let LatLngLog=JSON.parse(result);
+                        let temp = parseFloat(LatLngLog[2])===0?0.25:parseFloat(LatLngLog[2]);
+                        this.setState({
+                            LatLng: {
+                                latitude:LatLngLog[0],
+                                longitude:LatLngLog[1]
+                            },
+                            defaultSliderValue: temp,
+                            sliderValue:temp*5,
+                            placeholderLocationValue:'My Location - '+temp*5+'km',
+                            zoom:parseFloat(LatLngLog[3])
+                        });
+                    }
+                }
+            );
+        }catch(error){
+            console.warn('获取历史经纬度失败,重新获取当前位置经纬度'+error);
+        }
+    }
     componentWillMount () {
         this.getSearchLogs();
         this.getSearchLocationLogs();
-        this.getDefaultSliderValue();
+        // this.getDefaultSliderValue();
+        this.getLatLngLog();
 
     }
      componentDidMount() {
@@ -215,7 +269,8 @@ export default class Drink2SearchScene extends Component<Props, State> {
                             longitude: longitude
                         }
                     });
-                    AsyncStorage.setItem('LatLngLog',JSON.stringify([latitude,longitude]));
+                    let { zoom,sliderValue} = this.state;
+                    AsyncStorage.setItem('LatLngLog',JSON.stringify([ latitude,longitude,(sliderValue / 5).toString(),zoom.toString()]));
                 })
                 .catch((error) => {
                 });
@@ -294,7 +349,6 @@ export default class Drink2SearchScene extends Component<Props, State> {
         return result;
     }
 
-
     //点击搜索历史cell
     logsClicked(item){
         this.setState({
@@ -303,10 +357,10 @@ export default class Drink2SearchScene extends Component<Props, State> {
         });
         // this.refs['HorizontalPicker']._onScrollChange(item.substring(0,1).toUpperCase())
     }
-    logsLocationClicked(item){
+    logsLocationClicked(){
         this.setState({
             // picker2Value:item.substring(0,1).toUpperCase(),
-            defaultLocationValue:item,
+            placeholderLocationValue:this.state.placeholderLocationValue,
         });
         // this.refs['HorizontalPicker']._onScrollChange(item.substring(0,1).toUpperCase())
     }
@@ -521,8 +575,12 @@ export default class Drink2SearchScene extends Component<Props, State> {
                         backgroundColor={'#fff0'}
                         initialValue={this.state.defaultSliderValue}
                         onSelect={(e) => {
-                            e === 0 ? e = 0.25 : e;
-                            this.setState({sliderValue:e!==0.25?e*5:0.25,});
+                            e = e === 0 ?  0.25 : e*5;
+                            this.setState({
+                                sliderValue:e,
+                                placeholderLocationValue:'My Location - '+e+'km',
+                                defaultSliderValue:e/5
+                            });
                             // li.map((info,i)=>{
                             //
                             //     if ((e!==0.25?e*5:0.25)===info) this.setState({zoom:u[i]})
@@ -571,16 +629,19 @@ export default class Drink2SearchScene extends Component<Props, State> {
             </View>
         )
     }
-showLocationList(){
-        return(
-            <View style={{ width: screen.width * 0.95,
+
+    showLocationList() {
+        return (
+            <View style={{
+                width: screen.width * 0.95,
                 alignSelf: 'center',
-                alignItems: 'center',}}>
+                alignItems: 'center',
+            }}>
                 <View
                     style={{
                         flexDirection: 'row',
                         justifyContent: 'space-between',
-                        backgroundColor:'#fff2',
+                        backgroundColor: '#fff2',
                         paddingLeft: 5,
                         paddingRight: 5,
                         // borderColor: '#fff8',
@@ -593,18 +654,18 @@ showLocationList(){
                             flex: 1,
                             paddingTop: 10,
                             paddingBottom: 10,
-                            flexDirection:'row',
+                            flexDirection: 'row',
                             // alignSelf:'center',
                             // justifyContent: 'center',
                             alignItems: 'center',
                         }}
                         onPress={() => {
-                            this.logsLocationClicked('My Location');
+                            this.logsLocationClicked();
                             this.getPosition();
                         }}
                         key={'My-Location'}
                     >
-                        <View style={{paddingRight:5}}>
+                        <View style={{paddingRight: 5}}>
                             <Image source={require('../../../img/nearby/locationB.png')}
                                    style={[commonStyle.searchIcon, {}]}/>
                         </View>
@@ -614,14 +675,14 @@ showLocationList(){
                     </TouchableOpacity>
                 </View>
                 {/*<View style={{alignSelf:'flex-start',paddingTop:5}}>*/}
-                    {/*<Text style={{color: '#fff', fontSize: 15, fontFamily: 'arial',}}>*/}
-                        {/*RECENT*/}
-                    {/*</Text>*/}
+                {/*<Text style={{color: '#fff', fontSize: 15, fontFamily: 'arial',}}>*/}
+                {/*RECENT*/}
+                {/*</Text>*/}
                 {/*</View>*/}
 
             </View>
         )
-}
+    }
 
     render() {
         if (this.state.isLoading)
@@ -689,11 +750,12 @@ showLocationList(){
                             style={{
                                 backgroundColor: 'transparent'}}
                             onPress={() => {
-                                if (showLetter){
-                                    this.saveAndGoBack(this.state.defaultValue);
-                                } else {
-                                    this.saveAndGoBackB(this.state.defaultLocationValue)
-                                }
+                                this.saveAndGoBack();
+                                // if (showLetter){
+                                //     this.saveAndGoBack(this.state.defaultValue);
+                                // } else {
+                                //     this.saveAndGoBack(this.state.defaultLocationValue)
+                                // }
                             }}
                         >
                             <Text style={{color: '#ffcc0a', fontSize: 14, fontFamily: 'arial',}}>
@@ -730,7 +792,7 @@ showLocationList(){
                     img={'location'}
                     backgroundColor={this.state.SearchBoxLocationBGC}
                     defaultValue={this.state.defaultLocationValue}
-                    placeholder={'Address...'}
+                    placeholder={this.state.placeholderLocationValue}
                     onChangeText={(text) => {
                         this.onChangeSearchLocationBoxText(text)
                     }}

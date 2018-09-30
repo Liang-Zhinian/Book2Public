@@ -64,55 +64,64 @@ export default class Beauty2SearchScene extends Component<Props, State> {
             searchList: null,
             sliderValue:0,
             defaultSliderValue:0,
-            // searchKey:null,
             SearchLogs:[],
             SearchLocationLogs:[],
             letter:'A',
             picker2Value: 'A',
             defaultValue:null,
             defaultLocationValue:null,
+            placeholderLocationValue:'My Location - 0.25km',
             onScrollChange:false,
             showLetter:true,
             showLocation:false,
-            LatLng:{},
+            LatLng:null,
             SearchBoxKeyValueBGC:'#ffffff50',
-            SearchBoxLocationBGC:'#ffffff20'
+            SearchBoxLocationBGC:'#ffffff20',
+            zoom:12.5,
         }
     }
 
-    // _keyboardDidHide () {//键盘输入完毕后传值回去上一个页面
-    //     // this.saveAndGoBack(this.state.searchKey)
-    // }
     //判断输入字符串是否为空或者全部都是空格
     isNull( str ){
-        if ( str == "" ) return true;
-        var regu = "^[ ]+$";
-        var re = new RegExp(regu);
+        if ( str === "" ) return true;
+        let regu = "^[ ]+$";
+        let re = new RegExp(regu);
         return re.test(str);
     }
-    saveAndGoBack(v){
-        if (v===null||this.isNull(v)===true){
-            // this.props.navigation.state.params.callback('');
-
-        }else {
-            this.props.navigation.state.params.callback(v);
-            SearchTemp.push(v);
-            AsyncStorage.setItem('searchLogs',JSON.stringify(SearchTemp));
+    saveAndGoBack(){
+        let {defaultValue, sliderValue, LatLng, defaultLocationValue,zoom} = this.state;
+        AsyncStorage.setItem('defaultSliderValue', (this.state.sliderValue / 5).toString());
+        AsyncStorage.setItem('LocationSearchKey', defaultLocationValue);
+        if (LatLng===null){
+            LatLng = {
+                longitude: 116.404,
+                latitude: 39.915
+            }
+        }else{
+            AsyncStorage.setItem('LatLngLog',JSON.stringify([ LatLng.latitude,LatLng.longitude,(this.state.sliderValue / 5).toString(),zoom.toString()]));
         }
+       //keyWork  radius LatLng
+        this.props.navigation.state.params.callback(defaultValue, sliderValue, LatLng);
+        SearchTemp.push(defaultValue);
+        AsyncStorage.setItem('searchLogs', JSON.stringify(SearchTemp));
+        SearchLocationTemp.push(defaultLocationValue);
+        AsyncStorage.setItem('searchLocationLogs', JSON.stringify(SearchLocationTemp));
+        // }
         this.props.navigation.goBack();
 
     }
-    saveAndGoBackB(v){
-        AsyncStorage.setItem('defaultSliderValue',(this.state.sliderValue / 5).toString());
-        if (v===null||this.isNull(v)===true){
-            this.props.navigation.state.params.callback(null);
-        }else {
-            this.props.navigation.state.params.callback(v);
-            SearchLocationTemp.push(v);
-            AsyncStorage.setItem('searchLocationLogs', JSON.stringify(SearchLocationTemp));
-        }
-        this.props.navigation.goBack();
-    }
+    // saveAndGoBackB(){
+    //     let {defaultLocationValue} = this.state;
+    //     AsyncStorage.setItem('defaultSliderValue',(this.state.sliderValue / 5).toString());
+    //     if (defaultLocationValue===null||this.isNull(defaultLocationValue)===true){
+    //         this.props.navigation.state.params.callback(null);
+    //     }else {
+    //         this.props.navigation.state.params.callback(defaultLocationValue);
+    //         SearchLocationTemp.push(defaultLocationValue);
+    //         AsyncStorage.setItem('searchLocationLogs', JSON.stringify(SearchLocationTemp));
+    //     }
+    //     this.props.navigation.goBack();
+    // }
 
     getSearchLogs(){
         try {
@@ -120,12 +129,9 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                 'searchLogs',
                 (error,result)=>{
                     if (error){
-                        // alert('取值失败:'+error);
                     }else{
                         SearchTemp=JSON.parse(result);
                         this.setState({SearchLogs: this.unique(SearchTemp), isLoading: false});
-                        // alert('取值成功:'+JSON.parse(result));  .reverse()
-                        // console.log(SearchTemp)
                     }
                 }
             )
@@ -133,43 +139,42 @@ export default class Beauty2SearchScene extends Component<Props, State> {
             console.warn('获取历史数据失败'+error);
         }
     }
-    getDefaultSliderValue(){
-        try {
-            AsyncStorage.getItem(
-                'defaultSliderValue',
-                (error,result)=>{
-                    if (error){
-                        // alert('取值失败:'+error);
-                        // console.log(error);
-                    }else{
-                        if (result === null) {
-                            result = 0;
-                            AsyncStorage.setItem('defaultSliderValue', result.toString(),);
-                        }
-                        this.setState({
-                            defaultSliderValue: parseFloat(result),
-                            sliderValue:parseFloat(result)*5
-                        });
-
-                    }
-                }
-            )
-        }catch(error){
-            console.warn('获取历史数据失败'+error);
-        }
-    }
+    // getDefaultSliderValue(){
+    //     try {
+    //         AsyncStorage.getItem(
+    //             'defaultSliderValue',
+    //             (error,result)=>{
+    //                 if (error){
+    //                     // alert('取值失败:'+error);
+    //                     // console.log(error);
+    //                 }else{
+    //                     if (result === null) {
+    //                         result = 0;
+    //                         AsyncStorage.setItem('defaultSliderValue', result.toString());
+    //                     }
+    //                     let temp = parseFloat(result)===0?0.25:parseFloat(result);
+    //                     this.setState({
+    //                         defaultSliderValue: temp,
+    //                         sliderValue:temp*5,
+    //                         placeholderLocationValue:'My Location - '+temp*5+'km',
+    //                     });
+    //
+    //                 }
+    //             }
+    //         )
+    //     }catch(error){
+    //         console.warn('获取历史数据失败'+error);
+    //     }
+    // }
     getSearchLocationLogs(){
         try {
             AsyncStorage.getItem(
                 'searchLocationLogs',
                 (error,result)=>{
                     if (error){
-                        // alert('取值失败:'+error);
                     }else{
                         SearchLocationTemp=JSON.parse(result);
                         this.setState({SearchLocationLogs: this.unique(SearchLocationTemp), isLoading: false});
-                        // alert('取值成功:'+JSON.parse(result));  .reverse()
-                        // console.log('取值成功',SearchLocationTemp)
                     }
                 }
             )
@@ -177,26 +182,53 @@ export default class Beauty2SearchScene extends Component<Props, State> {
             console.warn('获取历史数据失败'+error);
         }
     }
-    componentWillMount () {
-        this.getSearchLogs();
-        this.getSearchLocationLogs();
-        this.getDefaultSliderValue();
-
+    getLatLngLog(){
+        try {
+            AsyncStorage.getItem(
+                'LocationSearchKey',
+                (error,result)=>{
+                    if (error){
+                        // alert('取值失败:'+error);
+                    }else{
+                        address = result;
+                        this.setState({defaultLocationValue: result});
+                    }
+                }
+            );
+            AsyncStorage.getItem(
+                'LatLngLog',
+                (error,result)=>{
+                    if (error||result==null){
+                        this.getPosition();
+                    }else{
+                        let LatLngLog=JSON.parse(result);
+                        let temp = parseFloat(LatLngLog[2])===0?0.25:parseFloat(LatLngLog[2]);
+                        this.setState({
+                            LatLng: {
+                                latitude:LatLngLog[0],
+                                longitude:LatLngLog[1]
+                            },
+                            defaultSliderValue: temp,
+                            sliderValue:temp*5,
+                            placeholderLocationValue:'My Location - '+temp*5+'km',
+                            zoom:parseFloat(LatLngLog[3])
+                        });
+                    }
+                }
+            );
+        }catch(error){
+            console.warn('获取历史经纬度失败,重新获取当前位置经纬度'+error);
+        }
     }
+
     componentDidMount() {
         this.setState({isLoading: true});
-        // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
-        //  this.getSearchLogs();
-        //  this.getSearchLocationLogs();
-        //  this.getDefaultSliderValue();
-
-
-        // debugger;
-        //     t.then((v) => {
-        //     console.log(v);
-        //     // this.setState({SearchLogs: v, isLoading: false});
-        //     })
-        //.catch(error=>console.log('error=>>', error))
+    }
+    componentWillMount() {
+        this.getSearchLogs();
+        this.getSearchLocationLogs();
+        // this.getDefaultSliderValue();
+        this.getLatLngLog();
     }
     /** 获取地理位置（经纬度） */
     getPosition = (): void => {
@@ -213,16 +245,23 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                             longitude: longitude
                         }
                     });
-                    AsyncStorage.setItem('LatLngLog',JSON.stringify([latitude,longitude]));
+                    let { zoom,sliderValue} = this.state;
+                    AsyncStorage.setItem('LatLngLog',JSON.stringify([ latitude,longitude,(sliderValue / 5).toString(),zoom.toString()]));
                 })
                 .catch((error) => {
                 });
         }, error => {
             this.interval = setInterval(() => {
                     this.getPosition();
-                },
-                1000
-            );
+                },1000);
+            setTimeout(()=>{
+                this.setState({
+                    LatLng: {
+                        longitude: 116.404,
+                        latitude: 39.915
+                    }
+                })
+            },2000);
         });
         clearInterval(this.interval);
     };
@@ -301,12 +340,10 @@ export default class Beauty2SearchScene extends Component<Props, State> {
         });
         // this.refs['HorizontalPicker']._onScrollChange(item.substring(0,1).toUpperCase())
     }
-    logsLocationClicked(item){
+    logsLocationClicked(){
         this.setState({
-            // picker2Value:item.substring(0,1).toUpperCase(),
-            defaultLocationValue:item,
+            placeholderLocationValue:this.state.placeholderLocationValue,
         });
-        // this.refs['HorizontalPicker']._onScrollChange(item.substring(0,1).toUpperCase())
     }
     //列表的每一行
     renderItemView({item,index}){
@@ -480,8 +517,13 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                         backgroundColor={'#fff0'}
                         initialValue={this.state.defaultSliderValue}
                         onSelect={(e) => {
-                            e === 0 ? e = 0.25 : e;
-                            this.setState({sliderValue:e!==0.25?e*5:0.25,});
+                          e = e === 0 ?  0.25 : e*5;
+                            this.setState({
+                                sliderValue:e,
+                                placeholderLocationValue:'My Location - '+e+'km',
+                                defaultSliderValue:e/5
+                            });
+                            // AsyncStorage.setItem('defaultSliderValue',(this.state.sliderValue / 5).toString());
                             // li.map((info,i)=>{
                             //
                             //     if ((e!==0.25?e*5:0.25)===info) this.setState({zoom:u[i]})
@@ -558,7 +600,7 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                             alignItems: 'center',
                         }}
                         onPress={() => {
-                            this.logsLocationClicked('My Location');
+                            this.logsLocationClicked();
                             this.getPosition();
                         }}
                         key={'My-Location'}
@@ -583,10 +625,6 @@ export default class Beauty2SearchScene extends Component<Props, State> {
     }
 
     render() {
-        if (this.state.isLoading)
-        {
-            // loading ...
-        }
         let {showLetter} = this.state;
         // if (this.state.data.length > 0) {
         //     if (this.state.seachList != null) {
@@ -648,11 +686,12 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                             style={{
                                 backgroundColor: 'transparent'}}
                             onPress={() => {
-                                if (showLetter){
-                                    this.saveAndGoBack(this.state.defaultValue);
-                                } else {
-                                    this.saveAndGoBackB(this.state.defaultLocationValue)
-                                }
+                                this.saveAndGoBack();
+                                // if (showLetter){
+                                //     this.saveAndGoBack();
+                                // } else {
+                                //     this.saveAndGoBackB()
+                                // }
                             }}
                         >
                             <Text style={{color: '#ffcc0a', fontSize: 14, fontFamily: 'arial',}}>
@@ -689,7 +728,7 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                     img={'location'}
                     backgroundColor={this.state.SearchBoxLocationBGC}
                     defaultValue={this.state.defaultLocationValue}
-                    placeholder={'Address...'}
+                    placeholder={this.state.placeholderLocationValue}
                     onChangeText={(text) => {
                         this.onChangeSearchLocationBoxText(text)
                     }}

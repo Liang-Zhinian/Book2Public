@@ -4,6 +4,7 @@ import {Heading2, Paragraph} from '../../../../widget/Text'
 import {screen} from '../../../../common'
 import {color} from '../../../../widget'
 import StarRating from "../../../Common/StarRating";
+import {RefreshState} from "react-native-refresh-list-view";
 
 
 type Props = {
@@ -13,7 +14,12 @@ type Props = {
 
 
 export default class ProducerCell extends PureComponent<Props> {
-
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            waiting:false,
+        }
+    }
     subString(str){
         if (str.length*13>screen.width*0.9-80){
             str = str.substring(0,Math.round((screen.width)/13))+'... ';
@@ -23,33 +29,22 @@ export default class ProducerCell extends PureComponent<Props> {
     onStarRatingPress(value) {
         console.log('Rated ' + value + ' stars!');
     }
+    toWait() {
+        setTimeout(() => {
+            this.setState({waiting: false})
+        }, 1500);//设置的时间间隔由你决定
+    }
     render() {
         let {info} = this.props;
-        // console.log(info);
-        //AdditionalLocationImages
-        // null
-        // firmId
-        // :
-        // 2
-        // id
-        // :
-        // 8
-        // imageUrl
-        // :
-        // null
-        // key
-        // :
-        // 8
-        // subtitle
-        // :
-        // undefined
-        // title
-        // :
-        // "Domaine de Cabrol Réquieu"
+        let {waiting} =this.state;
         return (
-            <View style={{flexDirection:'row'}}>
-                <TouchableOpacity activeOpacity={0.9}  style={styles.container} onPress={() => this.props.onPress(info)}>
-                    <View style={{backgroundColor:'#ff9b9e',width:screen.width/3,height:50}}>
+            <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity  disabled={waiting} activeOpacity={0.9} style={styles.container} onPress={() => {
+                    this.setState({waiting:true});
+                    this.props.onPress(info);
+                    this.toWait();
+                }}>
+                    <View style={{backgroundColor: '#ff9b9e', width: screen.width / 3, height: 50}}>
 
                     </View>
                 </TouchableOpacity>
@@ -63,16 +58,9 @@ export default class ProducerCell extends PureComponent<Props> {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        // paddingLeft: 10,
-        // paddingRight: 10,
         width:screen.width/3,
         alignSelf:'center',
-        // marginBottom:10,
         margin:5,
-        // borderBottomWidth: screen.onePixel,
-        // borderColor: color.border,
-        // backgroundColor: 'white',
-        // borderRadius:3,
     },
     icon: {
         width: 50,
@@ -81,7 +69,6 @@ const styles = StyleSheet.create({
         resizeMode:'contain'
     },
     rightContainer: {
-        // flex: 1,
         flexDirection:'row',
         backgroundColor:"#9dff4f00",
     },

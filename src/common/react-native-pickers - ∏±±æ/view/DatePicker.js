@@ -128,7 +128,6 @@ class DatePicker extends BaseDialog {
     }
 
     setSelectedValue(value){
-        debugger;
         for (var i=0; i<value.length; i++) {
             this.props.selectedValue[i] = value[i];
         }

@@ -186,7 +186,7 @@ export default class FitnessCube extends React.Component {
             this.animatedValue,
             {
                 toValue: 1,
-                duration: 2000,
+                duration: 5000,
                 easing: Easing.linear
             }
         ).start(
@@ -199,45 +199,49 @@ export default class FitnessCube extends React.Component {
             outputRange: [0, 1, 0]
         });
         if (typeof allPageList!=='undefined'&&allPageList.length > 1) {
-
             return (
                 <View style={[commonStyle.tabViewStylePage, {
                     width: screen.width * 0.95,
-                    height: 30,
+                    // height: 30,
                     backgroundColor: '#e52a0000',
+                    flexDirection:'row',
                     justifyContent: 'space-between',
+                    alignItems: 'center',
+                    alignSelf: 'center',
                     position: 'absolute',
                     bottom: 10,
                 }]}
                       {...this.responder.panHandlers}>
-                    <TouchableOpacity activeOpacity={0.6} onPress={() => {
-                        page <= 1 ? page = 1 : page--;
-                        this.refs['swiper'].flipLeftIndex(0);
-                        this.setState({allPageList: allPageList[page - 1]});
-                        setTimeout(() => {
+                    <TouchableOpacity
+                        style={{paddingRight:30}}
+                        activeOpacity={0.6}
+                        onPress={() => {
+                            page <= 1 ? page = 1 : page--;
+                            this.refs['swiper'].flipLeftIndex(0);
                             this.setState({allPageList: allPageList[page - 1]});
-                        }, 500);
-                        this.animate()
-                    }}>
-                        <Animated.View
-                            style={{opacity,}}
-                        >
+                            setTimeout(() => {
+                                this.setState({allPageList: allPageList[page - 1]});
+                            }, 500);
+                            this.animate()
+                        }}>
+                        <Animated.View style={{opacity}}>
                             <ImageBackground source={require('../../img/nearby/lastPage.png')}
-                                             style={{width: 25, height: 25}}/>
+                                             style={{width: 30, height: 30}}/>
                         </Animated.View>
-
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.9}
-                                      style={{
-                                          paddingTop: 10,
-                                          paddingBottom: 10,
-                                          paddingLeft: 20,
-                                          paddingRight: 20,
-                                          width: screen.width * 0.8,
-                                      }}
-                                      onPress={() => {
-                                          this.animate()
-                                      }}>
+                    <TouchableOpacity
+                        activeOpacity={0.9}
+                        style={{
+                            backgroundColor:'#f230',
+                            // paddingTop: 10,
+                            // paddingBottom: 10,
+                            // paddingLeft: 20,
+                            // paddingRight: 20,
+                            // width: screen.width * 0.8,
+                        }}
+                        onPress={() => {
+                            this.animate()
+                        }}>
                         <PageControl
                             numberOfPages={allPageList.length}
                             currentPage={page - 1}
@@ -246,24 +250,25 @@ export default class FitnessCube extends React.Component {
                             currentPageIndicatorTintColor={'#000000'}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.6} onPress={() => {
-                        page >= allPageList.length ? page = allPageList.length : page++;
-                        this.refs['swiper'].flipLeftIndex(0);
-                        this.setState({allPageList: allPageList[page - 1]});
-                        setTimeout(() => {
+                    <TouchableOpacity
+                        style={{paddingLeft:30}}
+                        activeOpacity={0.6}
+                        onPress={() => {
+                            page >= allPageList.length ? page = allPageList.length : page++;
+                            this.refs['swiper'].flipLeftIndex(0);
                             this.setState({allPageList: allPageList[page - 1]});
-                        }, 500);
-                        this.animate()
-                    }}>
+                            setTimeout(() => {
+                                this.setState({allPageList: allPageList[page - 1]});
+                            }, 500);
+                            this.animate()
+                        }}>
                         <Animated.View
                             style={{opacity,}}
                         >
                             <ImageBackground source={require('../../img/nearby/nextPage.png')}
-                                             style={{width: 25, height: 25}}/>
+                                             style={{width: 30, height: 30}}/>
                         </Animated.View>
-
                     </TouchableOpacity>
-
                 </View>
             )
         }else {
@@ -281,6 +286,10 @@ export default class FitnessCube extends React.Component {
                 paddingLeft: screen.width * 0.1,
                 paddingRight: screen.width * 0.1,
                 justifyContent: 'center',
+                alignItems: 'center',
+                position: 'absolute',
+                top: 5,
+                zIndex:666
             }}>
                 <TouchableOpacity activeOpacity={0.9}
                                   onPress={() => {
@@ -299,7 +308,7 @@ export default class FitnessCube extends React.Component {
                         paddingTop: 5,
                         paddingBottom: 5,
                     }}>
-                        <Text style={{fontSize: 12, color: this.getchosedTintColor('BUSINESSES'),}}>{I18n.t('BUSINESSES')}</Text>
+                        <Text style={{fontSize: 14, color: this.getchosedTintColor('BUSINESSES'),}}>{I18n.t('BUSINESSES')}</Text>
                     </View>
                 </TouchableOpacity>
                 <View style={{
@@ -348,7 +357,7 @@ export default class FitnessCube extends React.Component {
                         paddingTop: 5,
                         paddingBottom: 5,
                     }}>
-                        <Text style={{fontSize: 12, color: this.getchosedTintColor('CLASS'),}}>{I18n.t('CLASS')}</Text>
+                        <Text style={{fontSize: 14, color: this.getchosedTintColor('CLASS'),}}>{I18n.t('CLASS')}</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -362,7 +371,11 @@ export default class FitnessCube extends React.Component {
                 paddingBottom: 5,
                 justifyContent: 'center',
                 alignItems: 'center',
+                alignSelf:'center',
                 flexDirection: 'row',
+                position: 'absolute',
+                top: 35,
+                zIndex:666
             }]}>
                 <Image source={require('../../img/nearby/time.png')}
                        style={[{
@@ -370,39 +383,38 @@ export default class FitnessCube extends React.Component {
                            height: 30,
                            tintColor: '#FFFFFF',
                        }]}/>
-                <TouchableOpacity activeOpacity={0.9}  style={{
-                    backgroundColor: '#ffffff',
-                    width: screen.width * 0.75,
-                    borderRadius: 4,
-                    marginLeft: 5,
-                    paddingTop:5,
-                    paddingBottom:5,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    alignSelf: 'center',
-                    flexDirection: 'row',
-                }}
-                                  onPress={() => {
-                                      let day = 0
-                                      if (this.state.month - (new Date().getMonth() + 1) === 0) {
-                                          day = this.state.date - (new Date().getDate());
-                                          this.setState({selectedValue: [new Date().getFullYear(), m[this.state.month], this.state.date ]});
-                                      } else {
-                                          day = this.state.date - 1;
-                                          this.setState({selectedValue: [new Date().getFullYear() , m[this.state.month], this.state.date ]});
-                                      }
-
-
-                                      this.DatePicker1.setState({
-                                          selectedIndex: [0, this.state.month - (new Date().getMonth() + 1), day],
-                                          multiSliderValue:
-                                              [this.state.SliderValue.start, this.state.SliderValue.end]
-                                      });
-                                      this.DatePicker1.setSelectedValue([new Date().getFullYear() , m[this.state.month] , this.state.date ]);
-                                      this.DatePicker1.changeState();
-                                      this.DatePicker1.show(() => {
-                                      });
-                                  }}
+                <TouchableOpacity
+                    activeOpacity={0.9}
+                    style={{
+                        backgroundColor: '#ffffff',
+                        width: screen.width * 0.75,
+                        borderRadius: 4,
+                        marginLeft: 5,
+                        paddingTop: 5,
+                        paddingBottom: 5,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        alignSelf: 'center',
+                        flexDirection: 'row',
+                    }}
+                    onPress={() => {
+                        let day = 0;
+                        if (this.state.month - (new Date().getMonth() + 1) === 0) {
+                            day = this.state.date - (new Date().getDate());
+                            this.setState({selectedValue: [new Date().getFullYear(), m[this.state.month], this.state.date]});
+                        } else {
+                            day = this.state.date - 1;
+                            this.setState({selectedValue: [new Date().getFullYear(), m[this.state.month], this.state.date]});
+                        }
+                        this.DatePicker1.setState({
+                            selectedIndex: [0, this.state.month - (new Date().getMonth() + 1), day],
+                            multiSliderValue:
+                                [this.state.SliderValue.start, this.state.SliderValue.end]
+                        });
+                        this.DatePicker1.setSelectedValue([new Date().getFullYear(), m[this.state.month], this.state.date]);
+                        this.DatePicker1.changeState();
+                        this.DatePicker1.show(() => {});
+                    }}
                 >
                     {/*<TouchableOpacity activeOpacity={0.9} style={{*/}
                     {/*}} onPress={() => {*/}
@@ -410,7 +422,7 @@ export default class FitnessCube extends React.Component {
                     {/*}}>*/}
                     <View style={{flexDirection: 'row'}}>
                         <Text style={{fontSize: 12, color: '#4a4a4a', fontWeight: 'bold'}}>
-                            {((this.state.month.toString() === (new Date().getMonth() ).toString()) && this.state.date.toString() === new Date().getDate().toString()) ? 'ToDay ' :
+                            {((this.state.month.toString() === (new Date().getMonth()).toString()) && this.state.date.toString() === new Date().getDate().toString()) ? 'ToDay ' :
                                 this.formatDay(this.state.month, this.state.date) + ' ' + this.state.date + ' ' + m[this.state.month] + ' '}
                         </Text>
                         <Text style={{fontSize: 12, color: '#4a4a4a',}}>from </Text>
@@ -456,23 +468,24 @@ export default class FitnessCube extends React.Component {
     }
     render() {
         return (
-                <View style={[commonStyle.cubeStyleDrink,]}>
+                <View style={[commonStyle.cubeStyleDrink,commonStyle.center]}>
                     {this.showClassesAndBusinesses()}
                     {this.state.showchoseTime ? this.showTimeChose() : <View/>}
-                    <Cube ref='swiper'
+                    <Cube
+                          ref='swiper'
                           reduceface={() => {
                               //上一个页面, right
                               let face = --this.state.face;
-                              if (face <0) {
-                                  if (page>1){
+                              if (face < 0) {
+                                  if (page > 1) {
                                       this.animate();
                                       // this.refs.toast.show('the first');
                                   }
-                                  face = 4+face;
+                                  face = 4 + face;
                               }
 
                               this.setState({face: face});
-                              this.props.onSwipe( allPageList[page - 1][face].props.category);
+                              this.props.onSwipe(allPageList[page - 1][face].props.category);
 
                           }}
                           addface={() => {
@@ -482,17 +495,18 @@ export default class FitnessCube extends React.Component {
                                   // alert(allPageList.length);
                                   // this.refs.toast.show('the last');
                                   this.animate();
-                                  face = face-4;
+                                  face = face - 4;
                               }
 
                               this.setState({face: face});
-                              this.props.onSwipe( allPageList[page - 1][face].props.category);
+                              this.props.onSwipe(allPageList[page - 1][face].props.category);
 
                           }}
                     >{this.state.allPageList && this.state.allPageList}
                     </Cube>
                     {this.pageTab()}
                     <DatePicker
+                        // style={{zIndex:667}}
                         itemSelectedColor={'#000000'}
                         SliderValue={this.state.SliderValue}
                         HH={false}
@@ -519,7 +533,6 @@ export default class FitnessCube extends React.Component {
                             // alert('cancel')
                         }}
                         onPickerSelected={(pickerId, value) => {
-                            debugger;
                             let v = this.state.selectedValue;
 
                             v[pickerId] = value;
