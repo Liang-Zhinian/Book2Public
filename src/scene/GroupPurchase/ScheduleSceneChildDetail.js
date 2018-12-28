@@ -8,6 +8,8 @@ import testAppointmentsData from '../../testAppointmentsData'
 import TimeUtils from '../Common/TimeUtils';
 import Button from "../../widget/Button";
 import RNFS from "react-native-fs";
+import LocalImage from "../../widget/LocalImage";
+import * as ScreenUtil from "../Common/ScreenUtil";
 
 type
 Props = {
@@ -210,11 +212,11 @@ class ScheduleSceneChildDetail extends PureComponent<Props, State> {
                 <Text style={{
                     color: this.state.selectTime === null ? "#707070" : "#1a1a1a",
                     fontFamily: 'arial',
-                    fontSize: 13
+                    fontSize: ScreenUtil.setSpText(13)
                 }}>
                     Time
                 </Text>
-                <Text style={{color: "#1a1a1a", fontFamily: 'arial', fontSize: 13}}>
+                <Text style={{color: "#1a1a1a", fontFamily: 'arial', fontSize: ScreenUtil.setSpText(13)}}>
                     {this.state.sectionTime}
                 </Text>
             </TouchableOpacity>
@@ -233,7 +235,7 @@ class ScheduleSceneChildDetail extends PureComponent<Props, State> {
                     <Text style={{
                         color: this.state.selectTime === null ? "#707070" : "#1a1a1a",
                         fontFamily: 'arial',
-                        fontSize: 13
+                        fontSize: ScreenUtil.setSpText(13)
                     }}>
                         Phone
                     </Text>
@@ -251,7 +253,7 @@ class ScheduleSceneChildDetail extends PureComponent<Props, State> {
                     }}
                     style={{
                         width: screen.width / 2,
-                        fontSize: 13,
+                        fontSize: ScreenUtil.setSpText(13),
                         color: '#232323',
                         textAlignVertical: 'center',
                         textAlign: 'right',
@@ -276,7 +278,7 @@ class ScheduleSceneChildDetail extends PureComponent<Props, State> {
                         paddingLeft: 10,
                         width: screen.width,
                         height: screen.height / 4,
-                        fontSize: 18,
+                        fontSize: ScreenUtil.setSpText(18),
                         color: '#232323',
                         textAlignVertical: 'top'
                     }}/>
@@ -290,7 +292,7 @@ class ScheduleSceneChildDetail extends PureComponent<Props, State> {
                 <Button
                     title={'NEXT'}
                     style={{padding: 10, width: screen.width}}
-                    titleStyle={{color: '#fff', fontFamily: 'arial', fontSize: 15}}
+                    titleStyle={{color: '#fff', fontFamily: 'arial', fontSize: ScreenUtil.setSpText(15)}}
                     onPress={() => {
                         let scheduleItem = {
                             AppointmentId : Number(new Date()),
@@ -394,14 +396,14 @@ class ScheduleSceneChildDetail extends PureComponent<Props, State> {
                     <TouchableOpacity activeOpacity={0.5} onPress={() => {
                         this.props.navigation.goBack();
                     }}>
-                        <Image source={require('../../img/mine/icon_homepage_left_arrow.png')}
+                        <Image source={LocalImage.goBackIcon}
                                style={[styles.callbackIcon, {}]}
                                onPress={() => {
                                    this.props.navigation.goBack();
                                }}
                         />
                     </TouchableOpacity>
-                    <Text style={{color: '#ededed', fontSize: 12, fontFamily: 'arial', backgroundColor: 'transparent'}}
+                    <Text style={{color: '#ededed', fontSize: ScreenUtil.setSpText(12), fontFamily: 'arial', backgroundColor: 'transparent'}}
                           numberOfLines={1}>APPOINTMENT BOOKING</Text>
                     <TouchableOpacity activeOpacity={0.5} onPress={() => {
                         this.props.navigation.goBack();
@@ -419,10 +421,10 @@ class ScheduleSceneChildDetail extends PureComponent<Props, State> {
                                 padding: 10,
                                 justifyContent: 'space-between'
                             }}>
-                            <Text style={{color: "#1a1a1a", fontFamily: 'arial', fontSize: 13}}>
+                            <Text style={{color: "#1a1a1a", fontFamily: 'arial', fontSize: ScreenUtil.setSpText(13)}}>
                                 {this.props.navigation.state.params.service.title}
                             </Text>
-                            <Text style={{color: "#1a1a1a", fontFamily: 'arial', fontSize: 13}}>
+                            <Text style={{color: "#1a1a1a", fontFamily: 'arial', fontSize: ScreenUtil.setSpText(13)}}>
                                 Dr.Hello
                             </Text>
                         </View>
@@ -443,11 +445,11 @@ class ScheduleSceneChildDetail extends PureComponent<Props, State> {
                             <Text style={{
                                 color: this.state.selectTime === null ? "#707070" : "#1a1a1a",
                                 fontFamily: 'arial',
-                                fontSize: 13
+                                fontSize: ScreenUtil.setSpText(13)
                             }}>
                                 Date
                             </Text>
-                            <Text style={{color: "#1a1a1a", fontFamily: 'arial', fontSize: 13}}>
+                            <Text style={{color: "#1a1a1a", fontFamily: 'arial', fontSize: ScreenUtil.setSpText(13)}}>
                                 {this.state.selectTime}
                             </Text>
                         </TouchableOpacity>
@@ -478,7 +480,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     showTimePointDetail: {
-        padding: 5, color: '#151515', fontSize: 13, fontFamily: 'arial',
+        padding: 5, color: '#151515', fontSize: ScreenUtil.setSpText(13), fontFamily: 'arial',
 
     },
     showTimePointView: {
@@ -489,7 +491,7 @@ const styles = StyleSheet.create({
         borderColor: '#9c9c9c'
     },
     timePoint: {
-        color: '#666666', fontSize: 13, fontFamily: 'arial',
+        color: '#666666', fontSize: ScreenUtil.setSpText(13), fontFamily: 'arial',
     },
     linearGradient: {
         alignItems: 'center',

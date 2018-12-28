@@ -16,12 +16,13 @@ import DrinkDetailDataUtils from "../Explore/Drink/DrinkDetailDataUtils";
 import {RefreshState} from "react-native-refresh-list-view";
 import QRDetailScene from "../Explore/Drink/QRDetailScene";
 import Icon from "react-native-vector-icons/SimpleLineIcons";
+import LocalImage from "../../widget/LocalImage";
 
 export default  class PrintInteractionScreen extends Component {
     static navigationOptions = ({navigation}: any) => ({
         headerMode: 'screen',
-        headerTitle: 'QR/Bar Code',
-        headerTitleStyle:{position:'absolute',left:0,right:0},
+        headerTitle: 'QR Code',
+        headerTitleStyle:{alignSelf:'center'},
         headerLeft:(
             <TouchableOpacity
                 activeOpacity={0.8}
@@ -29,14 +30,14 @@ export default  class PrintInteractionScreen extends Component {
                     navigation.goBack();//返回按钮图片
                 }}
             >
-                {/*<Image source={require('../../img/mine/icon_homepage_left_arrow.png')}*/}
+                {/*<Image source={LocalImage.goBackIcon}*/}
                        {/*style={[commonStyle.searchIcon, {}]}/>*/}
                 <Icon name={'arrow-left'} size={15} color={'#fff'}
                       style={[{padding:10}]}/>
             </TouchableOpacity>
         ),
         headerTintColor:'#fff',
-        headerStyle:{backgroundColor:'#1b1b1b',paddingTop:screen.statusBarHeight,}
+        headerStyle:{backgroundColor:'#1b1b1b',paddingTop:screen.statusBarHeight,paddingBottom:10,height:65}
     });
     // static navigationOptions = {
     //     header: {
@@ -87,6 +88,24 @@ export default  class PrintInteractionScreen extends Component {
     }
 
     componentDidMount() {
+
+            // this.props.navigation.navigate('QRDetailScene', {
+            //     data:  [{
+            //             key: 123,
+            //             id: 123,
+            //             imageUrl: null,
+            //             title: 'info.WineName',
+            //             AdditionalLocationImages: null,
+            //             firmId: 2,
+            //             Appellation:3,
+            //             Colour:'red',
+            //             ProducerId:33,
+            //             Country:'Spain'
+            //         }],
+            //     restartScan: () => {
+            //         this._startScan();
+            //     }
+            // });//跳到扫码页面
         // let viewAppearCallBack = (event) => {
         //     this.setTimeout( () => {
         //         this.setState({

@@ -49,6 +49,7 @@
 		874E8A2453D2422C9832BEC5 /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F5C493906BCC45078A28BCB7 /* rubicon-icon-font.ttf */; };
 		8A3E7445215CCD310093DB1D /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A3E741A215CCD260093DB1D /* libBVLinearGradient.a */; };
 		8A3E7446215CCF580093DB1D /* libRNI18n.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD082E3215A287300BF7A61 /* libRNI18n.a */; };
+		8A860325216C9E2400B05F5C /* libfishhook.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD0828F215A124600BF7A61 /* libfishhook.a */; };
 		8FEDB1112E1F4B2DA52851BF /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 863174FFAE0D4C269C28F797 /* Ionicons.ttf */; };
 		A82C5FFA1B56447689615FC2 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5B521ABC64C471993014CD3 /* Foundation.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
@@ -454,6 +455,7 @@
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				58802D4F4C97472486CCC996 /* libRCTBarcode.a in Frameworks */,
+				8A860325216C9E2400B05F5C /* libfishhook.a in Frameworks */,
 				D9D6D0C33E0B9F6C36110331 /* libPods-Book2.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

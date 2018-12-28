@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import Toast, {DURATION} from './ToastUtil'
+import * as ScreenUtil from "../../Common/ScreenUtil";
 
 const SECTIONHEIGHT = 30;
 const ROWHEIGHT = 40;
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
     },
     letterText: {
         textAlign: 'center',
-        fontSize: height * 1.1 / 50,
+        fontSize: ScreenUtil.setSpText(height * 1.1 / 50),
         color: '#e75404'
     },
     sectionView: {

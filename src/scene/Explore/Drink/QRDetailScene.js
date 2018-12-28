@@ -10,6 +10,8 @@ import DrinkDetailDataUtils from "./DrinkDetailDataUtils";
 import {getAllProducer} from "../../../api";
 import {RefreshState} from "react-native-refresh-list-view";
 import StarRating from "../../Common/StarRating";
+import LocalImage from "../../../widget/LocalImage";
+import * as ScreenUtil from "../../Common/ScreenUtil";
 
 export default class QRDetailScene extends Component {
     static navigationOptions = ({navigation}: any) => ({
@@ -67,99 +69,95 @@ export default class QRDetailScene extends Component {
         let {data} = this.props.navigation.state.params;
         // let item = data[Math.floor(Math.random()*100)];
         let item = data[0];
+        let hot = [3,3.5,4,4.5,5];
+        let reviews = Math.floor((Math.random()*1000));
+        let rating = hot[Math.floor((Math.random()*10)%4)];
         let contentView = data.length > 0
-            ? <View style={{justifyContent:'center',alignItems:'center'}}>
-                <TouchableOpacity activeOpacity={0.9} style={styles.container} onPress={() => {
-                    // this.props.navigation.navigate('QRWineDetail', {info: item})
-                }}>
-                    <View style={{flexDirection: 'column',}}>
-                        {(item.imageUrl !== null && item.imageUrl !== 'null') ?
-                            <Image source={{uri: item.imageUrl}} style={styles.icon}/>
-                            : <Image source={require('../../../img/public/WineIcon.png')} style={styles.icon}/>}
+            ? <View style={commonStyle.center}>
+                <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => {
+                        this.props.navigation.navigate('WineDetail', {info: item,reviews,rating });//跳到商品详情
+                        this.toWait();
+                    }}
+                    style={{
+                        paddingTop: 5,
+                        flexDirection: 'row',
+                        width: screen.width * 0.95,
+                        justifyContent: 'space-between',
+                        backgroundColor:'#Fff'
+                    }}
+                >
+                    <View
+                        activeOpacity={0.9}
+                        style={styles.container2}
+                    >
+                        <View style={{flexDirection: 'row', paddingTop: 5, marginBottom: 0}}>
+                            <Text style={{fontSize: ScreenUtil.setSpText(15),color: '#000',fontWeight:'500'}}>Wine: </Text>
+                            <Text style={{fontSize: ScreenUtil.setSpText(15),color: '#019eff',fontWeight:'500'}}>{item.title}</Text>
+                        </View>
+                        <View style={{flexDirection: 'row', paddingTop: 5, marginBottom: 0}}>
+                            <Text style={{fontSize: ScreenUtil.setSpText(12)}}>Color: </Text>
+                            <Text style={{fontSize: ScreenUtil.setSpText(12), color: '#019eff'}}>{item.Colour}</Text>
+                        </View>
+                        <View style={{
+                            flexDirection: 'row',
+                            paddingTop: 5,
+                            marginBottom: 5
+                        }}>
+                            <StarRating
+                                maxStars={5}
+                                rating={rating}
+                                disabled={true}
+                                starSize={15}
+                                onStarChange={(value) => this.onStarRatingPress(value)}
+                            />
+                            <Text style={{paddingLeft: 10, fontSize: ScreenUtil.setSpText(12),color:'#019eff'}}>{reviews} </Text>
+                            <Text style={{ fontSize: ScreenUtil.setSpText(12)}}>reviews</Text>
+                        </View>
                     </View>
-
-                    <View style={styles.rightContainer}>
-                        <Heading2 style={{paddingTop: 5, paddingLeft: 10}}>{item.title}</Heading2>
-                        <View style={{flexDirection: 'row'}}>
-                            <Heading2 style={{paddingLeft: 10, fontFamily: 'arial', fontSize: 16}}>
-                                Color:
-                            </Heading2>
-                            <Text style={{paddingLeft: 10, fontFamily: 'arial', fontSize: 16}}>{item.Colour}</Text>
-                        </View>
-                        <View style={{flexDirection: 'row'}}>
-                            <Heading2 style={{paddingLeft: 10, fontFamily: 'arial', fontSize: 16}}>
-                                Appellation:
-                            </Heading2>
-                            <Text style={{
-                                paddingLeft: 10,
-                                fontFamily: 'arial',
-                                fontSize: 16
-                            }}>{this.subString(item.Appellation)}</Text>
-                        </View>
+                    <View style={{flexDirection: 'column',}}>
+                        <Image source={require('../../../img/public/WineIcon.png')} style={[styles.icon,{marginRight:10}]}/>
                     </View>
                 </TouchableOpacity>
                 {this.renderProducer()}
-                <View style={{width:screen.width,height:5}}/>
-                <Panel title={'DETAIL'} expanded={false}>
+                {/*<View style={{width:screen.width,height:5}}/>*/}
+                <Panel title={'Wine Details'} expanded={false} style={{borderRadius:0}}>
                     <View style={{flexDirection: 'row'}}>
-                        <Heading2 style={{paddingLeft: 5, fontFamily: 'arial', fontSize: 16}}>
+                        <Text style={{paddingLeft: 5, fontFamily: 'arial',}}>
                             Classification:
-                        </Heading2>
-                        <Text style={{
-                            paddingLeft: 5,
-                            fontFamily: 'arial',
-                            fontSize: 16
-                        }}>NA</Text>
+                        </Text>
+                        <Text style={styles.propertyText}>NA</Text>
                     </View>
                     <View style={{flexDirection: 'row'}}>
-                        <Heading2 style={{paddingLeft: 5, fontFamily: 'arial', fontSize: 16}}>
+                        <Text style={{paddingLeft: 5, fontFamily: 'arial', }}>
                             Type:
-                        </Heading2>
-                        <Text style={{
-                            paddingLeft: 5,
-                            fontFamily: 'arial',
-                            fontSize: 16
-                        }}>Sparkling</Text>
+                        </Text>
+                        <Text style={styles.propertyText}>Sparkling</Text>
                     </View>
                     <View style={{flexDirection: 'row'}}>
-                        <Heading2 style={{paddingLeft: 5, fontFamily: 'arial', fontSize: 16}}>
+                        <Text style={{paddingLeft: 5, fontFamily: 'arial', }}>
                             Sweetness:
-                        </Heading2>
-                        <Text style={{
-                            paddingLeft: 5,
-                            fontFamily: 'arial',
-                            fontSize: 16
-                        }}>Dry</Text>
+                        </Text>
+                        <Text style={styles.propertyText}>Dry</Text>
                     </View>
                     <View style={{flexDirection: 'row'}}>
-                        <Heading2 style={{paddingLeft: 5, fontFamily: 'arial', fontSize: 16}}>
+                        <Text style={{paddingLeft: 5, fontFamily: 'arial', }}>
                             Country Sweetness:
-                        </Heading2>
-                        <Text style={{
-                            paddingLeft: 5,
-                            fontFamily: 'arial',
-                            fontSize: 16
-                        }}>NA (France)</Text>
+                        </Text>
+                        <Text style={styles.propertyText}>{item.Country}</Text>
                     </View>
                     <View style={{flexDirection: 'row'}}>
-                        <Heading2 style={{paddingLeft: 5, fontFamily: 'arial', fontSize: 16}}>
+                        <Text style={{paddingLeft: 5, fontFamily: 'arial', }}>
                             Tannin:
-                        </Heading2>
-                        <Text style={{
-                            paddingLeft: 5,
-                            fontFamily: 'arial',
-                            fontSize: 16
-                        }}>Light</Text>
+                        </Text>
+                        <Text style={styles.propertyText}>Light</Text>
                     </View>
                     <View style={{flexDirection: 'row'}}>
-                        <Heading2 style={{paddingLeft: 5, fontFamily: 'arial', fontSize: 16}}>
+                        <Text style={{paddingLeft: 5, fontFamily: 'arial', }}>
                             Holding Company:
-                        </Heading2>
-                        <Text style={{
-                            paddingLeft: 5,
-                            fontFamily: 'arial',
-                            fontSize: 16
-                        }}>abbaye de Frontfroide</Text>
+                        </Text>
+                        <Text style={styles.propertyText}>abbaye de Frontfroide</Text>
                     </View>
                 </Panel>
 
@@ -177,6 +175,9 @@ export default class QRDetailScene extends Component {
     renderProducer(){
         let {Producer} = this.state;
         let info =  Producer&& Producer[0];
+        let hot = [3,3.5,4,4.5,5];
+        let reviews = Math.floor((Math.random()*1000));
+        let rating = hot[Math.floor((Math.random()*10)%4)];
         return (
             Producer===null
                 ?<View/>
@@ -186,75 +187,77 @@ export default class QRDetailScene extends Component {
                         flexDirection: 'row',
                         backgroundColor:'#fff',
                         width:screen.width*0.95,
-                        paddingTop: 20,
+                        paddingTop: 0,
                         alignItems:'center',
-                        justifyContent:'center',
+                        justifyContent:'space-between',
                         alignSelf:'center',
-                        paddingBottom: 20
+                        paddingBottom: 5,
                     }}
                     onPress={()=>{
-                        this.props.navigation.navigate('ProducerDetail', {info:info})
+                        this.props.navigation.navigate('ProducerDetail', {info:info,distance:123,reviews:reviews,rating:rating})
                     }}
                 >
-                    <View style={{flexDirection: 'column', width: screen.width * 0.15}}>
-                        <View style={{alignItems: 'center',alignSelf:'center',justifyContent:'center'}}>
-                            {(info.imageUrl !== null && info.imageUrl !== 'null') ?
-                                <Image source={{uri: info.imageUrl}} style={[{
-                                    width: screen.width * 0.2 * 0.5,
-                                    height: screen.width * 0.2 * 0.5,
-                                    resizeMode: 'cover',
-                                }]}/>
-                                : <Image source={require('../../../img/public/shop.png')}
-                                         style={[{
-                                             tintColor: '#696969',
-                                             width: screen.width * 0.2* 0.5,
-                                             resizeMode: 'contain',
-                                         }]}/>}
-                        </View>
-                    </View>
-                    <View style={{width: screen.width * 0.65}}>
-                        <View style={{
-                            flexDirection: 'row',
-                        }}>
-                            <Text style={{fontWeight: 'bold', fontSize: 15, fontFamily: 'arial', color: '#000'}}>
-                                {info.title}
-                            </Text>
+                    {/*<View style={{flexDirection: 'column', width: screen.width * 0.15}}>*/}
+                        {/*<View style={{alignItems: 'center',alignSelf:'center',justifyContent:'center'}}>*/}
+                            {/*/!*{(info.imageUrl !== null && info.imageUrl !== 'null') ?*!/*/}
+                                {/*/!*<Image source={{uri: info.imageUrl}} style={[{*!/*/}
+                                    {/*/!*width: screen.width * 0.2 * 0.5,*!/*/}
+                                    {/*/!*height: screen.width * 0.2 * 0.5,*!/*/}
+                                    {/*/!*resizeMode: 'cover',*!/*/}
+                                {/*/!*}]}/>*!/*/}
+                                {/*/!*: <Image source={require('../../../img/public/shop.png')}*!/*/}
+                                         {/*/!*style={[{*!/*/}
+                                             {/*/!*tintColor: '#696969',*!/*/}
+                                             {/*/!*width: screen.width * 0.2* 0.5,*!/*/}
+                                             {/*/!*resizeMode: 'contain',*!/*/}
+                                         {/*/!*}]}/>}*!/*/}
+                        {/*</View>*/}
+                    {/*</View>*/}
+                    <View style={{marginLeft:10}}>
+                        <View style={{height:screen.onePixel,width:screen.width,backgroundColor:'#797979'}}/>
+                        {/*<View style={{*/}
+                            {/*flexDirection: 'row',*/}
+                            {/*paddingTop:5*/}
+                        {/*}}>*/}
+                            {/*<Text style={{fontWeight: 'bold', fontSize: ScreenUtil.setSpText(15), fontFamily: 'arial', color: '#000'}}>*/}
+                                {/*Producer:*/}
+                            {/*</Text>*/}
+                            {/*<Text style={{fontWeight: 'bold', fontSize: ScreenUtil.setSpText(12), fontFamily: 'arial', color: '#019eff'}}>*/}
+                                {/*{info.title}*/}
+                            {/*</Text>*/}
+                        {/*</View>*/}
+                        <View style={{flexDirection: 'row', paddingTop: 5, marginBottom: 0}}>
+                            <Text style={{fontSize: ScreenUtil.setSpText(15),color: '#000',fontWeight:'500'}}>Producer: </Text>
+                            <Text style={{fontSize: ScreenUtil.setSpText(15),color: '#019eff',fontWeight:'500'}}>{info.title}</Text>
                         </View>
                         {(info.URL !== null && info.URL !== '') && <View style={{}}>
                             <Text style={{lineHeight: 25}}>
                                 Website: {info.URL}
                             </Text>
-                            <Text>
-                                Away from you: 254km
-                            </Text>
+                            {/*<Text>*/}
+                                {/*Away from you: 254km*/}
+                            {/*</Text>*/}
                         </View>}
                         <View style={{flexDirection: 'row', paddingTop: 10}}>
                             <StarRating
                                 // style={{marginBottom: 5}}
                                 maxStars={5}
-                                rating={3.5}
+                                rating={rating}
                                 disabled={true}
                                 starSize={15}
                                 onStarChange={(value) => this.onStarRatingPress(value)}
                             />
-                            <Text style={{paddingLeft: 10, fontSize: 12}}>123 reviews</Text>
+                            <Text style={{paddingLeft: 10, fontSize: ScreenUtil.setSpText(12),color:'#019eff'}}>{reviews} </Text>
+                            <Text style={{ fontSize: ScreenUtil.setSpText(12)}}>reviews</Text>
                         </View>
                     </View>
-                    <View style={{flexDirection: 'column', width: screen.width * 0.1}}>
-                        <TouchableOpacity
-                            activeOpacity={0.8}
-                            onPress={() => {
-                            this.setState({
-                                loveTintColor: this.state.loveTintColor === '#696969' ? '#ff4b1a' : '#696969'
-                            })
-                        }}>
-                            <Image source={require('../../../img/public/collection.png')} style={[{
-                                width: screen.width * 0.08,
-                                zIndex:10,
-                                resizeMode: 'contain',
-                                tintColor: this.state.loveTintColor
-                            }]}/>
-                        </TouchableOpacity>
+                    <View style={{flexDirection: 'column',marginRight:10}}>
+                        <Image source={require('../../../img/public/ProducerIcon.png')} style={[{
+                            width: screen.width * 0.08,
+                            zIndex:10,
+                            resizeMode: 'contain',
+                            tintColor: this.state.loveTintColor
+                        }]}/>
                     </View>
                 </TouchableOpacity>
         )
@@ -272,7 +275,7 @@ export default class QRDetailScene extends Component {
                             this.onBackAndroid();
                             this.props.navigation.goBack();//返回按钮图片
                         }}>
-                            <Image source={require('../../../img/mine/icon_homepage_left_arrow.png')}
+                            <Image source={LocalImage.goBackIcon}
                                    style={[commonStyle.searchIcon, {}]}/>
                         </TouchableOpacity>
                     </View>
@@ -290,24 +293,40 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         width:screen.width*0.95,
         alignSelf:'center',
-        marginBottom:10,
+        // marginBottom:10,
         borderBottomWidth: screen.onePixel,
         borderColor: color.border,
         backgroundColor: 'white',
-        borderRadius:3,
+        // borderRadius:3,
     },
     icon: {
         width: 50,
-        paddingBottom:100,
-        backgroundColor:"#9e9e9e00",
-        resizeMode:'contain'
+        height: 50,
+        backgroundColor: "#9e9e9e00",
+        resizeMode: 'contain'
     },
     rightContainer: {
-        flex: 1,
-        backgroundColor:"#9dff4f00",
-        justifyContent:'space-between'
+        // flex: 1,
+        // backgroundColor: "#9dff4f00",
     },
     price: {
         color: color.primary
-    }
+    },
+    propertyText:{
+        color:'#019eff',
+        paddingLeft: 5,
+        fontFamily: 'arial',
+    },
+    container2: {
+        flexDirection: 'column',
+        paddingLeft: 10,
+        paddingRight: 10,
+        width: screen.width * 0.7,
+        alignSelf: 'center',
+        marginBottom:0,
+        borderBottomWidth: screen.onePixel,
+        borderColor: color.border,
+        backgroundColor: '#fff',
+        // borderRadius: 3,
+    },
 })

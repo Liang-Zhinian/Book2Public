@@ -8,6 +8,7 @@ import {
   Image,
   Text,
 } from 'react-native';
+import * as ScreenUtil from "../../Common/ScreenUtil";
 
 const window = Dimensions.get('window');
 const uri = 'https://pickaface.net/gallery/avatar/Opi51c74d0125fd4.png';
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
     top: 20,
   },
   item: {
-    fontSize: 14,
+    fontSize: ScreenUtil.setSpText(14),
     fontWeight: '300',
     paddingTop: 5,
   },

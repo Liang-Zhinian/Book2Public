@@ -38,7 +38,7 @@ import ProducerScene from "./scene/Explore/Drink/Producer/ProducerScene";
 import CountryListScene from "./scene/Explore/Drink/Vineyard/CountryListScene";
 import VineyardScene from "./scene/Explore/Drink/Vineyard/VineyardScene";
 import ProducerDetail from './scene/Explore/Drink/Producer/ProducerDetail'
-import WineDetail from './scene/Explore/Drink/Producer/WineDetail'
+import WineDetail from './scene/Explore/Drink/WineDetail'
 import QRDetailScene from "./scene/Explore/Drink/QRDetailScene";
 import {StatusBar, View} from "react-native";
 import Drink2SearchScene from "./scene/Explore/Drink/Drink2SearchScene";
@@ -46,6 +46,7 @@ import BeautyScene from "./scene/Explore/Beauty/BeautyScene";
 import BeautyDetail from "./scene/Explore/Beauty/BeautyDetail";
 import Beauty2SearchScene from "./scene/Explore/Beauty/Beauty2SearchScene";
 import VineyardDetail from "./scene/Explore/Drink/Vineyard/VineyardDetail";
+import WineScene from "./scene/Explore/Drink/Wine/WineScene";
 
 const lightContentScenes = ['Home', 'Mine'];
 
@@ -279,6 +280,7 @@ const Navigator = StackNavigator(
         WineDetail:{screen:WineDetail},
         VineyardScene: {screen: VineyardScene},
         VineyardDetail:{screen:VineyardDetail},
+        WineScene:{screen:WineScene},
         CountryListScene: {screen: CountryListScene},
         ProducerDetail: {screen: ProducerDetail},
         PrintInteractionScreen: {screen: PrintInteractionScreen},

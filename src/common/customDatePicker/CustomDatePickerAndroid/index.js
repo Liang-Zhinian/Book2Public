@@ -93,7 +93,7 @@ export default class CustomDatePickerAndroid extends React.PureComponent {
         this.props.onCancel();
       }
     } catch ({ code, message }) {
-      console.warn("Cannot open date picker", message);
+      // console.warn("Cannot open date picker", message);
     }
   };
 
@@ -122,7 +122,7 @@ export default class CustomDatePickerAndroid extends React.PureComponent {
         this.props.onCancel();
       }
     } catch ({ code, message }) {
-      console.warn("Cannot open time picker", message);
+      // console.warn("Cannot open time picker", message);
     }
   };
 

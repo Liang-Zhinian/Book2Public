@@ -19,12 +19,15 @@ import {commonStyle} from "../../../../widget/commonStyle";
 import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
 import DrinkDetailDataUtils from "../DrinkDetailDataUtils";
 import ProducerCell from "./ProducerCell";
-import {getWineByProducer,amapStaticImg} from "../../../../api";
+import {getWineByProducer, amapStaticImg} from "../../../../api";
 import MasonryList from "../../../Common/Waterfall/MasonryList";
 import PlacehoderImage from "../../../Common/Waterfall/PlaceholderImage";
 import {Heading2} from "../../../../widget/Text";
 import {color} from "../../../../widget";
 import AMapAndroid from "../../../Api/AMapAndroid";
+import LocalImage from "../../../../widget/LocalImage";
+import AMap3D from "../../../Api/AMap.ios";
+import * as ScreenUtil from "../../../Common/ScreenUtil";
 
 type
 Props = {
@@ -39,10 +42,10 @@ State = {
 
 const secToTime = (s) => {
     let h = 0, m = 0;
-    if(s > 60){
+    if (s > 60) {
         m = parseInt(s / 60);
         s = parseInt(s % 60);
-        if(m > 60) {
+        if (m > 60) {
             h = parseInt(i / 60);
             m = parseInt(i % 60);
         }
@@ -55,7 +58,7 @@ const secToTime = (s) => {
 };
 
 
-const { width, height } = screen;
+const {width, height} = screen;
 const itemWidth = (width - 16) / 2;
 
 //酒庄详情
@@ -72,12 +75,12 @@ export default class ProducerDetail extends PureComponent<Props, State> {
             refreshState: false,
             loveTintColor: '#696969',
             handerBgc: '#69696900',
-            WinedList:[],
+            WinedList: [],
             refreshStateRe: RefreshState.Idle,
-            refreshing:false,
-            title:'',
-            isLoading:false,
-            waiting:false,
+            refreshing: false,
+            title: '',
+            isLoading: false,
+            waiting: false,
         }
     }
 
@@ -94,25 +97,23 @@ export default class ProducerDetail extends PureComponent<Props, State> {
         })
 
     }
-    requestData = async () => {
-        this._getWine();
-    };
 
-    renderWineList(){
+    renderWineList() {
         return (
             <View style={commonStyle.container}>
                 <RefreshListView
                     style={{
                         width: screen.width,
-                        flexDirection:'row',
-                        backgroundColor:'#b3ffa0'
+                        flexDirection: 'row',
+                        backgroundColor: '#b3ffa0'
                     }}
                     data={this.state.WinedList}
                     // ListHeaderComponent={this.GetADList()}//广告位
                     renderItem={this.renderCell}
                     refreshState={this.state.refreshStateRe}
                     onHeaderRefresh={this.requestData}
-                    footerTextStyle={{color: '#ffffff'}}
+                    onFooterRefresh={this.nextPage}//上拉翻页回调方法 refreshState参数值为RefreshState.FooterRefreshing
+                    footerTextStyle={{color: '#8f8f8f'}}
                     footerRefreshingText={'loading...'}
                     footerFailureText={'click refresh'}
                     footerNoMoreDataText={'no more data'}
@@ -139,6 +140,7 @@ export default class ProducerDetail extends PureComponent<Props, State> {
             </SafeAreaView>
         )
     }
+
     _keyExtractor = (item, index) => {
         return item.text + index;
     };
@@ -159,13 +161,13 @@ export default class ProducerDetail extends PureComponent<Props, State> {
     };
     _renderItem = ({item}) => {
         const itemHeight = this._getHeightForItem({item});
-        let {waiting} =this.state;
+        let {waiting} = this.state;
         return (
             <TouchableOpacity
                 disabled={waiting}
                 activeOpacity={0.7}
                 onPress={() => {
-                    this.setState({waiting:true});
+                    this.setState({waiting: true});
                     this._onPressContent(item);
                     this.toWait();
                 }}
@@ -173,7 +175,7 @@ export default class ProducerDetail extends PureComponent<Props, State> {
                 <PlacehoderImage
                     source={require('../../../../img/public/What2Book.png')}
                     placeholder={{uri: 'placeholder'}}
-                    style={{width: itemWidth, height: itemHeight, borderRadius: 4}}
+                    style={{width: screen.width, resizeMode: 'contain', borderRadius: 4}}
                 />
                 <View style={styles.itemText}>
                     {/*<Text style={{color: '#fff'}}>{secToTime(item.id)}</Text>*/}
@@ -185,19 +187,44 @@ export default class ProducerDetail extends PureComponent<Props, State> {
     _getHeightForItem = ({item}) => {
         return Math.max(itemWidth, itemWidth / 200 * 200);
     };
-
-
+    requestData = async () => {
+        this.page = 1;
+        this._getWine();
+    };
+    nextPage=async()=>{
+        ++this.page;
+        //叠加翻页数据
+        this.setState({refreshStateRe: RefreshState.FooterRefreshing});
+        this._getWine();
+    };
+    page = 1;
+    dataLength=0;
+    size=500;
     _getWine = async () => {
-        this.setState({isLoading: true});
-        let {title} = this.props.navigation.state.params.info;
-        await getWineByProducer(title, 1, 100)
+        this.setState({isLoading:true,WinedList:[]});
+        let { id} = this.props.navigation.state.params.info;
+        await getWineByProducer(id, this.page, this.size, '')
             .then((msg) => {
-                this.setState({
-                    refreshing: false,
-                    isLoading: false,
-                    WinedList: DrinkDetailDataUtils.requestWineData(msg),
-                    refreshStateRe: RefreshState.NoMoreData,
-                });
+                if (msg !== undefined) {
+                    this.dataLength = this.state.WinedList.length;
+                    let data = DrinkDetailDataUtils.requestWineData(msg);
+                    // data.length > 0 ? this.setState({NoData: false}) : this.setState({NoData: true});
+                    this.setState({
+                        refreshing: false,
+                        isLoading: false,
+                        WinedList: this.state.WinedList.concat(data),
+                        refreshStateRe: RefreshState.Idle,
+                    }, () => {
+                        if (this.state.WinedList.length === this.dataLength) {
+                            this.setState({refreshStateRe: RefreshState.NoMoreData})
+                        }
+                    });
+                }else{
+                    this.setState({
+                        isLoading: false,
+                        refreshStateRe: RefreshState.NoMoreData,
+                    })
+                }
             })
             .catch(() => {
 
@@ -209,16 +236,21 @@ export default class ProducerDetail extends PureComponent<Props, State> {
             this.setState({waiting: false})
         }, 1500);//设置的时间间隔由你决定
     }
-    _getWineItem(){
-        let {WinedList,waiting} = this.state;
+
+    _getWineItem() {
+        let {WinedList, waiting} = this.state;
+        if (!WinedList) return (<View/>);
         let info = this.props.navigation.state.params.info;
         let WineItem = WinedList.map((item) => {
+            let hot = [3,3.5,4,4.5,5];
+            let reviews = Math.floor((Math.random()*1000));
+            let rating = hot[Math.floor((Math.random()*10)%4)];
             return <TouchableOpacity
                 disabled={waiting}
                 activeOpacity={0.9}
                 onPress={() => {
                     this.setState({waiting: true});
-                    this.props.navigation.navigate('WineDetail', {info: item});//跳到商品详情
+                    this.props.navigation.navigate('WineDetail', {info: item,reviews,rating });//跳到商品详情
                     this.toWait();
                 }}
                 style={{
@@ -240,20 +272,18 @@ export default class ProducerDetail extends PureComponent<Props, State> {
                     </View>
                     <View style={{
                         flexDirection: 'row',
-                        marginTop: 0,
+                        paddingTop: 5,
                         marginBottom: 10
                     }}>
                         <StarRating
                             maxStars={5}
-                            rating={3.5}
+                            rating={rating}
                             disabled={true}
                             starSize={15}
                             onStarChange={(value) => this.onStarRatingPress(value)}
                         />
-                        <Text style={{
-                            paddingLeft: 10,
-                            fontSize: 12
-                        }}>456 reviews</Text>
+                        <Text style={{paddingLeft: 10, fontSize: ScreenUtil.setSpText(12),color:'#019eff'}}>{reviews} </Text>
+                        <Text style={{ fontSize: ScreenUtil.setSpText(12)}}>reviews</Text>
                     </View>
                 </View>
                 <View style={{flexDirection: 'column',}}>
@@ -271,7 +301,7 @@ export default class ProducerDetail extends PureComponent<Props, State> {
             <ProducerCell
                 info={rowData.item}
                 onPress={() => {
-                    this.setState({waiting:true});
+                    this.setState({waiting: true});
                     console.log(rowData.item);
                     this.toWait();
                     // let scene = this.state.title+'Scene';
@@ -280,10 +310,11 @@ export default class ProducerDetail extends PureComponent<Props, State> {
             />
         )
     };
+
     showLoading() {
         return (
-            <View style={{alignItems:'center'}}>
-                <ActivityIndicator size="large" color="#EDDEFF" />
+            <View style={{alignItems: 'center'}}>
+                <ActivityIndicator size="large" color="#EDDEFF"/>
             </View>
         )
     }
@@ -313,18 +344,54 @@ export default class ProducerDetail extends PureComponent<Props, State> {
             />
         )
     }
-    renderHeader = () => {
+
+    loadAMap() {
         let info = this.props.navigation.state.params.info;
-        this.setState({title:info.title});
-        let {isLoading,waiting} = this.state;
+        return (
+            <View style={commonStyle.mapImageStyle}>
+                <AMap3D
+                    locationEnabled={false}
+                    zoomLevel={14}
+                    coordinate={{
+                        longitude: parseFloat(info.Longitude),
+                        latitude: parseFloat(info.Latitude)
+                    }}
+                    zoomEnabled={false}
+                    scrollEnabled={false}
+                    ref={component => this._amap = component}
+                    onFormattedAddressReceived={this.onFormattedAddressReceived}
+                    onMapLoaded={(e) => {
+                        console.warn('onMapLoaded--->' + e)
+                    }}
+                    onLongPressEvent={(e) => {
+
+                    }}
+                    onMarkerPress={(index) => {
+                    }}
+                    onPressEvent={(e) => {
+                    }}
+                />
+            </View>
+        );
+    }
+
+    renderHeader = () => {
+        let {info,distance,reviews,rating } = this.props.navigation.state.params;
+        this.setState({title: info.title});
+        let {isLoading, waiting} = this.state;
         return (
             <View style={commonStyle.center}>
                 <View>
                     {(info.AdditionalLocationImages !== null && info.AdditionalLocationImages !== 'null')
-                        ?<Image source={{uri: info.AdditionalLocationImages}} style={commonStyle.banner}/>
-                        :<ImageBackground source={require('../../../../img/public/Book2_Producer_Background.png')} style={[commonStyle.banner,{justifyContent:'center',alignItem:'center',alignSelf:'center'}]}>
+                        ? <Image source={{uri: info.AdditionalLocationImages}} style={commonStyle.banner}/>
+                        : <ImageBackground source={require('../../../../img/public/Book2_Producer_Background.png')}
+                                           style={[commonStyle.banner, {
+                                               justifyContent: 'center',
+                                               alignItem: 'center',
+                                               alignSelf: 'center'
+                                           }]}>
                             <Image source={require('../../../../img/public/Book2_Producer_Word.png')}
-                                   style={{alignSelf:'center' }}/>
+                                   style={{alignSelf: 'center'}}/>
                         </ImageBackground>
                     }
 
@@ -349,28 +416,33 @@ export default class ProducerDetail extends PureComponent<Props, State> {
                             <View style={{
                                 flexDirection: 'row',
                             }}>
-                                <Text style={{fontWeight: 'bold', fontSize: 15,fontFamily:'arial',color:'#000'}}>
+                                <Text style={{fontWeight: 'bold', fontSize: 15, fontFamily: 'arial', color: '#000'}}>
                                     {info.title}
                                 </Text>
                             </View>
-                            {(info.URL!==null&&info.URL!=='')&&<View style={{}}>
+                            {(info.URL !== null && info.URL !== '') && <View style={{}}>
                                 <Text style={{lineHeight: 25}}>
                                     Website: {info.URL}
                                 </Text>
-                                <Text>
-                                    Away from you: 254km
-                                </Text>
+                                {
+                                    distance !== 'NaNm' &&
+                                    <View style={{flexDirection: 'row', paddingTop: 5, marginBottom: 0}}>
+                                        <Text >Away from you: </Text>
+                                        <Text style={{ color: '#019eff'}}>{distance}</Text>
+                                    </View>
+                                }
                             </View>}
-                            <View style={{flexDirection: 'row', paddingTop: 10}}>
+                            <View style={{flexDirection: 'row', paddingTop: 5}}>
                                 <StarRating
                                     // style={{marginBottom: 5}}
                                     maxStars={5}
-                                    rating={3.5}
+                                    rating={rating}
                                     disabled={true}
                                     starSize={15}
                                     onStarChange={(value) => this.onStarRatingPress(value)}
                                 />
-                                <Text style={{paddingLeft: 10, fontSize: 12}}>123 reviews</Text>
+                                <Text style={{paddingLeft: 10, fontSize: ScreenUtil.setSpText(12),color:'#019eff'}}>{reviews} </Text>
+                                <Text style={{ fontSize: ScreenUtil.setSpText(12)}}>reviews</Text>
                             </View>
                         </View>
                         <View style={{flexDirection: 'column', width: screen.width * 0.1}}>
@@ -389,28 +461,29 @@ export default class ProducerDetail extends PureComponent<Props, State> {
                     </View>
                     <Separator/>
                 </View>
-                {this.getMapView()}
+                {/*{this.getMapView()}*/}
+                {this.loadAMap()}
                 {/*<TouchableOpacity activeOpacity={0.9} style={{*/}
-                    {/*padding: 10,*/}
-                    {/*flexDirection: 'row',*/}
-                    {/*justifyContent: 'space-between'*/}
+                {/*padding: 10,*/}
+                {/*flexDirection: 'row',*/}
+                {/*justifyContent: 'space-between'*/}
                 {/*}}*/}
-                                  {/*onPress={() => {*/}
-                                      {/*// this.showActionSheet();*/}
-                                  {/*}}*/}
+                {/*onPress={() => {*/}
+                {/*// this.showActionSheet();*/}
+                {/*}}*/}
                 {/*>*/}
-                    {/*<View>*/}
-                        {/*<Text style={{width: screen.width * 0.8}}>{info.subtitle}</Text>*/}
-                    {/*</View>*/}
-                    {/*<View style={{flexDirection: 'column', alignItems: 'center', alignSelf: 'center'}}>*/}
-                        {/*<Image style={commonStyle.arrow} source={require('../../../../img/public/right_arrow.png')}/>*/}
-                    {/*</View>*/}
+                {/*<View>*/}
+                {/*<Text style={{width: screen.width * 0.8}}>{info.subtitle}</Text>*/}
+                {/*</View>*/}
+                {/*<View style={{flexDirection: 'column', alignItems: 'center', alignSelf: 'center'}}>*/}
+                {/*<Image style={commonStyle.arrow} source={require('../../../../img/public/right_arrow.png')}/>*/}
+                {/*</View>*/}
                 {/*</TouchableOpacity>*/}
                 {/*{this.renderWineList()}*/}
                 {/*{console.log(this.state.WinedList)}*/}
-                {isLoading?this.showLoading():this._getWineItem()}
+                {isLoading ? this.showLoading() : this._getWineItem()}
                 {/*<ContentWaterfall data={this.state.WinedList} onPressContent={(item)=>{*/}
-                    {/*this.props.navigation.navigate('WineDetail', {item});*/}
+                {/*this.props.navigation.navigate('WineDetail', {item});*/}
                 {/*}} />*/}
 
             </View>
@@ -418,9 +491,9 @@ export default class ProducerDetail extends PureComponent<Props, State> {
     };
 
     render() {
-        let {title,waiting} = this.state;
+        let {title, waiting} = this.state;
         return (
-            <View style={[commonStyle.container,{backgroundColor:'#fff'}]}>
+            <View style={[commonStyle.container, {backgroundColor: '#fff'}]}>
                 <View style={{
                     position: 'absolute',
                     top: screen.statusBarHeight,
@@ -432,31 +505,36 @@ export default class ProducerDetail extends PureComponent<Props, State> {
                     backgroundColor: this.state.handerBgc,
                 }}>
                     <TouchableOpacity disabled={waiting} activeOpacity={0.5} onPress={() => {
-                        this.setState({waiting:true});
+                        this.setState({waiting: true});
                         this.props.navigation.goBack();
                         this.toWait();
                     }}>
-                        <Image source={require('../../../../img/mine/icon_homepage_left_arrow.png')}
+                        <Image source={LocalImage.goBackIcon}
                                style={[commonStyle.callbackIcon, {}]}
                                onPress={() => {
-                                   this.setState({waiting:true});
+                                   this.setState({waiting: true});
                                    this.props.navigation.goBack();
                                    this.toWait();
                                }}
                         />
                     </TouchableOpacity>
-                    <View style={{width:screen.width*0.8,alignItems:'center'}}>
-                        <Text numberOfLines={1} style={{fontWeight: '400', fontSize: 15,fontFamily:'arial',color:'#fff'}}>{title.toUpperCase()}</Text>
+                    <View style={{width: screen.width * 0.8, alignItems: 'center'}}>
+                        <Text numberOfLines={1} style={{
+                            fontWeight: '400',
+                            fontSize: 15,
+                            fontFamily: 'arial',
+                            color: '#fff'
+                        }}>{title.toUpperCase()}</Text>
                     </View>
-                    <TouchableOpacity  disabled={waiting} activeOpacity={0.5} onPress={() => {
-                        this.setState({waiting:true});
+                    <TouchableOpacity disabled={waiting} activeOpacity={0.5} onPress={() => {
+                        this.setState({waiting: true});
                         this.props.navigation.goBack();
                         this.toWait();
                     }}>
                         <Image source={require('../../../../img/public/share.png')}
                                style={[commonStyle.callbackIcon, {}]}
                                onPress={() => {
-                                   this.setState({waiting:true});
+                                   this.setState({waiting: true});
                                    // this.props.navigation.goBack();
                                    this.toWait();
                                }}
@@ -486,21 +564,20 @@ export default class ProducerDetail extends PureComponent<Props, State> {
         )
     }
 
-    setBackgroundColorAsync = (color)=>{
-        setTimeout(function(){
-        StatusBar.setBackgroundColor(color);
-        },50)
+    setBackgroundColorAsync = (color) => {
+        setTimeout(function () {
+            StatusBar.setBackgroundColor(color);
+        }, 50)
     }
 }
-
 
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        width:screen.width,
-        height:500,
-        backgroundColor:'#0064ff'
+        width: screen.width,
+        height: 500,
+        backgroundColor: '#0064ff'
     },
     item: {
         margin: 4,
@@ -523,23 +600,22 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         paddingLeft: 10,
         paddingRight: 10,
-        width:screen.width*0.7,
-        alignSelf:'center',
-        marginBottom:10,
+        width: screen.width * 0.7,
+        alignSelf: 'center',
+        marginBottom: 10,
         borderBottomWidth: screen.onePixel,
         borderColor: color.border,
         backgroundColor: '#fff',
-        borderRadius:3,
+        borderRadius: 3,
     },
     rightContainer: {
         flex: 1,
-        backgroundColor:"#9dff4f00",
+        backgroundColor: "#9dff4f00",
     },
     icon: {
         width: 50,
-        height:50,
-        // paddingBottom:100,
-        backgroundColor:"#9e9e9e00",
-        resizeMode:'contain'
+        height: 50,
+        backgroundColor: "#9e9e9e00",
+        resizeMode: 'contain'
     },
 });

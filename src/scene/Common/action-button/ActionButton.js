@@ -18,6 +18,7 @@ import {
     touchableBackground,
     DEFAULT_ACTIVE_OPACITY
 } from "./shared";
+import * as ScreenUtil from "../ScreenUtil";
 
 export default class ActionButton extends Component {
     constructor(props) {
@@ -435,7 +436,7 @@ const styles = StyleSheet.create({
     },
     btnText: {
         marginTop: -4,
-        fontSize: 24,
+        fontSize: ScreenUtil.setSpText(24),
         backgroundColor: "transparent"
     }
 });

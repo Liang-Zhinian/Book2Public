@@ -1,6 +1,7 @@
 package cn.qiuxiang.react.amap3d
 
 import cn.qiuxiang.react.amap3d.maps.*
+import com.amap.api.maps.AMap
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext

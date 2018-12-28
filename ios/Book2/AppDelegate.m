@@ -12,6 +12,7 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <AMapFoundationKit/AMapFoundationKit.h>
+//#import <GoogleMaps/GoogleMaps.h>
 
 //#import <AMapSearchKit/AMapSearchKit.h>
 
@@ -20,7 +21,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   [AMapServices sharedServices].apiKey = @"67be50719e82fca9506084895ecc1dd9";
-//  [AMapSearchServices sharedServices].apiKey = @"67be50719e82fca9506084895ecc1dd9";
+//  [GMSServices provideAPIKey:@"_YOUR_API_KEY_"];
   
   NSURL *jsCodeLocation;
 

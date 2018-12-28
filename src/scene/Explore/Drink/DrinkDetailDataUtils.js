@@ -12,6 +12,8 @@ function requestData(data) {
                 Longitude: info.Longitude,
                 AdditionalLocationImages: null,
                 firmId: info.Vineyard_Id,
+                WineCount:info.WineCount,
+                Country:info.Country
             }
         });
         // //数据打乱
@@ -19,6 +21,7 @@ function requestData(data) {
         //     return 0.5 - Math.random()
         // });
     } catch (e) {
+        return e;
         console.warn(e)
     }
 }
@@ -39,20 +42,18 @@ function requestProducerData(data) {
                 AdditionalLocationImages: null,
                 firmId: info.Entity_Id,
                 Email:info.Email,
-                URL:info.URL
+                URL:info.URL,
+                WineCount:info.WineCount,
+                Country:info.Country
             }
         });
-        // //数据打乱
-        // dataList.sort(() => {
-        //     return 0.5 - Math.random()
-        // });
     } catch (e) {
+        return e;
         console.warn(e)
     }
 }
 
 function requestWineData(data) {
-    console.log('requestWineData',data);
     try {
         // if (data.length > 0) {
             return data.map((info) => {
@@ -65,12 +66,14 @@ function requestWineData(data) {
                     firmId: info.Producer_Id,
                     Appellation:info.Appellation,
                     Colour:info.Colour,
-                    ProducerId:info.Producer_Id
+                    ProducerId:info.Producer_Id,
+                    Country:info.Country
                 }
             });
         // }
 
     } catch (e) {
+        return null;
         console.warn(e)
     }
 }
@@ -86,7 +89,8 @@ function requestAreaData(data) {
             }
         });
     } catch (e) {
-        console.warn(e)
+        console.warn(e);
+        throw e
     }
 }
 function requestFormatProducerData(data) {
@@ -102,6 +106,7 @@ function requestFormatProducerData(data) {
             }
         });
     } catch (e) {
+        return e;
         console.warn(e)
     }
 }

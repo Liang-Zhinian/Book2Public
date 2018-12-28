@@ -22,6 +22,7 @@ import ActionSheet from '../Common/ActionSheet'
 import LinearGradient from 'react-native-linear-gradient';
 import AMapAndroid from "../Api/AMapAndroid";
 import {commonStyle} from "../../widget/commonStyle";
+import LocalImage from "../../widget/LocalImage";
 
 
 type
@@ -489,7 +490,7 @@ class CommodityDetails extends PureComponent<Props, State> {
                     <TouchableOpacity activeOpacity={0.5} onPress={() => {
                         this.props.navigation.goBack();
                     }}>
-                        <Image source={require('../../img/mine/icon_homepage_left_arrow.png')}
+                        <Image source={LocalImage.goBackIcon}
                                style={[commonStyle.callbackIcon, {}]}
                                onPress={() => {
                                    this.props.navigation.goBack();

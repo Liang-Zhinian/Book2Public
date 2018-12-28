@@ -6,6 +6,7 @@ import {
     StyleSheet,
     Platform,
 } from 'react-native';
+import * as ScreenUtil from "../../Common/ScreenUtil";
 
 export default class SearchBox extends Component {
     constructor(props) {
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
             : 40,
         marginLeft: 2,
         marginRight: 5,
-        fontSize: 12,
+        fontSize: ScreenUtil.setSpText(12),
         lineHeight: 30,
         textAlignVertical: 'bottom',
         textDecorationLine: 'none'

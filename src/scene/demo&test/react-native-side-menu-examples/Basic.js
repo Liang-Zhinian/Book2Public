@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import SideMenu from 'react-native-side-menu';
 import Menu from './Menu';
+import * as ScreenUtil from "../../Common/ScreenUtil";
 
 const image = require('./assets/menu.png');
 
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   caption: {
-    fontSize: 20,
+    fontSize: ScreenUtil.setSpText(20),
     fontWeight: 'bold',
     alignItems: 'center',
   },
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
   welcome: {
-    fontSize: 20,
+    fontSize: ScreenUtil.setSpText(20),
     textAlign: 'center',
     margin: 10,
   },

@@ -199,17 +199,6 @@ class HorizontalPicker extends Component {
             }
         }
     };
-    playSoundBundle = () => {
-        const s = new Sound('frog.wav', Sound.MAIN_BUNDLE, (e) => {
-            if (e) {
-                console.log('error', e);
-            } else {
-                s.setSpeed(0);
-                console.log('duration', s.getDuration());
-                s.play(() => s.release()); // Release when it's done so we're not using up resources
-            }
-        });
-    };
     scrollXTemp=0;
     onScroll = (event) => {
         // Sometimes onMomentumScrollBegin event seems to be missing and onMomentumScrollEnd
@@ -236,7 +225,6 @@ class HorizontalPicker extends Component {
         if (Math.floor(this.scrollX) === scrollXIndex * this.getItemWidth()) {
             this.onChange(letter);
             // this.onScrollChange(letter)
-            // this.playSoundBundle()
         }
         this.setState({
             scrollXIndex: scrollXIndex,
@@ -486,7 +474,6 @@ class HorizontalPicker extends Component {
       let letter = this.props.children[this.state.scrollXIndex].props.label;
       if (this.letterTemp !== letter && this.letterTemp !== null) {
           // this.onChange(letter);
-          // this.playSoundBundle();
       }
       this.letterTemp = letter;
       const bounds = this.state.bounds;

@@ -15,6 +15,7 @@ import {
     BackHandler
 } from 'react-native';
 import PropTypes from 'prop-types'
+import * as ScreenUtil from "./ScreenUtil";
 
 const {width, height} = Dimensions.get('window');
 const [left, top] = [0, 0];
@@ -302,7 +303,7 @@ export default class ActionSheet extends Component {
             return (
                 <TouchableWithoutFeedback>
                     <View style={[styles.contentViewStyle,{backgroundColor:this.titleBackgroundColor,width:this.contentWidth,height:this.real_titleHeight,borderTopLeftRadius:this.state.borderRadius,borderTopRightRadius:this.state.borderRadius,padding:this.state.mainTitlePadding}]}>
-                        <Text style={ {color: this.state.mainTitleColor, fontSize: this.state.mainTitleFont, fontWeight:this.titleFontWeight, textAlign: this.state.mainTitleTextAlign,}}>{this.props.mainTitle}</Text>
+                        <Text style={ {color: this.state.mainTitleColor, fontSize: ScreenUtil.setSpText(this.state.mainTitleFont), fontWeight:this.titleFontWeight, textAlign: this.state.mainTitleTextAlign,}}>{this.props.mainTitle}</Text>
                     </View>
                 </TouchableWithoutFeedback>
             )
@@ -343,7 +344,7 @@ export default class ActionSheet extends Component {
                     {/* item for selection*/}
                     <TouchableOpacity onPress={this._didSelect.bind(this, i)}  activeOpacity = {0.9}>
                         <View style={[styles.contentViewStyle,{backgroundColor:this.itemBackgroundColor,width:this.contentWidth,height:this.state.itemHeight,borderTopLeftRadius:topRadius,borderTopRightRadius:topRadius,borderBottomLeftRadius:bottomRadius,borderBottomRightRadius:bottomRadius}]} key={i}>
-                            <Text style={[styles.textStyle, {color: this.state.itemTitleColor, fontSize: this.state.itemTitleFont,fontWeight:this.itemFontWeight}]}>{title}</Text>
+                            <Text style={[styles.textStyle, {color: this.state.itemTitleColor, fontSize: ScreenUtil.setSpText(this.state.itemTitleFont),fontWeight:this.itemFontWeight}]}>{title}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -378,7 +379,7 @@ export default class ActionSheet extends Component {
               {/* Cancel Item */}
                 <TouchableOpacity onPress={this._dismiss.bind(this)} activeOpacity = {0.9}>
                     <View style={[styles.contentViewStyle,{backgroundColor:this.cancelBackgroundColor,borderRadius:this.state.borderRadius,width:this.contentWidth,height:this.state.cancelHeight}]}>
-                        <Text style={[styles.textStyle,{color:this.state.cancelTitleColor,fontSize:this.state.cancelTitleFont,fontWeight:this.cancelFontWeight}]}>{this.state.cancelTitle}</Text>
+                        <Text style={[styles.textStyle,{color:this.state.cancelTitleColor,fontSize:ScreenUtil.setSpText(this.state.cancelTitleFont),fontWeight:this.cancelFontWeight}]}>{this.state.cancelTitle}</Text>
                     </View>
                 </TouchableOpacity>
           </View>

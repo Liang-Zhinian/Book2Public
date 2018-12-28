@@ -15,6 +15,7 @@ import Svg, {
     Rect,
     Stop
 } from 'react-native-svg';
+import * as ScreenUtil from "../../Common/ScreenUtil";
 
 class PickerView extends BaseComponent {
 
@@ -255,7 +256,7 @@ class PickerView extends BaseComponent {
                 color: this.colorPath[index].interpolate({
                     inputRange: [0, 1],
                     outputRange: [this.props.itemTextColor, this.props.itemSelectedColor]
-                }), fontSize: this.props.fontSize ? this.props.fontSize : this.getSize(20),
+                }), fontSize: ScreenUtil.setSpText(this.props.fontSize ? this.props.fontSize : this.getSize(20)),
                 backgroundColor: 'transparent', fontWeight: 'normal'
             }}>{item}</Animated.Text>
         </View>

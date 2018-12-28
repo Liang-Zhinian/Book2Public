@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {Image, Keyboard, Platform, StyleSheet, TextInput, TouchableOpacity, View,} from 'react-native';
 import {screen} from "../../common";
 import Mater from "react-native-vector-icons/MaterialIcons";
-let imgList={search:require('../../img/nearby/Search.png'),location:require('../../img/nearby/locationB.png')};
+import LocalImage from "../../widget/LocalImage";
+let imgList={search:LocalImage.searchIcon,location:LocalImage.locationIcon};
 export default class SearchBox extends Component {
 
     constructor(props) {

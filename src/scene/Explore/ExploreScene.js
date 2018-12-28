@@ -8,10 +8,10 @@ import {BVLinearGradient, Image, ImageBackground, Text, TouchableOpacity, Vibrat
 
 import {screen} from '../../common';
 import SearchAnythingScene from "./SearchAnythingScene";
-import BeautyCube from "./BeautyCube";
-import WellnessCube from "./WellnessCube";
-import FitnessCube from "./FitnessCube";
-import DrinkCube from "./DrinkCube";
+import BeautyCube from "./Beauty/BeautyCube";
+import WellnessCube from "./Wellness/WellnessCube";
+import FitnessCube from "./Fitness/FitnessCube";
+import DrinkCube from "./Drink/DrinkCube";
 import {commonStyle} from "../../widget/commonStyle";
 
 import I18n, {getLanguages} from 'react-native-i18n';
@@ -22,6 +22,8 @@ import frCA from '../../scene/demo&test/react-native-i18n_example/translations/f
 import cn from '../../scene/demo&test/react-native-i18n_example/translations/cn'
 import ProducerScene from "./Drink/Producer/ProducerScene";
 import VineyardScene from "./Drink/Vineyard/VineyardScene";
+import LocalImage from "../../widget/LocalImage";
+import WineScene from "./Drink/Wine/WineScene";
 
 I18n.fallbacks = true;
 
@@ -135,11 +137,7 @@ class ExploreScene extends PureComponent<Props> {
                                }else if (category === 'QR'){
                                    this.props.navigation.navigate('PrintInteractionScreen',{type:SelectTypeTemp})//跳到扫码页面
                                } else {
-                                   this.props.navigation.navigate('VineyardScene'
-                                       , {
-                                           category: 'Vineyard',
-                                           subareaObj: subareaObj
-                                       });
+                                   this.props.navigation.navigate('WineScene');
                                }
 
                            }}
@@ -151,105 +149,6 @@ class ExploreScene extends PureComponent<Props> {
         } else {
             return (
                 [
-                //     <View ref='f0' style={commonStyle.surface}>
-                //         <ImageBackground source={require('../../img/home/CubeImages-Beauty.png')}
-                //                          style={commonStyle.pageImg}>
-                //             <View style={{flexDirection: 'column', alignItems: 'stretch'}}>
-                //                 <Text style={{
-                //                     paddingTop: screen.width / 3,
-                //                     fontSize: 25,
-                //                     color: '#fff',
-                //                     fontFamily: 'arial'
-                //                 }}>
-                //                     EXPLORE
-                //                 </Text>
-                //                 <Text style={{
-                //                     fontSize: 40,
-                //                     color: '#fff',
-                //                     fontFamily: 'arial'
-                //                 }}>
-                //                     Discover beauty {"\n"}
-                //                     shops near you
-                //                 </Text>
-                //             </View>
-                //         </ImageBackground>
-                //     </View>,
-                //     <View ref='f1' style={commonStyle.surface}>
-                //         <ImageBackground source={require('../../img/home/CubeImages-AllGoodDeals.png')}
-                //                          style={commonStyle.pageImg}>
-                //             <View style={{flexDirection: 'column', alignItems: 'stretch'}}>
-                //                 <Text style={{
-                //                     paddingTop: screen.width / 3,
-                //                     fontSize: 25,
-                //                     color: '#fff',
-                //                     fontFamily: 'arial'
-                //                 }}>
-                //                     SPECIAL OFFERS
-                //                 </Text>
-                //                 <Text style={{
-                //                     fontSize: 40,
-                //                     color: '#fff',
-                //                     fontFamily: 'arial'
-                //                 }}>
-                //                     Good deals for you {"\n"}
-                //                 </Text>
-                //                 <Text style={{
-                //                     fontSize: 15,
-                //                     color: '#fff',
-                //                     fontFamily: 'arial'
-                //                 }}>
-                //                     Find great offers from the best locations in{"\n"}
-                //                     fitness,wellness and beauty.
-                //                 </Text>
-                //             </View>
-                //         </ImageBackground>
-                //     </View>,
-                //     <View ref='f2' style={commonStyle.surface}>
-                //         <ImageBackground source={require('../../img/home/CubeImages-Fitness.png')}
-                //                          style={commonStyle.pageImg}>
-                //             <View style={{flexDirection: 'column', alignItems: 'stretch'}}>
-                //                 <Text style={{
-                //                     paddingTop: screen.width / 3,
-                //                     fontSize: 25,
-                //                     color: '#fff',
-                //                     fontFamily: 'arial'
-                //                 }}>
-                //                     EXPLORE
-                //                 </Text>
-                //                 <Text style={{
-                //                     fontSize: 40,
-                //                     color: '#fff',
-                //                     fontFamily: 'arial'
-                //                 }}>
-                //                     Discover fitness {"\n"}
-                //                     classes near you{"\n"}
-                //                 </Text>
-                //             </View>
-                //         </ImageBackground>
-                //     </View>,
-                //     <View ref='f3' style={commonStyle.surface}>
-                //         <ImageBackground source={require('../../img/home/CubeImages-Wellness.png')}
-                //                          style={commonStyle.pageImg}>
-                //             <View style={{flexDirection: 'column', alignItems: 'stretch'}}>
-                //                 <Text style={{
-                //                     paddingTop: screen.width / 3,
-                //                     fontSize: 25,
-                //                     color: '#fff',
-                //                     fontFamily: 'arial'
-                //                 }}>
-                //                     EXPLORE
-                //                 </Text>
-                //                 <Text style={{
-                //                     fontSize: 40,
-                //                     color: '#fff',
-                //                     fontFamily: 'arial'
-                //                 }}>
-                //                     Discover wellness {"\n"}
-                //                     classes near you{"\n"}
-                //                 </Text>
-                //             </View>
-                //         </ImageBackground>
-                //     </View>
                 ]
             );
         }
@@ -391,7 +290,7 @@ class ExploreScene extends PureComponent<Props> {
                             this.searchBarOnPress()
                         }}>
                         <View style={{flexDirection: 'row', alignSelf: 'flex-start'}}>
-                            <Image source={require('../../img/nearby/Search.png')} style={commonStyle.searchIcon}/>
+                            <Image source={LocalImage.searchIcon} style={commonStyle.searchIcon}/>
                             <Text
                                 style={commonStyle.searchText}
                             >{this.state.searchKey} </Text>
@@ -403,7 +302,7 @@ class ExploreScene extends PureComponent<Props> {
                     <TouchableOpacity style={commonStyle.searchBar} underlineColorAndroid='white' onPress={(mm) => {
                         this.searchBarOnPress();
                     }}>
-                        <Image source={require('../../img/nearby/locationB.png')} style={commonStyle.searchIcon}/>
+                        <Image source={LocalImage.locationIcon} style={commonStyle.searchIcon}/>
                         <Text
                             style={commonStyle.searchText}
                         >Select the </Text>

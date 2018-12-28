@@ -13,6 +13,7 @@ import CityList from './IndexListView';
 
 // 下面是数据部分
 import DATA_JSON from './city-list.json';
+import * as ScreenUtil from "../../Common/ScreenUtil";
 
 const NOW_CITY_LIST = [
     {
@@ -144,6 +145,6 @@ const styles = StyleSheet.create({
         margin: 5
     },
     currentCityText: {
-        fontSize: 16
+        fontSize: ScreenUtil.setSpText(16)
     }
 });

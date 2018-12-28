@@ -2,6 +2,7 @@ package cn.qiuxiang.react.amap3d.maps
 
 import cn.qiuxiang.react.amap3d.toLatLng
 import cn.qiuxiang.react.amap3d.toPx
+import com.amap.api.maps.AMap
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext

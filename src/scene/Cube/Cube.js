@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {Animated, Easing, PanResponder, Platform, StyleSheet, Vibration, View,} from 'react-native';
+import {Animated, Easing, PanResponder, PixelRatio, Platform, StyleSheet, Vibration, View,} from 'react-native';
 import screen from "../../common/screen";
+const dp2px = dp => PixelRatio.getPixelSizeForLayoutSize(dp);
 const styles = StyleSheet.create({
     container: {
         width:Math.round(screen.width) ,
@@ -90,9 +91,11 @@ export default class Cube extends Component {
     responder = PanResponder.create({
         onStartShouldSetResponder: (evt, gestureState) => false,
         onStartShouldSetResponderCapture: (evt, gestureState) => false,
-        onMoveShouldSetPanResponder: (evt, gestureState) => true,
+        onMoveShouldSetPanResponder: (evt, gestureState) => {
+            return gestureState.dx != 0 && gestureState.dy != 0
+        },
         onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
-            return true;
+            return gestureState.dx != 0 && gestureState.dy != 0
         },
         _onPanResponderTerminationRequest: (evt, gestureState) => false,
         onPanResponderGrant: (evt, gestureState) => {

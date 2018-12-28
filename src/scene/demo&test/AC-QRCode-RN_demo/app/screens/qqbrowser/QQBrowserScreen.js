@@ -12,6 +12,7 @@ import {ImageButton} from "../../components/";
 
 import Styles from './styles/QQBrowserScreenStyles';
 import {Images, Colors} from "../../resource/";
+import * as ScreenUtil from "../../../../../Common/ScreenUtil";
 
 export default class QQBrowserScreen extends Component {
     render() {
@@ -28,7 +29,7 @@ export default class QQBrowserScreen extends Component {
                 borderWidth={2}
                 borderColor={Colors.black_000}
                 hintText={'对准二维码/条形码'}
-                hintTextStyle={{color: Colors.white_fff, fontSize: 16,}}
+                hintTextStyle={{color: Colors.white_fff, fontSize: ScreenUtil.setSpText(16),}}
                 hintTextPosition={80}
                 maskColor={Colors.black_00000080}
                 bottomMenuHeight={100}
@@ -49,13 +50,13 @@ export default class QQBrowserScreen extends Component {
                                 style={{height: 32, width: 32, resizeMode: 'contain', marginLeft: 16}}
                             />
                             <Text
-                                style={{color: Colors.blue_4187E8, fontSize: 18}}
+                                style={{color: Colors.blue_4187E8, fontSize: ScreenUtil.setSpText(18)}}
                             >扫码</Text>
                             <Text
-                                style={{color: 'white', fontSize: 18}}
+                                style={{color: 'white', fontSize: ScreenUtil.setSpText(18)}}
                             >扫物</Text>
                             <Text
-                                style={{color: 'white', fontSize: 18, marginRight: 80}}
+                                style={{color: 'white', fontSize: ScreenUtil.setSpText(18), marginRight: 80}}
                             >扫题</Text>
                         </View>
                     )

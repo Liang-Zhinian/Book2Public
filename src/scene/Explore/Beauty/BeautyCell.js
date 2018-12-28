@@ -4,6 +4,7 @@ import {Heading2, Paragraph} from '../../../widget/Text'
 import {screen} from '../../../common'
 import {color} from '../../../widget'
 import StarRating from "../../Common/StarRating";
+import * as ScreenUtil from "../../Common/ScreenUtil";
 
 
 type Props = {
@@ -42,22 +43,27 @@ export default  class BeautyCell extends PureComponent<Props> {
         let {info, latLng} = this.props;
         // let imageUrl = info.imageUrl.replace('w.h', '160.0')
         let distance = this.getDistance(latLng.latitude, latLng.longitude, info.Latitude, info.Longitude);
-        distance = Math.floor(distance / 1000) > 0 ? Math.floor(distance / 1000) + 'KM' : Math.floor(distance) + 'M';
+        distance = Math.floor(distance / 1000) > 0 ? Math.floor(distance / 1000) + 'km' : Math.floor(distance) + 'm';
+        let hot = [3,3.5,4,4.5,5];
+        let reviews = Math.floor((Math.random()*1000));
+        let rating = hot[Math.floor((Math.random()*10)%4)];
         return (
             <TouchableOpacity
                 activeOpacity={0.9}
                 style={styles.container}
-                onPress={() => this.props.onPress(info)}>
+                onPress={() => this.props.onPress(info,distance,reviews,rating)}>
 
                 <View style={styles.rightContainer}>
                     <Heading2 style={{paddingTop: 5}}>{info.title}</Heading2>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                        <Paragraph numberOfLines={0} style={{
-                            marginTop: 5,
-                            width: screen.width * 0.9 - 80
-                        }}>{info.subtitle !== null ? this.subString(info.subtitle) : 'This is a fixed demo data, including telephone and comment.'} - {distance}</Paragraph>
-
-                    </View>
+                    {
+                        distance !== 'NaNm' &&
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                            <Paragraph numberOfLines={0} style={{
+                                marginTop: 5,
+                                width: screen.width * 0.9 - 80
+                            }}>{info.subtitle !== null ? this.subString(info.subtitle) : 'This is a fixed demo data, including telephone and comment.'} - {distance}</Paragraph>
+                        </View>
+                    }
                     <TouchableOpacity activeOpacity={0.8}
                                       style={{flexDirection: 'row', marginTop: 10, marginBottom: 10}}
                     >
@@ -70,12 +76,13 @@ export default  class BeautyCell extends PureComponent<Props> {
                         <StarRating
                             // style={{marginBottom: 5}}
                             maxStars={5}
-                            rating={3.5}
+                            rating={rating}
                             disabled={true}
                             starSize={15}
                             onStarChange={(value) => this.onStarRatingPress(value)}
                         />
-                        <Text style={{paddingLeft: 10, fontSize: 12}}>456 reviews</Text>
+                        <Text style={{paddingLeft: 10, fontSize: ScreenUtil.setSpText(12),color:'#3d82ff'}}>{reviews} </Text>
+                        <Text style={{ fontSize: ScreenUtil.setSpText(12)}}>reviews</Text>
                     </View>
                 </View>
                 <View style={{flexDirection: 'column',}}>

@@ -12,6 +12,7 @@ import {ImageButton, TitleBar} from "../../components/";
 
 import Styles from './styles/OFOScreenStyles';
 import {Constants, Images, Colors} from "../../resource/";
+import * as ScreenUtil from "../../../../../Common/ScreenUtil";
 
 export default class OFOScreen extends Component {
     render() {
@@ -24,7 +25,7 @@ export default class OFOScreen extends Component {
                 cornerOffsetSize={0}
                 borderWidth={0}
                 hintText={'请对准车牌上的二维码'}
-                hintTextStyle={{color: Colors.yellow_FFD900, fontSize: 16, fontWeight: 'bold'}}
+                hintTextStyle={{color: Colors.yellow_FFD900, fontSize: ScreenUtil.setSpText(16), fontWeight: 'bold'}}
                 hintTextPosition={110}
                 maskColor={Colors.black_0000004D}
                 onScanResultReceived={this.barcodeReceived.bind(this)}

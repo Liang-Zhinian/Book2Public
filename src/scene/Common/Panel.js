@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 import PropTypes from 'prop-types'
 import {screen} from "../../common";
+import * as ScreenUtil from "./ScreenUtil";
 const ICONS = {
     up: require('../../img/mine/icon_homepage_up_arrow.png'),
     down: require('../../img/mine/icon_homepage_down_arrow.png')
@@ -18,7 +19,7 @@ export default class Panel extends Component {
     static propTypes = {
         expanded: PropTypes.bool,
         title: PropTypes.string,
-        onToggle: PropTypes.func
+        onToggle: PropTypes.func,
     };
 
     static defaultProps = {
@@ -56,7 +57,7 @@ export default class Panel extends Component {
         const icon = expanded ? 'up' : 'down';
 
         return (
-            <Animated.View style={[styles.container, {height: animation}]}>
+            <Animated.View style={[styles.container, {height: animation},this.props.style]}>
                 <TouchableOpacity activeOpacity={0.8}
                                   onPress={this.toggle}
                                   style={styles.titleContainer}
@@ -100,9 +101,9 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 5,
         color:'#393939',
-        fontSize:13,
+        fontSize:ScreenUtil.setSpText(15),
         fontFamily:'arial',
-        fontWeight:'200',
+        fontWeight:'500',
         justifyContent:'center'
     },
     button: {

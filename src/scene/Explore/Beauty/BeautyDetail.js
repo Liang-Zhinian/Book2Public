@@ -22,6 +22,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import AMapAndroid from "../../Api/AMapAndroid";
 import {commonStyle} from "../../../widget/commonStyle";
 import GroupPurchaseCell from "../../GroupPurchase/GroupPurchaseCell";
+import LocalImage from "../../../widget/LocalImage";
+import AMap3D from "../../Api/AMap.ios";
 
 
 type
@@ -146,9 +148,65 @@ export default class BeautyDetail extends PureComponent<Props, State> {
             }
         });
     }
-
-    renderHeader = () => {
+    getMapView(){
         let info = this.props.navigation.state.params.info;
+        return(
+            <AMapAndroid
+                style={commonStyle.mapImageStyle}
+                ref={component => this._amap = component}
+                options={{
+                    centerCoordinate: {
+                        longitude: info.Longitude,
+                        latitude: info.Latitude
+                    },
+                    // centerCoordinate: {
+                    //     longitude: 0.12527777777777777,
+                    //     latitude: 51.50833333333333
+                    // },
+                    radius: 0,
+                    zoomLevel: 18,//缩放比例级别
+                }}
+                zoomGestures={true}
+                scaleControls={false}
+                MapLanguage={"en"}
+                fill_color={0x7a888888}
+                onMapClick={() => {
+                    this.showActionSheet();
+                }}
+            />
+        )
+    }
+    loadAMap() {
+        let {info,distance,reviews,rating} = this.props.navigation.state.params;
+        return (
+            <View style={commonStyle.mapImageStyle}>
+                <AMap3D
+                    locationEnabled={false}
+                    zoomLevel={14}
+                    coordinate={{
+                        longitude: parseFloat(info.Longitude),
+                        latitude: parseFloat(info.Latitude)
+                    }}
+                    zoomEnabled={false}
+                    scrollEnabled={false}
+                    ref={component => this._amap = component}
+                    onFormattedAddressReceived={this.onFormattedAddressReceived}
+                    onMapLoaded={(e) => {
+                        console.warn('onMapLoaded--->' + e)
+                    }}
+                    onMarkerPress={(index) => {
+                        this.showActionSheet();
+                    }}
+                    onPressEvent={(e) => {
+                        this.showActionSheet();
+                    }}
+                />
+            </View>
+        );
+    }
+    renderHeader = () => {
+        let {info,distance,reviews,rating} = this.props.navigation.state.params;
+
         return (
             <View>
                 <View>
@@ -189,12 +247,12 @@ export default class BeautyDetail extends PureComponent<Props, State> {
                                 <StarRating
                                     // style={{marginBottom: 5}}
                                     maxStars={5}
-                                    rating={3.5}
+                                    rating={rating}
                                     disabled={true}
                                     starSize={15}
                                     onStarChange={(value) => this.onStarRatingPress(value)}
                                 />
-                                <Text style={{paddingLeft: 10, fontSize: 12}}>123 reviews</Text>
+                                <Text style={{paddingLeft: 10, fontSize: 12}}>{reviews} reviews</Text>
                             </View>
                         </View>
                         <View style={{flexDirection: 'column', width: screen.width * 0.1}}>
@@ -213,29 +271,8 @@ export default class BeautyDetail extends PureComponent<Props, State> {
                     </View>
                     <Separator/>
                 </View>
-                <AMapAndroid
-                    style={commonStyle.mapImageStyle}
-                    ref={component => this._amap = component}
-                    options={{
-                        centerCoordinate: {
-                            longitude: info.Longitude,
-                            latitude: info.Latitude
-                        },
-                        // centerCoordinate: {
-                        //     longitude: 0.12527777777777777,
-                        //     latitude: 51.50833333333333
-                        // },
-                        radius: 0,
-                        zoomLevel: 18,//缩放比例级别
-                    }}
-                    zoomGestures={true}
-                    scaleControls={false}
-                    MapLanguage={"en"}
-                    fill_color={0x7a888888}
-                    onMapClick={() => {
-                        this.showActionSheet();
-                    }}
-                />
+                {/*{this.getMapView()}*/}
+                {this.loadAMap()}
                 <TouchableOpacity activeOpacity={0.9} style={{
                     padding: 10,
                     flexDirection: 'row',
@@ -465,7 +502,7 @@ export default class BeautyDetail extends PureComponent<Props, State> {
                     <TouchableOpacity activeOpacity={0.5} onPress={() => {
                         this.props.navigation.goBack();
                     }}>
-                        <Image source={require('../../../img/mine/icon_homepage_left_arrow.png')}
+                        <Image source={LocalImage.goBackIcon}
                                style={[commonStyle.callbackIcon, {}]}
                                onPress={() => {
                                    this.props.navigation.goBack();

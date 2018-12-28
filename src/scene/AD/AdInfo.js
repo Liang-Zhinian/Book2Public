@@ -19,6 +19,7 @@ import {
 } from 'react-native';
 import ActionSheet from '../Common/ActionSheet'
 import {groupPurchaseDetailWithLOLA} from "../../api";
+import LocalImage from "../../widget/LocalImage";
 
 var Geolocation = require('Geolocation');
 
@@ -114,7 +115,7 @@ export default class AdInfo extends Component {
                     <TouchableOpacity style={{width: Dimensions.get('window').width * 0.1}} onPress={() => {
                         this.props.navigation.goBack();
                     }}>
-                        <Image source={require('../../img/mine/icon_homepage_left_arrow_black.png')}
+                        <Image source={LocalImage.goBackIcon}
                                style={[styles.searchIcon, {}]}/>
                     </TouchableOpacity>
                     <TouchableOpacity style={{

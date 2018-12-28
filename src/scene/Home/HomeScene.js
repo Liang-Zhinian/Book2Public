@@ -9,7 +9,8 @@ import {
     StyleSheet,
     Text, ToastAndroid,
     TouchableOpacity,
-    View
+    View,
+    SafeAreaView
 } from 'react-native'
 
 import {screen} from '../../common'
@@ -26,6 +27,8 @@ import cn from  '../../scene/demo&test/react-native-i18n_example/translations/cn
 import {NavigationActions} from "react-navigation";
 import {android} from "../../common/Device";
 import {commonStyle} from "../../widget/commonStyle";
+import LocalImage from "../../widget/LocalImage";
+import * as ScreenUtil from "../Common/ScreenUtil";
 
 type
 Props = {
@@ -319,9 +322,12 @@ export default class HomeScene extends PureComponent<Props, State> {
                            start={{x: 0, y: 0}}
                            end={{x: 1, y: 1}}
            >
+           <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }}>
+
                <View style={[styles.header, {
                    justifyContent: 'center',
                    alignItems: 'center',
+                   marginTop: 20
                }]}>
                    <TouchableOpacity
                        activeOpacity={0.8}
@@ -335,7 +341,7 @@ export default class HomeScene extends PureComponent<Props, State> {
                                    }
                                });
                        }}>
-                       <Image source={require('../../img/nearby/Search.png')} style={styles.searchIcon}/>
+                       <Image source={LocalImage.searchIcon} style={styles.searchIcon}/>
                        <View style={{
                            flexDirection: 'row',
                            width: screen.width * 0.8,
@@ -347,14 +353,14 @@ export default class HomeScene extends PureComponent<Props, State> {
                                color: '#ffffff',
                                paddingTop: 5,
                                marginLeft: 5,
-                               fontSize: 16,
+                               fontSize: ScreenUtil.setSpText(16),
                            }]}>Search for </Text>
                            <Text style={{
                                fontWeight: '500',
                                color: '#ffffff',
                                paddingTop: 5,
                                marginLeft: 5,
-                               fontSize: 16,
+                               fontSize: ScreenUtil.setSpText(16),
                            }}>Businesses</Text>
                        </View>
                    </TouchableOpacity>
@@ -401,6 +407,7 @@ export default class HomeScene extends PureComponent<Props, State> {
                        {this.GetCubeContent()}
                    </Cube>
                </View>
+           </SafeAreaView>
            </LinearGradient>
         )
     }
@@ -464,20 +471,24 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     tabTextInfoStyle: {
-        paddingTop: 5,
-        paddingBottom: 5,
+        paddingTop: 10,
+        paddingBottom: 10,
         width: screen.width * 0.95 / 4,
         alignItems: 'center',
     },
     tabViewTextStyle: {
-        backgroundColor: '#ffffff65',
+        backgroundColor: '#4A4C7D',
         width: screen.width * 0.95 / 4 - screen.width * 0.01,
+        // alignItems: 'center',
+        // paddingTop: 8,
+        // paddingBottom: 8,
+        borderRadius: 5,
         alignItems: 'center',
         paddingTop: 8,
         paddingBottom: 8,
     },
     tabTextStyle: {
-        fontSize: 12,
+        fontSize: ScreenUtil.setSpText(12),
         fontFamily: 'arial',
         color: '#ffffff',
         textAlignVertical: 'center',

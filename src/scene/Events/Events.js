@@ -4,6 +4,7 @@ import {screen} from '../../common/index'
 import LinearGradient from 'react-native-linear-gradient';
 import {Agenda, LocaleConfig} from 'react-native-calendars';
 import RNFS from "react-native-fs";
+import LocalImage from "../../widget/LocalImage";
 
 LocaleConfig.locales['fr'] = {
     monthNames: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
@@ -94,7 +95,7 @@ class Events extends React.Component {
                   {/*<TouchableOpacity activeOpacity={0.5} onPress={() => {*/}
                       {/*this.props.navigation.goBack();*/}
                   {/*}}>*/}
-                      {/*<Image source={require('../../img/mine/icon_homepage_left_arrow.png')}*/}
+                      {/*<Image source={LocalImage.goBackIcon}*/}
                              {/*style={[styles.callbackIcon, {}]}*/}
                              {/*onPress={() => {*/}
                                  {/*this.props.navigation.goBack();*/}

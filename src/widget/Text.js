@@ -2,6 +2,7 @@
 import React from 'react'
 import ReactNative, {StyleSheet, Dimensions, Text,TextInput} from 'react-native'
 import color from './color'
+import * as ScreenUtil from "../scene/Common/ScreenUtil";
 
 export function Heading1({style, ...props}: Object) {
     return <Text style={[styles.h1, style]} {...props} />
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
         color: color.primary,
     },
     h2: {
-        fontSize: 15,
+        fontSize: ScreenUtil.setSpText(15),
         fontWeight: 'bold',
         color: '#222222',
     },

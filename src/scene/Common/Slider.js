@@ -1,18 +1,11 @@
-
 import React from 'react';
-import {
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    Animated,
-    Vibration,
-    LayoutAnimation,
-    Dimensions, PanResponder, AsyncStorage,
-} from 'react-native';
+import {AsyncStorage, BVLinearGradient, PanResponder, StyleSheet, Text, Vibration, View,} from 'react-native';
 import {screen} from '../../common/index'
-const width = screen.width*0.9;
+import * as ScreenUtil from "./ScreenUtil";
+import {commonStyle} from "../../widget/commonStyle";
+import LinearGradient from "react-native-linear-gradient";
+
+const width = screen.width*0.86;
 
 
 export default class Slider extends React.Component {
@@ -24,15 +17,21 @@ export default class Slider extends React.Component {
             leftWidth:width/2,//左边直线长度
             sliderWidth:50,//滑块宽度
             sliderValue:5,//滑块值
-            sliderColor:'#454545',//滑块颜色
+            sliderColor:'#309bff',//滑块颜色
             totalScale:10,//总刻度
+            initialValueState:true,
         };
         this.count = 0;
     }
 
+    static defaultProps = {
+        stickBackgroundColor: '#309bff',
+        scrollEnabled: true,
+    };
+
     calculationProps(){
         this.setState({
-            leftWidth:width / this.state.totalScale*this.state.initialValue,
+            leftWidth:width / this.state.totalScale*this.state.initialValue-screen.onePixel*8,
         })
     }
 
@@ -84,7 +83,6 @@ export default class Slider extends React.Component {
             this.props.onPress?this.props.onPress(0):'';
         },
         onPanResponderMove: (evt, {dx, dy}) => {
-
             // let selectedValue =  (this.moveX+dx)/ (width/ this.state.totalScale);
             // dx>0?this.setState({sliderColor:'#57ff1f'}):this.setState({sliderColor:'#ff2d9e'});
 
@@ -93,9 +91,11 @@ export default class Slider extends React.Component {
             if (this.state.initialValue<=0&&dx<0||(this.state.initialValue>=10&&dx>0)){
                 return
             }
+            let tempValue=parseInt(((this.state.leftWidth + dx - this.tempDx))/ (width/ this.state.totalScale)*10)/10;
             this.setState({
+                initialValueState:false,
                 leftWidth: this.state.leftWidth + dx - this.tempDx,
-                initialValue:parseInt(((this.state.leftWidth + dx - this.tempDx))/ (width/ this.state.totalScale)*10)/10
+                initialValue:tempValue<0?0:(tempValue>=10?10:tempValue)
             }, ()=>{
                 this.props.onSelect && this.props.onSelect( this.state.initialValue );
             });
@@ -103,6 +103,7 @@ export default class Slider extends React.Component {
             // this.props.onSelect?this.props.onSelect( parseInt(((this.state.leftWidth + dx - this.tempDx))/ (width/ this.state.totalScale)*10)/10):'';
         },
         onPanResponderRelease: (evt, {vx, vy}) => {
+            this.setState({ initialValueState:true})
             Vibration.vibrate( [0, 10,0, 0]);
             let sliderValueList = [];
             let v=0;
@@ -110,17 +111,17 @@ export default class Slider extends React.Component {
                 sliderValueList.push(i)
                 v=v+5;
             }
-            if (this.state.initialValue<0){
+            if (this.state.initialValue<=0){
                     this.setState({
                         initialValue: this.state.initialValue + (Math.round((0-this.state.initialValue) * 10) / 10),
-                        leftWidth: this.state.leftWidth + (width / this.state.totalScale / 10)*Math.round((0-this.state.initialValue )* 10)
+                        leftWidth: this.state.leftWidth + (width / this.state.totalScale / 10)*Math.round((0-this.state.initialValue )* 10)-screen.onePixel*8
                     },()=>{
                         this.props.onSelect?this.props.onSelect( this.state.initialValue):'';
                     })
-            } else if (this.state.initialValue>10){
+            } else if (this.state.initialValue>=10){
                 this.setState({
                     initialValue: this.state.initialValue - (Math.round((this.state.initialValue-10) * 10) / 10),
-                    leftWidth: this.state.leftWidth - (width / this.state.totalScale / 10)*Math.round((this.state.initialValue-10 )* 10)
+                    leftWidth: this.state.leftWidth - (width / this.state.totalScale / 10)*Math.floor((this.state.initialValue-10 )* 10)-screen.onePixel*8
                 },()=>{
                     this.props.onSelect?this.props.onSelect( this.state.initialValue):'';
                 })
@@ -163,8 +164,8 @@ export default class Slider extends React.Component {
 
 
             this.tempDx = 0;
-            this.props.onSelect?this.props.onSelect( this.state.initialValue):'';
-            this.props.onPress?this.props.onPress(1):'';
+            this.props.onSelect&&this.props.onSelect( this.state.initialValue);
+            this.props.onPress&&this.props.onPress(1);
         },
     });
     render() {
@@ -182,37 +183,45 @@ export default class Slider extends React.Component {
                     <View
                         style={{
                             overflow: 'hidden',
-                            height: 2,
+                            height: 1.5,
                             width: width,
-                            backgroundColor: '#ffffff',
+                            backgroundColor: this.props.stickBackgroundColor,
                             borderRadius: 5,
                         }}
                     />
                     <View
                         {...this.responder.panHandlers}
                         style={{
-                            position:'absolute',
-                            height:20,
+                            position: 'absolute',
                             left: this.state.leftWidth,
-                            borderRadius:5,
-                            width:screen.width-width+10,
-                            backgroundColor: this.state.sliderColor,
-                            // paddingBottom: 10,
-                            // margin:5,
-                            alignItems:'center',
-                            justifyContent:'center',
+                            width: screen.width - width,
+                            backgroundColor: '#fff0',
+                            paddingTop: 5,
+                            paddingBottom: 5,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 999
                         }}>
-                        <Text style={{color:'#ffffff',fontsize:12,fontFamily:'arial',fontWeight:'500'}}>{this.state.initialValue*5===0?0.25:this.state.initialValue*5}km</Text>
+                        <LinearGradient
+                            colors={screen.sliderColor}
+                            start={{x: 1, y: 1}}
+                            end={{x: 0, y: 1}}
+                            style={{
+                                flex: 1,
+                                // backgroundColor: "#000",
+                                width: screen.width - width,
+                                alignItems: 'center',
+                                borderRadius: 5,
+                                borderWidth: screen.onePixel * 2,
+                                borderColor: '#F4CAD8',
+                            }}>
+                            <Text style={{
+                                color: '#ffffff',
+                                fontSize: ScreenUtil.setSpText(13),
+                                fontFamily: 'arial'
+                            }}>{this.state.initialValue * 5 === 0 ? 0.25 : this.state.initialValue * 5} km</Text>
+                        </LinearGradient>
                     </View>
-                    {/*<View*/}
-                    {/*style={{*/}
-                    {/*overflow: 'hidden',*/}
-                    {/*height: 1,*/}
-                    {/*width: width * 0.95-this.state.leftWidth-this.state.sliderWidth,*/}
-                    {/*backgroundColor: '#ffffff',*/}
-                    {/*borderRadius: 5,*/}
-                    {/*}}*/}
-                    {/*/>*/}
                 </View>
             </View>
         );

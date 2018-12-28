@@ -1,0 +1,49 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+buildscript {
+    ext.kotlin_version = '1.2.41'
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 22
+    }
+}
+
+dependencies {
+    compile project(':react-native-maps')
+    compile project(':react-native-device-info')
+    compile project(':react-native-sound')
+    compile project(':react-native-fast-image')
+    compile project(':react-native-i18n')
+    compile project(':react-native-camera')
+    compile project(':react-native-splash-screen')
+    compile project(':react-native-vector-icons')
+    compile project(':react-native-svg')
+    compile project(':react-native-sensors')
+    compile project(':react-native-picker')
+    compile project(':react-native-material-kit')
+    compile project(':react-native-linear-gradient')
+    compile project(':react-native-fs')
+    compile project(':react-native-datetime')
+    compile project(':react-native-blur')
+    compile project(':gl-react-native')
+    compile project(':react-native-amap3d')
+    provided 'com.facebook.react:react-native:+'
+    compile 'com.amap.api:3dmap:6.2.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}

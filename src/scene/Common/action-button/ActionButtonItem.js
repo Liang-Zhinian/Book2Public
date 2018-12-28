@@ -17,6 +17,7 @@ import {
     touchableBackground,
     DEFAULT_ACTIVE_OPACITY
 } from "./shared";
+import * as ScreenUtil from "../ScreenUtil";
 
 const {width: WIDTH} = Dimensions.get("window");
 const SHADOW_SPACE = 10;
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
     },
     text: {
         flex: 1,
-        fontSize: 12,
+        fontSize: ScreenUtil.setSpText(12),
         color: "#444"
     }
 });

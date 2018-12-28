@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
+import * as ScreenUtil from "../../../../Common/ScreenUtil";
 
 export default class MenuScreen extends Component {
 
@@ -64,6 +65,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1
   },
   menuText: {
-    fontSize: 18
+    fontSize: ScreenUtil.setSpText(18)
   }
 });

@@ -3,6 +3,7 @@ import {StyleSheet, ImageBackground, View, Text,BVLinearGradient, TouchableHighl
 import {screen} from '../../common/index'
 import {commonStyle} from "../../widget/commonStyle";
 import LinearGradient from "react-native-linear-gradient";
+import * as ScreenUtil from "../Common/ScreenUtil";
 
 type
 Props = {
@@ -104,9 +105,9 @@ const styles = StyleSheet.create({
         height: screen.width,
         justifyContent: 'center', alignSelf: 'center', alignItems: 'center',
         flexDirection: 'row',
-        borderRadius: 2,
-        borderWidth: 1,
-        borderColor: '#282828a3',
+        // borderRadius: 2,
+        // borderWidth: 0,
+        // borderColor: '#282828a3',
         backgroundColor: '#ffffff',
         flex: 1,
     },
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
     },
     tabTextStyle: {
         height: 50,
-        fontSize: 14,
+        fontSize: ScreenUtil.setSpText(14),
         fontFamily: 'arial',
         color: '#ffffff',
         textAlignVertical: 'center',

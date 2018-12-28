@@ -8,6 +8,8 @@ import GroupPurchaseCell from './GroupPurchaseCell'
 import StarRating from "../Common/StarRating";
 import LinearGradient from 'react-native-linear-gradient';
 import ScheduleSceneChildDetail from "./ScheduleSceneChildDetail";
+import LocalImage from "../../widget/LocalImage";
+import * as ScreenUtil from "../Common/ScreenUtil";
 
 
 type
@@ -112,7 +114,7 @@ class ScheduleSceneChild extends PureComponent<Props, State> {
                         <View style={{
                             flexDirection: 'row',
                         }}>
-                            <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                            <Text style={{fontWeight: 'bold', fontSize: ScreenUtil.setSpText(15)}}>
                                 {info.title}
                             </Text>
                         </View>
@@ -133,7 +135,7 @@ class ScheduleSceneChild extends PureComponent<Props, State> {
                                 starSize={15}
                                 onStarChange={(value) => this.onStarRatingPress(value)}
                             />
-                            <Text style={{paddingLeft: 10, fontSize: 12}}>123 reviews</Text>
+                            <Text style={{paddingLeft: 10, fontSize: ScreenUtil.setSpText(12)}}>123 reviews</Text>
                         </View>
                         <TouchableOpacity activeOpacity={0.8}
                                           style={{flexDirection: 'row', marginTop: 10, marginBottom: 5}}
@@ -177,14 +179,14 @@ class ScheduleSceneChild extends PureComponent<Props, State> {
                     <TouchableOpacity activeOpacity={0.5} onPress={() => {
                         this.props.navigation.goBack();
                     }}>
-                        <Image source={require('../../img/mine/icon_homepage_left_arrow.png')}
+                        <Image source={LocalImage.goBackIcon}
                                style={[styles.callbackIcon, {}]}
                                onPress={() => {
                                    this.props.navigation.goBack();
                                }}
                         />
                     </TouchableOpacity>
-                    <Text style={{color: '#fff', fontSize: 12, fontFamily: 'arial',
+                    <Text style={{color: '#fff', fontSize: ScreenUtil.setSpText(12), fontFamily: 'arial',
                                           backgroundColor: 'transparent'}}
                           numberOfLines={1}>{this.props.navigation.state.params.service.title}</Text>
                     <TouchableOpacity activeOpacity={0.5} onPress={() => {
@@ -226,7 +228,7 @@ class ScheduleSceneChild extends PureComponent<Props, State> {
                             }}>
                                 <Text style={{
                                     paddingLeft: 10,
-                                    fontSize: 13,
+                                    fontSize: ScreenUtil.setSpText(13),
                                     alignSelf: 'flex-start',
                                     fontFamily: 'arial'
                                 }}>Dr.Hello</Text>
@@ -267,7 +269,7 @@ class ScheduleSceneChild extends PureComponent<Props, State> {
                                 paddingBottom: 10,
                             }}
                         >
-                            <Text style={{color: '#fff', fontSize: 13, fontFamily: 'arial',
+                            <Text style={{color: '#fff', fontSize: ScreenUtil.setSpText(13), fontFamily: 'arial',
                                           backgroundColor: 'transparent'}}>
                                 VIEW SCHEDULE
                             </Text>

@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {StyleSheet, Text, View} from "react-native";
 import {Accelerometer} from "react-native-sensors";
+import * as ScreenUtil from "../../Common/ScreenUtil";
 
 const Value = ({name, value}) => (
     <View style={styles.valueContainer}>
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#F5FCFF"
     },
     headline: {
-        fontSize: 30,
+        fontSize: ScreenUtil.setSpText(30),
         textAlign: "center",
         margin: 10
     },
@@ -56,11 +57,11 @@ const styles = StyleSheet.create({
     },
     valueValue: {
         width: 200,
-        fontSize: 20
+        fontSize: ScreenUtil.setSpText(20)
     },
     valueName: {
         width: 50,
-        fontSize: 20,
+        fontSize: ScreenUtil.setSpText(20),
         fontWeight: "bold"
     },
     instructions: {

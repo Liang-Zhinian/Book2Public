@@ -11,11 +11,11 @@ import {
     ActivityIndicator,
     Animated,
     AsyncStorage,
-    BVLinearGradient, DeviceEventEmitter,
+    BVLinearGradient,
+    DeviceEventEmitter,
     Easing,
-    Image, InteractionManager,
-    Keyboard,
-    PanResponder, Platform,
+    Image,
+    Platform,
     SliderIOS,
     StatusBar,
     StyleSheet,
@@ -23,18 +23,22 @@ import {
     TextInput,
     TouchableOpacity,
     View,
+    SafeAreaView
 } from 'react-native'
 import {SpacingView} from '../../widget'
 import {screen} from "../../common";
-import AMap from '../Api/AMapAndroid'
 import AMap3D from '../Api/AMap.ios';
 import testData from '../../testData'
 import ExploreRangeMarkerList from './ExploreRangeMarkerList';
-import {CoordinateConverter, getVineyardByGPS, regeocodeLocation,getProducerByGPS } from "../../api";
+import {CoordinateConverter, getVineyardByGPS, regeocodeLocation} from "../../api";
 import Slider from "../Common/Slider";
 import DrinkDetailDataUtils from "./Drink/DrinkDetailDataUtils";
 import Mater from "react-native-vector-icons/MaterialIcons";
 import BeautyDetail from "./Beauty/BeautyDetail";
+import LocalImage from "../../widget/LocalImage";
+import * as ScreenUtil from "../Common/ScreenUtil";
+import {commonStyle} from "../../widget/commonStyle";
+import LottieView from 'lottie-react-native';
 
 type
 Props = { navigation: any, };
@@ -87,6 +91,9 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
             },
             markerView: false,
             signWidth:0,
+            signHeight:0,
+            searchBackgroundColor:'#0009',
+            GifSearchIcon:false,
             coordinates:[],
         };
         this.picker = null;
@@ -144,15 +151,20 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                         this.getPosition();
                     }else{
                         let LatLngLog=JSON.parse(result);
-                        this.setState({
-                            center: {
-                                latitude:parseFloat(LatLngLog[0]),
-                                longitude:parseFloat(LatLngLog[1])
-                            },
-                            radius:parseFloat(LatLngLog[2]*5),
-                            zoom:parseFloat(LatLngLog[3])
-                        });
-                        this.UpdateMarkerList();
+                        if (LatLngLog[0]===null||LatLngLog[1]===null){
+                            this.getPosition();
+                        }else{
+                            this.setState({
+                                center: {
+                                    latitude:parseFloat(LatLngLog[0]),
+                                    longitude:parseFloat(LatLngLog[1])
+                                },
+                                radius:parseFloat(LatLngLog[2]*5),
+                                zoom:parseFloat(LatLngLog[3])
+                            });
+                            this.UpdateMarkerList();
+                        }
+
                     }
                 }
             );
@@ -341,13 +353,11 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
         let {coordinates,radius} = this.state;
         return (
             <AMap3D
-                // region = {{latitudeDelta: 0,
-                //     longitudeDelta: 0, ...this.state.center}}
+                style={{height:screen.height-35}}
                 locationEnabled={false}
                 zoomLevel={this.state.zoom}
                 coordinate={this.state.center}
                 ref={component => this._amap = component}
-                // onFormattedAddressReceived={this.onFormattedAddressReceived}
                 onLongPressEvent={(e) => {
                     this.setState({
                         center: {
@@ -357,9 +367,6 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                     },()=>{
                         this.UpdateMarkerList();
                     });
-                    // this.regeocodeLocation(e.longitude,e.latitude);
-                    // this._onMapLongClick(address);
-
                 }}
                 onMarkerPress={(index) => {
                     this.setState({ markerView: true });
@@ -399,31 +406,10 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
         let {category} = this.props.navigation.state.params;
         return (
             <View style={[styles.sliderStyle]}>
-                <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() => {
-                        this._onSearchClick(address);
-                        this.props.navigation.goBack();
-                    }}
-                    style={{
-                        backgroundColor: '#ff7570',
-                        padding: 10,
-                        alignSelf: 'center',
-                        alignItems: 'center',
-                        borderRadius: 20,
-                        marginBottom:0
-                    }}>
-                    <Text style={{color: '#ffffff', fontSize: 14, fontFamily: 'arial',}}>
-                        SEARCH
-                    </Text>
-                </TouchableOpacity>
                 <View style={[ {
                     alignSelf:'center',
                     alignItems:'center',
                     justifyContent:'center',
-                    // backgroundColor:'#ff464f',
-                    // position: 'absolute',
-                    // bottom: 10,
                     marginTop: 10,
                     marginBottom: 10,
                     width: this.state.markerView ? screen.width * 0.9 : 0,
@@ -469,141 +455,198 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
     //
     //     },
     // });
-    opacity=[0, 1, 0];
+    opacity=[0.6, 1, 0];
     animate (v) {
-        this.opacity= v===0?[0, 1, 1]:[0, 1, 0];
-        this.setState({signWidth:screen.width * 0.15});
+        this.opacity= v===0?[0.8, 1, 1]:[0, 1,1];
+        this.setState({
+            signWidth:screen.width * 0.15,
+            signHeight:screen.width * 0.15,
+            GifSearchIcon:false,
+            searchBackgroundColor:'#0009',
+        });
         this.animatedValue.setValue(v);
-        Animated.timing(
-            this.animatedValue,
-            {
-                toValue: v===0?1:0,
-                duration: 2000,
-                easing: Easing.linear
-            }
-        ).start(
-            // () => this.animate()
-        );
+        // Animated.timing(
+        //     this.animatedValue,
+        //     {
+        //         toValue: v===0?1:0,
+        //         duration: 5000,
+        //         easing: Easing.linear
+        //     }
+        // ).start(
+        //     // () => this.animate()
+        // );
 
         if (v===1){
+            Animated.timing(
+                this.animatedValue,
+                {
+                    toValue: 0,
+                    duration: 3000,
+                    easing: Easing.linear
+                }
+            ).start(
+                // () => this.animate()
+            );
+            //  let isSetTimeout = setTimeout(()=>{
+            //     this.setState({signWidth:0,signHeight:0})
+            // },8000);
             setTimeout(()=>{
-                this.setState({signWidth:0})
-            },5000)
+                this.setState({
+                    searchBackgroundColor:'#ffcd08ae',
+                    GifSearchIcon:true
+                })
+            },500)
+        }else {
+            Animated.timing(
+                this.animatedValue,
+                {
+                    toValue: v===0?1:0,
+                    duration: 5000,
+                    easing: Easing.linear
+                }
+            ).start(
+                // () => this.animate()
+            );
         }
+
         // this.animatedValue.stopAnimation(()=>{
         //     console.log(123)
         // })
+    }
+    renderSlider(){
+        let  {radius}=this.state;
     }
     render() {
         const opacity = this.animatedValue.interpolate({
             inputRange: [0, 0.5, 1],
             outputRange: this.opacity
         });
-        let  {signWidth,radius,locationSearchKey,center}=this.state;
+        let  {signWidth,signHeight,searchBackgroundColor,GifSearchIcon,radius,locationSearchKey,center}=this.state;
         let li=[50,45,40,35,30,25,20,15,10,5,0.5,0.25];
         let liTemp=[50,45,40,35,30,25,20,15,10,5,0.5,0.25];
         let u=[9,9.2,9.3,9.5,10,10,10,11,11.5,12.5,15,17];
         return (
             <View style={styles.linearGradient}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }}>
+
                 <View style={{
                     flexDirection: 'column',
                     alignItems:'center',
                     position: 'absolute',
                     top: screen.statusBarHeight + 20,
                     width: screen.width ,
+                    // marginTop:5,
+                    // marginBottom:5,
+                    // height:46,
                     zIndex: 100,
                 }}>
-
                     <View style={{
-                        backgroundColor: '#ffffffae',
+                        backgroundColor: '#00000090',
                         flexDirection: 'row',
+                        borderColor:'#383838',
+                        borderWidth:screen.onePixel,
                         alignItems:'center',
-                        // justifyContent:'center',
-                        // alignSelf: 'center',
-                    }}
-                    >
+                        // marginTop:5,
+                        // marginBottom:5
+                        // alignItems:'center',
+                    }}>
                         <TouchableOpacity
                             style={{
                                 width: screen.width * 0.1,
-                                paddingRight: 5,
-                                paddingLeft: 5,
                                 paddingTop: 10,
-                                paddingBottom: 10,
+                                paddingBottom:10,
+                                alignItems:'center'
                             }}
                             onPress={() => {
                                 StatusBar.setBackgroundColor('#00000000');
                                 this.props.navigation.goBack();
                             }}
                         >
-                            <Image source={require('../../img/mine/icon_homepage_left_arrow.png')}
-                                   style={[styles.searchIcon, {tintColor: '#232323'}]}/>
+                            <Image source={LocalImage.goBackIcon}
+                                   style={[styles.searchIcon, {tintColor: '#ffffff'}]}/>
                         </TouchableOpacity>
                         <TextInput
-                            selectionColor={'#202020'}
-                            placeholder="Search location"
+                            numberOfLines={1}
+                            selectionColor={'#b2b2b2'}
+                            placeholder="Search Location"
+                            placeholderTextColor={'#ffffff'}
                             underlineColorAndroid='transparent'
-                            multiline={true}
+                            multiline={false}
+                            // blurOnSubmit={false}
                             onChangeText={(value) => {
                                 this.onChangeSearchBoxText(value)
                             }}
                             defaultValue={locationSearchKey}
                             style={{
+                                paddingVertical:0,
                                 width: screen.width * 0.8,
-                                fontSize: 15,
-                                color: '#232323',
+                                lineHeight:40,
+                                paddingRight: 30,
+                                fontSize: ScreenUtil.setSpText(15),
+                                color: '#ffffff',
                                 textAlignVertical: 'center',
                             }}/>
-                        {(locationSearchKey!==null&&locationSearchKey.length > 0)&&
+
                         <TouchableOpacity
                             activeOpacity={0.9}
                             style={[styles.inputIcon, {
+                                position: 'absolute',
+                                right: 0,
                                 paddingTop: Platform.OS === 'ios' ? 10 : 15,
                                 paddingBottom: Platform.OS === 'ios' ? 10 : 15,
                             }]}
-                            onPress={()=>{
-                                this.setState({locationSearchKey:null})
+                            onPress={() => {
+                                this.setState({locationSearchKey: null})
                             }}
                         >
-                            <Mater name={'close'} size={20} color={'#232323'}/>
-                        </TouchableOpacity>}
+                            {(locationSearchKey !== null && locationSearchKey.length > 0) &&
+                            <Mater name={'close'} size={20} color={'#ffffff'}/>}
+                        </TouchableOpacity>
                     </View>
                 </View>
+
                 <Animated.View
                     style={{
-                        opacity,
+                        opacity:opacity,
+                        // backgroundColor:'#fff',
+                        flexDirection: 'column',
+                        alignItems:'center',
+                        alignSelf:'center',
                         position: 'absolute',
-                        top: screen.statusBarHeight + 70,
-                        alignItems: 'flex-start',
+                        bottom: 40,
                         zIndex: 100,
                     }}
                 >
                     <View style={{
+                        backgroundColor: '#000',
+                        flexDirection: 'column',
+                        alignItems:'center',
                         width: signWidth,
-                        height: screen.width * 0.15,
-                        backgroundColor: '#8c55ff5e',
+                        height: signHeight,
                         borderRadius: 45,
                         borderWidth: 1,
                         borderColor: '#3295ff5e',
-                        alignItems: 'center',
-                        margin: 5,
+                        // margin: 5,
                         justifyContent: 'center',
-                        flexDirection: 'row'
                     }}>
                         <Text
                             numberOfLines={1}
                             style={{
-                                color: '#fff',
+                                lineHeight:20,
+                                color: '#ffcd08',
                                 fontFamily: 'arial',
-                                fontWeight: '400',
-                                fontSize: 20,
+                                fontWeight: '500',
+                                fontSize: ScreenUtil.setSpText(20),
                             }}>{radius}</Text>
                         <Text
                             style={{
+                                lineHeight:8,
                                 flexDirection: 'column',
-                                color: '#fff',
+                                color: '#ffcd08',
                                 fontFamily: 'arial',
-                                fontSize: 10,
-                                paddingTop: 10,
+                                fontWeight: '400',
+                                fontSize: ScreenUtil.setSpText(13),
+                                // paddingTop: 10,
                                 alignItems: 'flex-end',
                                 justifyContent: 'center'
                             }}>km</Text>
@@ -633,8 +676,59 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                         <Image source={require('../../img/nearby/my_location.png')}
                                style={[styles.searchIcon, {tintColor: '#707070'}]}/>
                     </TouchableOpacity>
-
                 </View>
+                <View
+                    style={{
+                        position: 'absolute',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        bottom: 40,
+                        right: screen.width * 0.02,
+                        zIndex: 100,
+                    }}>
+                    <TouchableOpacity
+                        activeOpacity={0.9}
+                        onPress={() => {
+                            this._onSearchClick(address);
+                            this.props.navigation.goBack();
+                        }}
+                        style={{
+                            backgroundColor: '#06ebffae',
+                            padding: 5,
+                            flexDirection: 'row',
+                            alignSelf: 'center',
+                            alignItems: 'flex-end',
+                            borderRadius: 20,
+                            borderWidth:1,
+                            borderColor:'#a5a5a5',
+                            marginBottom: 0
+                        }}>
+                        <View style={{
+                            width: 30,
+                            height: 30,
+                            alignSelf: 'center',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            {GifSearchIcon
+                                ? <LottieView
+                                    source={require('./search_ask_loop.json')}
+                                    style={{
+                                        width: 30,
+                                        height: 30,
+                                        tintColor: '#fff'
+                                    }}
+                                    autoPlay
+                                    loop />
+                                : <Image
+                                    source={LocalImage.searchIcon}
+                                    style={[commonStyle.searchIcon,
+                                        {tintColor: '#353535'}]}/>
+                            }
+                        </View>
+                    </TouchableOpacity>
+                </View>
+
                 <View style={[styles.mapStyle]}>
                     {center===null?this.showLoading():this.loadAMap()}
 
@@ -644,54 +738,59 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
                             {/*this.loadAMap()*/}
                         {/*// })*/}
                     {/*}*/}
-
+                    <View
+                        style={{
+                            position: 'absolute',
+                            bottom: 0,
+                            height:35,
+                            backgroundColor:'#353535',
+                            width:screen.width,
+                        }}
+                    >
+                        <Slider
+                            // stickBackgroundColor={'#2d68bb'}
+                            stickBackgroundColor={'#F4CAD8'}
+                            initialValue={radius/5}
+                            onSelect={(e) => {
+                                e === 0 ? e = 0.25 : e;
+                                li.map((info,i)=>{
+                                    this.setState({radius:e!==0.25?e*5:0.25,});
+                                    if ((e!==0.25?e*5:0.25)===info) this.setState({zoom:u[i]})
+                                })
+                            }}
+                            onPress={(v) => {//滑动
+                                this.animate(v);
+                                let {center,radius} = this.state;
+                                // let li=[50,45,40,35,30,25,20,15,10,5,0.25];
+                                // let u=[8.5,9.2,9.3,9.5,10,10,10,11,11.5,12.5,17];
+                                if (li.indexOf(radius) < 0) {
+                                    liTemp.push(radius);
+                                    this.sortarr(liTemp);//排序
+                                    let _radius = liTemp.indexOf(radius);//取到新半径的位置
+                                    let lastDiffer = Math.abs(liTemp[_radius - 1] - liTemp[_radius]);//前一个相差值
+                                    let nextDiffer = Math.abs(liTemp[_radius + 1] - liTemp[_radius]);//后一个相差值
+                                    if (lastDiffer === nextDiffer) {
+                                        return;
+                                    } else if (lastDiffer > nextDiffer) {//取后一个值
+                                        this.setState({
+                                            zoom: u[li.indexOf(liTemp[_radius + 1])]
+                                        })
+                                    } else if (lastDiffer < nextDiffer) {
+                                        this.setState({
+                                            zoom: u[li.indexOf(liTemp[_radius - 1])]
+                                        })
+                                    }
+                                }
+                                // let {center,radius} = this.state;
+                                this.UpdateMarkerList();
+                                // this.refs['ExploreRangeMarkerList']._GetBusinessLocationsWithinRadius(center.latitude,center.longitude,'',radius);
+                                // this.refs['ExploreRangeMarkerList']._GetVineyardLocationsWithinRadius(center.latitude,center.longitude,radius);
+                            }}
+                        />
+                    </View>
                 </View>
                 {this.GetMarkerList()}
-
-                <View
-                    style={{position: 'absolute', bottom: 0,width:screen.width,}}
-                >
-                    <Slider
-                        initialValue={radius/5}
-                        onSelect={(e) => {
-                            e === 0 ? e = 0.25 : e;
-                            li.map((info,i)=>{
-                                this.setState({radius:e!==0.25?e*5:0.25,});
-                                if ((e!==0.25?e*5:0.25)===info) this.setState({zoom:u[i]})
-                            })
-                        }}
-                        onPress={(v) => {//滑动
-                            this.animate(v);
-                            let {center,radius} = this.state;
-                            // let li=[50,45,40,35,30,25,20,15,10,5,0.25];
-                            // let u=[8.5,9.2,9.3,9.5,10,10,10,11,11.5,12.5,17];
-                            if (li.indexOf(radius) < 0) {
-                                liTemp.push(radius);
-                                this.sortarr(liTemp);//排序
-                                let _radius = liTemp.indexOf(radius);//取到新半径的位置
-                                let lastDiffer = Math.abs(liTemp[_radius - 1] - liTemp[_radius]);//前一个相差值
-                                let nextDiffer = Math.abs(liTemp[_radius + 1] - liTemp[_radius]);//后一个相差值
-                                if (lastDiffer === nextDiffer) {
-                                    return;
-                                } else if (lastDiffer > nextDiffer) {//取后一个值
-                                    this.setState({
-                                        zoom: u[li.indexOf(liTemp[_radius + 1])]
-                                    })
-                                } else if (lastDiffer < nextDiffer) {
-                                    this.setState({
-                                        zoom: u[li.indexOf(liTemp[_radius - 1])]
-                                    })
-                                }
-                            }
-                            // let {center,radius} = this.state;
-                            this.UpdateMarkerList();
-                            // this.refs['ExploreRangeMarkerList']._GetBusinessLocationsWithinRadius(center.latitude,center.longitude,'',radius);
-                            // this.refs['ExploreRangeMarkerList']._GetVineyardLocationsWithinRadius(center.latitude,center.longitude,radius);
-                        }}
-                    />
-                </View>
-
-
+                </SafeAreaView>
             </View>
         )
 
@@ -720,9 +819,10 @@ export default class ExploreRangeScene extends PureComponent<Props, State> {
 
 const styles = StyleSheet.create({
     mapStyle: {
-        flex: 1,
+        flex:1,
         flexDirection: 'column',
-        width: screen.width
+        // width: screen.width,
+        // height:screen.height,
     },
     sliderStyle: {
         alignSelf:'center',

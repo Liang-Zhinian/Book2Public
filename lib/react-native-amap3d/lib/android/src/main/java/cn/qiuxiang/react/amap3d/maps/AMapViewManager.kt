@@ -14,6 +14,8 @@ import com.facebook.react.uimanager.annotations.ReactProp
 
 @Suppress("unused")
 internal class AMapViewManager : ViewGroupManager<AMapView>() {
+    private val AMAP: AMap? = null;
+
     companion object {
         val ANIMATE_TO = 1
     }
@@ -43,6 +45,8 @@ internal class AMapViewManager : ViewGroupManager<AMapView>() {
 
     override fun addView(mapView: AMapView, child: View, index: Int) {
         mapView.add(child)
+//        com.amap.api.maps.MapsInitializer.loadWorldGridMap(true);
+//        AMAP?.setMapLanguage(AMap.ENGLISH);
         super.addView(mapView, child, index)
     }
 
@@ -164,6 +168,7 @@ internal class AMapViewManager : ViewGroupManager<AMapView>() {
         view.map.moveCamera(CameraUpdateFactory.changeLatLng(LatLng(
                 coordinate.getDouble("latitude"),
                 coordinate.getDouble("longitude"))))
+        view.setCoordinate(coordinate)
     }
 
     @ReactProp(name = "region")

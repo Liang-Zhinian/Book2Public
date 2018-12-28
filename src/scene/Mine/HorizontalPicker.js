@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 import PropTypes from 'prop-types';
+import * as ScreenUtil from "../Common/ScreenUtil";
 
 const defaultForegroundColor = '#444';
 const defaultItemWidth = 30;
@@ -372,7 +373,7 @@ var styles = StyleSheet.create({
         backgroundColor: 'yellow'
     },
     itemText: {
-        fontSize: 20,
+        fontSize: ScreenUtil.setSpText(20),
         textAlign: 'center'
     },
     overlay: {

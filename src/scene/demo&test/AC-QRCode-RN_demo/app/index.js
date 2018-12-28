@@ -15,6 +15,7 @@ import TwitterScreen from './screens/twitter/TwitterScreen';
 import QQBrowserScreen from "./screens/qqbrowser/QQBrowserScreen";
 import WeChatScreen from "./screens/wechat/WeChatScreen";
 import DefaultScreen from "./screens/default/DefaultScreen";
+import * as ScreenUtil from "../../../Common/ScreenUtil";
 
 class HomeScreen extends Component {
     constructor(props) {
@@ -34,7 +35,7 @@ class HomeScreen extends Component {
                         />
                     </View>
                     <Text
-                        style={{fontSize: 18, color: 'black'}}
+                        style={{fontSize: ScreenUtil.setSpText(18), color: 'black'}}
                     >Marno</Text>
 
                 </View>
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         padding: 16,
         borderRadius: 8,
-        fontSize: 18,
+        fontSize: ScreenUtil.setSpText(18),
     }
 })
 

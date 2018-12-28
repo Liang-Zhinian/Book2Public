@@ -9,6 +9,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import {Images} from '../resource/'
 import ImageButton from "./ImageButton";
 import PropTypes from 'prop-types'
+import * as ScreenUtil from "../../../../Common/ScreenUtil";
 
 export default class TitleBar extends Component {
 
@@ -89,6 +90,6 @@ const styles = StyleSheet.create({
     },
     text_title:{
         color: '#000',
-        fontSize:18,
+        fontSize:ScreenUtil.setSpText(18),
     }
 })

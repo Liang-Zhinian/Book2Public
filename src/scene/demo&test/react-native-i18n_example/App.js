@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, Text, ScrollView, View } from 'react-native';
 import I18n, { getLanguages } from 'react-native-i18n';
+import * as ScreenUtil from "../../Common/ScreenUtil";
 
 // Enable fallbacks if you want `en-US`
 // and `en-GB` to fallback to `en`
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     }),
   },
   title: {
-    fontSize: 20,
+    fontSize: ScreenUtil.setSpText(20),
     fontWeight: '700',
     marginBottom: 8,
   },

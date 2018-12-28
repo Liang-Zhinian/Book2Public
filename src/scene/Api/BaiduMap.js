@@ -5,6 +5,8 @@ import {Geolocation, MapTypes, MapView} from 'react-native-baidu-map';
 import {Button, Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 import Dimensions from 'Dimensions';
+import LocalImage from "../../widget/LocalImage";
+import * as ScreenUtil from "../Common/ScreenUtil";
 
 export default class BaiduMapDemo extends Component {
     static navigationOptions = ({navigation}: any) => ({
@@ -62,7 +64,7 @@ export default class BaiduMapDemo extends Component {
                     <TouchableOpacity style={{width: Dimensions.get('window').width * 0.1}} onPress={() => {
                         this.props.navigation.goBack();//返回按钮
                     }}>
-                        <Image source={require('../../img/mine/icon_homepage_left_arrow_black.png')}
+                        <Image source={LocalImage.goBackIcon}
                                style={[styles.searchIcon, {}]}/>
                     </TouchableOpacity>
                     <TouchableOpacity style={{
@@ -73,7 +75,7 @@ export default class BaiduMapDemo extends Component {
                         alignItems: 'center',
                     }}>
                         <Text numberOfLines={1} style={{
-                            marginLeft: 5, fontSize: 20, fontFamily: 'arial', textAlign: "center"
+                            marginLeft: 5, fontSize: ScreenUtil.setSpText(20), fontFamily: 'arial', textAlign: "center"
                         }}/>
                     </TouchableOpacity>
                     <TouchableOpacity style={{width: Dimensions.get('window').width * 0.1}} onPress={() => {

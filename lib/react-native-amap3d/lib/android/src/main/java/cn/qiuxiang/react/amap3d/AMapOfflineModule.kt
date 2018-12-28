@@ -6,7 +6,6 @@ import com.amap.api.maps.offlinemap.OfflineMapProvince
 import com.amap.api.maps.offlinemap.OfflineMapStatus
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
-
 @Suppress("unused")
 class AMapOfflineModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext), OfflineMapManager.OfflineMapDownloadListener {
     private val manager = OfflineMapManager(reactContext, this)

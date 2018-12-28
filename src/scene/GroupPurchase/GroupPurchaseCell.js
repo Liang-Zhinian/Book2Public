@@ -4,6 +4,7 @@ import {Heading2, Paragraph} from '../../widget/Text'
 import {screen} from '../../common'
 import {color} from '../../widget'
 import StarRating from "../Common/StarRating";
+import * as ScreenUtil from "../Common/ScreenUtil";
 
 let count = 0
 
@@ -59,7 +60,7 @@ class GroupPurchaseCell extends PureComponent<Props> {
                             starSize={15}
                             onStarChange={(value) => this.onStarRatingPress(value)}
                         />
-                        <Text style={{paddingLeft:10,fontSize:12}}>456 reviews</Text>
+                        <Text style={{paddingLeft:10,fontSize:ScreenUtil.setSpText(12)}}>456 reviews</Text>
                     </View>
                 </View>
                 <View style={{flexDirection: 'column',}}>

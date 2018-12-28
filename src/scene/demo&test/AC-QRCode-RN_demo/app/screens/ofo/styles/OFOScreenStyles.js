@@ -5,6 +5,7 @@
  */
 import {StyleSheet} from 'react-native';
 import {Colors} from '../../../resource/';
+import * as ScreenUtil from "../../../../../../Common/ScreenUtil";
 
 export default StyleSheet.create({
     image_bottom_menu:{
@@ -19,7 +20,7 @@ export default StyleSheet.create({
     },
     text_menu_title:{
         color:'white',
-        fontSize:14
+        fontSize:ScreenUtil.setSpText(14)
     },
     view_menu_item_container:{
         justifyContent:'center',

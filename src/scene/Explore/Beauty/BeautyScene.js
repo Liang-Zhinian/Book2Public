@@ -9,6 +9,8 @@ import {commonStyle} from "../../../widget/commonStyle";
 import AMapSelect from "../../Api/AMapSelect";
 import BeautyDataUtils from './BeautyDataUtils'
 import BeautyCell from "./BeautyCell";
+import LocalImage from "../../../widget/LocalImage";
+import * as ScreenUtil from "../../Common/ScreenUtil";
 
 var Geolocation = require('Geolocation');
 type
@@ -47,7 +49,8 @@ export default class BeautyScene extends PureComponent<Props> {
             radius:0,
             zoom:12.5,
             onSearch:false,
-            waiting: false
+            waiting: false,
+            NoData: false
         };
 
         this.count = 0;
@@ -74,7 +77,7 @@ export default class BeautyScene extends PureComponent<Props> {
     showNoDataMsg() {
         return (
             <View style={{alignItems:'center', backgroundColor: 'transparent'}}>
-                <Text style={{color: '#fff', fontSize: 13, fontFamily: 'arial'}}>
+                <Text style={{color: '#fff', fontSize: ScreenUtil.setSpText(13), fontFamily: 'arial'}}>
                     No matched search result is returned.
                 </Text>
             </View>
@@ -82,6 +85,7 @@ export default class BeautyScene extends PureComponent<Props> {
     }
 
     GetExploreList() {//商品列表
+        console.log( 'GetExploreList---->',this.state.BeautyList);
         return (
             this.state.BeautyList.length > 0
                 ? <View style={commonStyle.container}>
@@ -95,6 +99,7 @@ export default class BeautyScene extends PureComponent<Props> {
                         renderItem={this.renderCell}
                         refreshState={this.state.refreshState}
                         onHeaderRefresh={this.requestData}
+                        onFooterRefresh={this.nextPage}//上拉翻页回调方法 refreshState参数值为RefreshState.FooterRefreshing
                         footerTextStyle={{color: '#ffffff'}}
                         footerRefreshingText={'loading...'}
                         footerFailureText={'click refresh'}
@@ -109,34 +114,65 @@ export default class BeautyScene extends PureComponent<Props> {
     size = 25;
     dataLength = 0;
     requestData = async () => {
-            this.setState({
-                onSearch:true,
-                isLoading:true
-            });
-            let {LatLng,radius,searchKey,BeautyList,zoom} = this.state;
-            await GetBusinessLocationsWithinRadius(LatLng.latitude,LatLng.longitude,radius,searchKey===null?'':searchKey,this.size,this.page)
-                .then((msg) => {
-                    this.dataLength = BeautyList.length;
+        this.page=0;
+        this.setState({
+            BeautyList:[],
+            refreshState:RefreshState.HeaderRefreshing
+        });
+        this._GetBusinessLocationsWithinRadius();
+    };
+
+    _GetBusinessLocationsWithinRadius= async () => {
+        this.setState({
+            onSearch: true,
+            isLoading: true});
+        let {LatLng, radius, searchKey, BeautyList, zoom} = this.state;
+        await GetBusinessLocationsWithinRadius(LatLng.latitude, LatLng.longitude, radius, searchKey === null ? '' : searchKey, this.size, this.page)
+            .then((msg) => {
+                if (msg !== undefined&&msg.length!==undefined) {
+                    this.dataLength = this.state.BeautyList.length;
                     let data = BeautyDataUtils.requestBeautyData(msg);
+                    console.log('BeautyScene------>_GetBusinessLocationsWithinRadius', data);
                     data.length > 0 ? this.setState({NoData: false}) : this.setState({NoData: true});
                     this.setState({
-                        isLoading:false,
-                        BeautyList: BeautyList.concat(data),
+                        isLoading: false,
+                        BeautyList: this.state.BeautyList.concat(data),
                         refreshState: RefreshState.Idle,
                     }, () => {
-                        if (BeautyList.length === this.dataLength) {
+                        if (this.state.BeautyList.length === this.dataLength) {
                             this.setState({refreshState: RefreshState.NoMoreData})
                         }
                     });
-                })
-                .catch((e) => {
-                    console.warn(e);
+                }else{
                     this.setState({
-                        refreshState: RefreshState.Failure,
+                        isLoading: false,
+                        refreshState: RefreshState.NoMoreData
                     })
-                });
+                }
+            })
+            .catch((e) => {
+                console.warn('ERROR---> BeautyScene.js L133',e);
+                this.setState({
+                    isLoading: false,
+                    refreshState: RefreshState.Failure,
+                })
+            });
     };
-
+    nextPage=async()=>{
+        console.log('nextPage');
+        ++this.page;
+        //叠加翻页数据
+        this.setState({refreshState: RefreshState.FooterRefreshing});
+        let {searchKey,LocationSearchKey} = this.state;
+        // if (searchKey!==null) {
+        //     this._getProducerByName(searchKey);
+        //     // this.setState({refreshState: RefreshState.NoMoreData})//暂时没有分页,临时停止翻页刷新
+        // } else if (LocationSearchKey!==null){
+        //     // this._getProducerByGPS(center.latitude,center.longitude,radius);
+        //     this.setState({refreshState: RefreshState.NoMoreData})//暂时没有分页,临时停止翻页刷新
+        // }
+        this._GetBusinessLocationsWithinRadius();
+    };
     keyExtractor = (item: Object, index: number) => {
         return item.id
     };
@@ -147,6 +183,10 @@ export default class BeautyScene extends PureComponent<Props> {
                 (error,result)=>{
                     if (error||result==null){
                         console.log('取值失败');
+                        this.setState({
+                            isLoading: false,
+                            refreshState: RefreshState.Failure,
+                        })
                     }else{
                         let LatLngLog=JSON.parse(result);
                         this.setState({
@@ -168,7 +208,8 @@ export default class BeautyScene extends PureComponent<Props> {
     }
     componentWillMount() {
         this.getLocationSearchKey();
-       this.getLatLngLog();
+        this.getLatLngLog();
+        // this.requestData()
     }
     renderCell = (rowData: any) => {
         return (
@@ -176,8 +217,8 @@ export default class BeautyScene extends PureComponent<Props> {
                 <BeautyCell
                     info={rowData.item}
                     latLng={this.state.LatLng}
-                    onPress={() => {
-                        this.props.navigation.navigate('BeautyDetail', {info: rowData.item})//跳到商品详情
+                    onPress={(info,distance,reviews,rating) => {
+                        this.props.navigation.navigate('BeautyDetail', {info: rowData.item,distance:distance,reviews:reviews,rating:rating})//跳到商品详情
                     }}
                 />
             </View>
@@ -194,7 +235,7 @@ export default class BeautyScene extends PureComponent<Props> {
         return (
             <View style={{alignItems:'center',
             backgroundColor: 'transparent'}}>
-                <Text style={{color: '#fff', fontSize: 13, fontFamily: 'arial',paddingTop:5}}>
+                <Text style={{color: '#fff', fontSize: ScreenUtil.setSpText(13), fontFamily: 'arial',paddingTop:5}}>
                     Please enter keywords to search.
                 </Text>
             </View>
@@ -223,13 +264,13 @@ export default class BeautyScene extends PureComponent<Props> {
                                 this.props.navigation.goBack();//返回按钮图片
                                 this.toWait();
                             }}>
-                            <Image source={require('../../../img/mine/icon_homepage_left_arrow.png')}
+                            <Image source={LocalImage.goBackIcon}
                                    style={[commonStyle.searchIcon, {}]}/>
                         </TouchableOpacity>
                         <TouchableOpacity style={commonStyle.BarTitle}>
                             <Text style={{
                                 color: '#ffffff',
-                                fontSize: 16,
+                                fontSize: ScreenUtil.setSpText(16),
                                 fontFamily: 'arial',
                             }}>BUSINESSES</Text>
                         </TouchableOpacity>
@@ -285,7 +326,7 @@ export default class BeautyScene extends PureComponent<Props> {
                                               });
                                           this.toWait();
                                       }}>
-                        <Image source={require('../../../img/nearby/Search.png')} style={commonStyle.searchIcon}/>
+                        <Image source={LocalImage.searchIcon} style={commonStyle.searchIcon}/>
                         <Text style={commonStyle.searchText}>{searchKey === null ? 'What to' : searchKey} </Text>
                         {searchKey === null &&
                         <Text style={commonStyle.searchText2}>search?</Text>}
@@ -313,7 +354,7 @@ export default class BeautyScene extends PureComponent<Props> {
                                               });
                                           this.toWait();
                                       }}>
-                        <Image source={require('../../../img/nearby/locationB.png')} style={commonStyle.searchIcon}/>
+                        <Image source={LocalImage.locationIcon} style={commonStyle.searchIcon}/>
                         <Text
                             style={commonStyle.searchText}>{LocationSearchKey === null ? 'Select the' : LocationSearchKey} </Text>
                         {LocationSearchKey === null &&
@@ -334,7 +375,11 @@ export default class BeautyScene extends PureComponent<Props> {
                         this.getPosition();
                         // alert('取值失败:'+error);
                     } else {
-                        this.setState({LocationSearchKey: result});
+                        this.setState({
+                            LocationSearchKey: result,
+                            isLoading: true,
+                            NoData: false
+                        });
                     }
                 }
             )
@@ -345,7 +390,7 @@ export default class BeautyScene extends PureComponent<Props> {
 
     componentDidMount() {
         // this.setState({isLoading: true});
-        this.requestData()
+        // this.requestData()
     }
 
     /** 获取地理位置（经纬度） */

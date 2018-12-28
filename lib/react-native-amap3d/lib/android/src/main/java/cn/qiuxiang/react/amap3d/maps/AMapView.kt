@@ -8,21 +8,31 @@ import cn.qiuxiang.react.amap3d.toWritableMap
 import com.amap.api.maps.AMap
 import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.TextureMapView
-import com.amap.api.maps.model.BitmapDescriptorFactory
-import com.amap.api.maps.model.CameraPosition
-import com.amap.api.maps.model.Marker
-import com.amap.api.maps.model.MyLocationStyle
+import com.amap.api.maps.model.*
+import com.amap.api.services.core.AMapException
+import com.amap.api.services.core.LatLonPoint
+import com.amap.api.services.geocoder.GeocodeResult
+import com.amap.api.services.geocoder.GeocodeSearch
+import com.amap.api.services.geocoder.RegeocodeQuery
+import com.amap.api.services.geocoder.RegeocodeResult
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableMap
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.events.RCTEventEmitter
 
-class AMapView(context: Context) : TextureMapView(context) {
+
+class AMapView(context: Context) : TextureMapView(context), GeocodeSearch.OnGeocodeSearchListener  {
+
     private val eventEmitter: RCTEventEmitter = (context as ThemedReactContext).getJSModule(RCTEventEmitter::class.java)
     private val markers = HashMap<String, AMapMarker>()
     private val lines = HashMap<String, AMapPolyline>()
+    private val AMAP: AMap? = getMap()
+    private val geocoderSearch: GeocodeSearch = GeocodeSearch(context)
+    private var coordinates: ArrayList<LatLng> = ArrayList()
+
     private val locationStyle by lazy {
         val locationStyle = MyLocationStyle()
         locationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER)
@@ -32,15 +42,30 @@ class AMapView(context: Context) : TextureMapView(context) {
     init {
         super.onCreate(null)
 
+        try {
+            map.setMapLanguage("en");
+            com.amap.api.maps.MapsInitializer.loadWorldGridMap(true);
+            geocoderSearch.setOnGeocodeSearchListener(this);
+        } catch (e: Exception) {
+            println("Exception"+e)
+        }
+
+
+//        AMap.OnMapLoadedListener {
+//            getAddressAsync(
+//                    LatLonPoint( coordinate.toLatLng().latitude,  coordinate.toLatLng().longitude)
+//            )
+//        }
+
         map.setOnMapClickListener { latLng ->
             for (marker in markers.values) {
                 marker.active = false
             }
-
             emit(id, "onPress", latLng.toWritableMap())
         }
 
         map.setOnMapLongClickListener { latLng ->
+            getAddressAsync(LatLonPoint(latLng.latitude, latLng.longitude))
             emit(id, "onLongPress", latLng.toWritableMap())
         }
 
@@ -104,6 +129,53 @@ class AMapView(context: Context) : TextureMapView(context) {
         }
 
         map.setInfoWindowAdapter(AMapInfoWindowAdapter(context, markers))
+
+    }
+
+
+
+    /**
+     * 响应逆地理编码
+     */
+   fun getAddressAsync(latLonPoint: LatLonPoint) {
+        val query = RegeocodeQuery(latLonPoint, 200f,GeocodeSearch.AMAP);// 第一个参数表示一个Latlng，第二参数表示范围多少米，第三个参数表示是火系坐标系还是GPS原生坐标系
+       geocoderSearch.getFromLocationAsyn(query)// 设置异步逆地理编码请求
+   }
+    override fun onGeocodeSearched(result: GeocodeResult?, rCode: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onRegeocodeSearched(result: RegeocodeResult?, rCode: Int) {
+        var writableMap = Arguments.createMap();
+        if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+            if (result != null && result.getRegeocodeAddress() != null
+                    && result.getRegeocodeAddress().getFormatAddress() != null) {
+                val addressName:String? = result.getRegeocodeAddress().getFormatAddress();
+                var  addressNameTemp = "";
+                if (result.getRegeocodeAddress().getAois().size > 0) {
+                    addressNameTemp = result.getRegeocodeAddress().getAois().get(0).getAoiName();
+                } else {
+                    val len = result.getRegeocodeAddress().getTownship().length;
+                    val indexTownship = addressName?.indexOf(result.getRegeocodeAddress().getTownship())!!.plus(len);
+                    val addressName2 = addressName.substring(indexTownship);
+
+                            if (addressName2.length > 0) addressNameTemp = addressName
+                    else addressNameTemp = result.getRegeocodeAddress().getTownship(); //+ "附近";
+                }
+
+                writableMap.putString("addressName", addressNameTemp);
+                try {
+//                    aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+//                            point, 15f));
+//                    regeoMarker.setPosition(point);
+                } catch (e:Exception ) {
+                    e.printStackTrace();
+                }
+            }
+            (context as ThemedReactContext)
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                            .emit("amap.onMapClickDone", writableMap)
+        }
     }
 
     fun emitCameraChangeEvent(event: String, position: CameraPosition?) {
@@ -195,6 +267,11 @@ class AMapView(context: Context) : TextureMapView(context) {
         map.moveCamera(CameraUpdateFactory.newLatLngBounds(region.toLatLngBounds(), 0))
     }
 
+    fun setCoordinate(coordinates: ReadableMap) {
+        getAddressAsync(
+                LatLonPoint( coordinates.toLatLng().latitude,  coordinates.toLatLng().longitude)
+        )
+    }
     fun setLimitRegion(region: ReadableMap) {
         map.setMapStatusLimits(region.toLatLngBounds())
     }

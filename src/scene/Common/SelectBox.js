@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 var Dimensions = require('Dimensions');
 import screen from '../../common/screen'
+import * as ScreenUtil from "./ScreenUtil";
 export default class SelectBox extends Component {
     constructor(props){
         super(props);
@@ -92,7 +93,7 @@ class CourseItem extends Component{
         return(
             <TouchableOpacity style={styles.boxView} onPress={this.props.onPress}>
                 <View >
-                    <Text style={{fontSize:13, color:'#000',fontWeight:'200'}}>{this.props.course}</Text>
+                    <Text style={{fontSize:ScreenUtil.setSpText(13), color:'#000',fontWeight:'200'}}>{this.props.course}</Text>
                 </View>
             </TouchableOpacity>
         )
@@ -124,11 +125,11 @@ const styles = StyleSheet.create({
     },
     selCourseText:{
         padding:8,
-        fontSize:18,
+        fontSize:ScreenUtil.setSpText(18),
     },
     blackText:{
         color:'black',
-        fontSize:16,
+        fontSize:ScreenUtil.setSpText(16),
     },
     arrowStyle:{
         width:20,
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     },
     headText:{
         color:'#fff',
-        fontSize:13,
+        fontSize:ScreenUtil.setSpText(13),
     },
     headStyle:{
         flexDirection:'row',

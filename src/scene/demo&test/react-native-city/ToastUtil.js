@@ -13,6 +13,7 @@ import {
     Text,
 } from 'react-native'
 import PropTypes from 'prop-types'
+import * as ScreenUtil from "../../Common/ScreenUtil";
 export const DURATION = {LENGTH_LONG: 2000, LENGTH_SHORT: 500};
 const {height, width} = Dimensions.get('window');
 const OPACITY=0.6;
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     text:{
-        fontSize:30,
+        fontSize:ScreenUtil.setSpText(30),
         fontFamily:'arial',
         fontWeight:'200',
         color:'white'

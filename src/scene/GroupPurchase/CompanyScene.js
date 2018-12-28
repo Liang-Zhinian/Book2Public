@@ -190,7 +190,7 @@ class CompanyScene extends PureComponent<Props, State> {
                     <TouchableOpacity activeOpacity={0.5} onPress={() => {
                         this.props.navigation.goBack();
                     }}>
-                        <Image source={require('../../img/mine/icon_homepage_left_arrow.png')}
+                        <Image source={LocalImage.goBackIcon}
                                style={[styles.callbackIcon, {}]}
                                onPress={() => {
                                    this.props.navigation.goBack();

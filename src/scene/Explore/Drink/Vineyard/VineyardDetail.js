@@ -19,12 +19,15 @@ import {commonStyle} from "../../../../widget/commonStyle";
 import RefreshListView, {RefreshState} from 'react-native-refresh-list-view'
 import DrinkDetailDataUtils from "../DrinkDetailDataUtils";
 import VineyardCell from "./VineyardCell";
-import {getWineByVineyard,amapStaticImg} from "../../../../api";
+import {getWineByVineyard, amapStaticImg, getWineByProducer} from "../../../../api";
 import MasonryList from "../../../Common/Waterfall/MasonryList";
 import PlacehoderImage from "../../../Common/Waterfall/PlaceholderImage";
 import {Heading2} from "../../../../widget/Text";
 import {color} from "../../../../widget";
 import AMapAndroid from "../../../Api/AMapAndroid";
+import LocalImage from "../../../../widget/LocalImage";
+import AMap3D from "../../../Api/AMap.ios";
+import * as ScreenUtil from "../../../Common/ScreenUtil";
 
 type
 Props = {
@@ -94,9 +97,7 @@ export default class VineyardDetail extends PureComponent<Props, State> {
         })
 
     }
-    requestData = async () => {
-        this._getWine();
-    };
+
 
     renderWineList(){
         return (
@@ -112,7 +113,8 @@ export default class VineyardDetail extends PureComponent<Props, State> {
                     renderItem={this.renderCell}
                     refreshState={this.state.refreshStateRe}
                     onHeaderRefresh={this.requestData}
-                    footerTextStyle={{color: '#ffffff'}}
+                    onFooterRefresh={this.nextPage}//上拉翻页回调方法 refreshState参数值为RefreshState.FooterRefreshing
+                    footerTextStyle={{color: '#8f8f8f'}}
                     footerRefreshingText={'loading...'}
                     footerFailureText={'click refresh'}
                     footerNoMoreDataText={'no more data'}
@@ -191,24 +193,49 @@ export default class VineyardDetail extends PureComponent<Props, State> {
     _getHeightForItem = ({item}) => {
         return Math.max(itemWidth, itemWidth / 200 * 200);
     };
-
-
+    requestData = async () => {
+        this.page = 1;
+        this._getWine();
+    };
+    nextPage=async()=>{
+        ++this.page;
+        //叠加翻页数据
+        this.setState({refreshStateRe: RefreshState.FooterRefreshing});
+        // this._getWine();
+    };
+    page = 1;
+    dataLength=0;
+    size=500;
     _getWine = async () => {
-        this.setState({isLoading:true});
+        this.setState({isLoading:true,WinedList:[]});
         let {title,id} = this.props.navigation.state.params.info;
         // console.log(this.props.navigation.state.params.info)
-        await getWineByVineyard(title,id,1,100)
+        await getWineByVineyard(title,id,this.page,this.size)
             .then((msg) => {
-                console.log(msg);
-                this.setState({
-                    refreshing: false,
-                    isLoading:false,
-                    WinedList: DrinkDetailDataUtils.requestWineData(msg),
-                    refreshStateRe: RefreshState.NoMoreData,
-                });
+                if (msg!==undefined){
+                    this.dataLength = this.state.WinedList.length;
+                    let data = DrinkDetailDataUtils.requestWineData(msg);
+                    // data.length > 0 ? this.setState({NoData: false}) : this.setState({NoData: true});
+                    this.setState({
+                        refreshing: false,
+                        isLoading: false,
+                        WinedList: this.state.WinedList.concat(data),
+                        refreshStateRe: RefreshState.Idle,
+                    }, () => {
+                        if (this.state.WinedList.length === this.dataLength) {
+                            this.setState({refreshStateRe: RefreshState.NoMoreData})
+                        }
+                    });
+                }else {
+                    this.setState({
+                        refreshing: false,
+                        isLoading:false,
+                        refreshStateRe: RefreshState.NoMoreData,
+                    });
+                }
             })
-            .catch(() => {
-
+            .catch((e) => {
+                console.log('_getWine--->error', e);
             });
     };
 
@@ -216,37 +243,46 @@ export default class VineyardDetail extends PureComponent<Props, State> {
         let info = this.props.navigation.state.params.info;
         let {WinedList,waiting} = this.state;
         let WineItem = WinedList.map((item) => {
-            return <View style={{paddingTop:5,flexDirection:'row',width:screen.width*0.95,justifyContent:'space-between'}}>
+            let hot = [3,3.5,4,4.5,5];
+            let reviews = Math.floor((Math.random()*1000));
+            let rating = hot[Math.floor((Math.random()*10)%4)];
+            return(
                 <TouchableOpacity
                     disabled={waiting}
                     activeOpacity={0.9}
-                    style={styles.container2}
+                    style={[styles.container2,{paddingTop:5}]}
                     onPress={() => {
                         this.setState({waiting: true});
-                        this.props.navigation.navigate('WineDetail', {info :item});//跳到商品详情
+                        this.props.navigation.navigate('WineDetail', {info :item,reviews,rating});//跳到商品详情
                         this.toWait();
                     }}
                 >
                     <View style={styles.rightContainer}>
                         <Heading2 style={{paddingTop: 5}}>{item.title}</Heading2>
+                        <View style={{flexDirection: 'row', paddingTop: 5, marginBottom: 0}}>
+                            <Text style={{fontSize: ScreenUtil.setSpText(12)}}>Color: </Text>
+                            <Text style={{fontSize: ScreenUtil.setSpText(12), color: '#019eff'}}>{item.Colour}</Text>
+                        </View>
+                        <View style={{flexDirection: 'row', paddingTop: 5, marginBottom: 10}}>
+                            <StarRating
+                                maxStars={5}
+                                rating={3.5}
+                                disabled={true}
+                                starSize={15}
+                                onStarChange={(value) => this.onStarRatingPress(value)}
+                            />
+                            <Text style={{paddingLeft: 10, fontSize: ScreenUtil.setSpText(12),color:'#019eff'}}>{reviews} </Text>
+                            <Text style={{ fontSize: ScreenUtil.setSpText(12)}}>reviews</Text>
+                        </View>
                     </View>
-                    <View style={{flexDirection: 'row', marginTop: 0, marginBottom: 10}}>
-                        <StarRating
-                            maxStars={5}
-                            rating={3.5}
-                            disabled={true}
-                            starSize={15}
-                            onStarChange={(value) => this.onStarRatingPress(value)}
-                        />
-                        <Text style={{paddingLeft: 10, fontSize: 12}}>456 reviews</Text>
+                    <View style={{flexDirection: 'column',}}>
+                        {(info.imageUrl !== null && info.imageUrl !== 'null') ?
+                            <Image source={{uri: info.imageUrl}} style={styles.icon}/>
+                            : <Image source={require('../../../../img/public/WineIcon.png')} style={styles.icon}/>}
                     </View>
                 </TouchableOpacity>
-                <View style={{flexDirection: 'column',}}>
-                    {(info.imageUrl !== null && info.imageUrl !== 'null') ?
-                        <Image source={{uri: info.imageUrl}} style={styles.icon}/>
-                        : <Image source={require('../../../../img/public/WineIcon.png')} style={styles.icon}/>}
-                </View>
-            </View>
+            )
+
         });
         return WineItem
     }
@@ -300,8 +336,38 @@ export default class VineyardDetail extends PureComponent<Props, State> {
             />
         )
     }
-    renderHeader = () => {
+    loadAMap() {
         let info = this.props.navigation.state.params.info;
+        return (
+            <View style={commonStyle.mapImageStyle}>
+                <AMap3D
+                    locationEnabled={false}
+                    zoomLevel={14}
+                    coordinate={{
+                        longitude: parseFloat(info.Longitude),
+                        latitude: parseFloat(info.Latitude)
+                    }}
+                    zoomEnabled={false}
+                    scrollEnabled={false}
+                    ref={component => this._amap = component}
+                    onFormattedAddressReceived={this.onFormattedAddressReceived}
+                    onMapLoaded={(e) => {
+                        console.warn('onMapLoaded--->' + e)
+                    }}
+                    onLongPressEvent={(e) => {
+
+                    }}
+                    onMarkerPress={(index) => {
+                    }}
+                    onPressEvent={(e) => {
+                    }}
+                />
+            </View>
+        );
+    }
+
+    renderHeader = () => {
+        let {info,distance,reviews,rating } = this.props.navigation.state.params;
         this.setState({title:info.title});
         let {isLoading,waiting} = this.state;
         return (
@@ -340,24 +406,30 @@ export default class VineyardDetail extends PureComponent<Props, State> {
                                     {info.title}
                                 </Text>
                             </View>
-                            {(info.URL!==null&&info.URL!=='')&&<View style={{}}>
-                                <Text style={{lineHeight: 25}}>
-                                    Website: {info.URL}
-                                </Text>
-                                <Text>
-                                    Away from you: 254km
-                                </Text>
-                            </View>}
-                            <View style={{flexDirection: 'row', paddingTop: 10}}>
+                            {/*{(info.URL!==null&&info.URL!=='')&&<View style={{}}>*/}
+                                {/*<Text style={{lineHeight: 25}}>*/}
+                                    {/*Website: {info.URL}*/}
+                                {/*</Text>*/}
+                               {/**/}
+                            {/*</View>}*/}
+                            {
+                                distance !== 'NaNm' &&
+                                <View style={{flexDirection: 'row', paddingTop: 5, marginBottom: 0}}>
+                                    <Text style={{fontSize: ScreenUtil.setSpText(12)}}>Away from you: </Text>
+                                    <Text style={{fontSize: ScreenUtil.setSpText(12), color: '#019eff'}}>{distance}</Text>
+                                </View>
+                            }
+                            <View style={{flexDirection: 'row', paddingTop: 5}}>
                                 <StarRating
                                     // style={{marginBottom: 5}}
                                     maxStars={5}
-                                    rating={3.5}
+                                    rating={rating}
                                     disabled={true}
                                     starSize={15}
                                     onStarChange={(value) => this.onStarRatingPress(value)}
                                 />
-                                <Text style={{paddingLeft: 10, fontSize: 12}}>123 reviews</Text>
+                                <Text style={{paddingLeft: 10, fontSize: ScreenUtil.setSpText(12),color:'#019eff'}}>{reviews} </Text>
+                                <Text style={{ fontSize: ScreenUtil.setSpText(12)}}>reviews</Text>
                             </View>
                         </View>
                         <View style={{flexDirection: 'column', width: screen.width * 0.1}}>
@@ -376,7 +448,8 @@ export default class VineyardDetail extends PureComponent<Props, State> {
                     </View>
                     <Separator/>
                 </View>
-                {this.getMapView()}
+                {/*{this.getMapView()}*/}
+                {this.loadAMap()}
                 {/*<TouchableOpacity activeOpacity={0.9} style={{*/}
                 {/*padding: 10,*/}
                 {/*flexDirection: 'row',*/}
@@ -423,7 +496,7 @@ export default class VineyardDetail extends PureComponent<Props, State> {
                         this.props.navigation.goBack();
                         this.toWait();
                     }}>
-                        <Image source={require('../../../../img/mine/icon_homepage_left_arrow.png')}
+                        <Image source={LocalImage.goBackIcon}
                                disabled={waiting}
                                style={[commonStyle.callbackIcon, {}]}
                                onPress={() => {
@@ -506,20 +579,21 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 4
     },
     container2: {
-        flexDirection: 'column',
+        flexDirection: 'row',
         paddingLeft: 10,
         paddingRight: 10,
-        width:screen.width*0.7,
+        width:screen.width*0.95,
         alignSelf:'center',
         marginBottom:10,
         borderBottomWidth: screen.onePixel,
         borderColor: color.border,
-        backgroundColor: 'white',
+        backgroundColor: '#fff',
         borderRadius:3,
     },
     rightContainer: {
         flex: 1,
         backgroundColor:"#9dff4f00",
+        justifyContent:'space-between'
     },
     icon: {
         width: 50,

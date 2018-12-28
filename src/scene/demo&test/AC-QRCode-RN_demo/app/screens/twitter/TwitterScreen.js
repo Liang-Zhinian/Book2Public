@@ -12,6 +12,7 @@ import {ImageButton} from "../../components/";
 
 import Styles from './styles/TwitterScreenStyles';
 import {Constants, Images, Colors} from "../../resource/";
+import * as ScreenUtil from "../../../../../Common/ScreenUtil";
 
 
 export default class TwitterScreen extends Component {
@@ -30,7 +31,7 @@ export default class TwitterScreen extends Component {
                 hintText={'我的二维码'}
                 hintTextStyle={{
                     color: Colors.white_fff,
-                    fontSize: 16,
+                    fontSize: ScreenUtil.setSpText(16),
                     backgroundColor: Colors.blue_1DA1F2,
                     paddingTop: 8,
                     paddingBottom: 8,

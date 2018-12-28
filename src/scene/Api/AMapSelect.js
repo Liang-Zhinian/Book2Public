@@ -18,6 +18,7 @@ import {screen} from "../../common";
 import LinearGradient from 'react-native-linear-gradient';
 import {CoordinateConverter,regeocodeLocation} from "../../api";
 import {commonStyle} from "../../widget/commonStyle";
+import LocalImage from "../../widget/LocalImage";
 
 const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window')
 
@@ -76,14 +77,18 @@ export default class AMapSelect extends PureComponent<Props, State> {
                         this.getPosition();
                     } else {
                         let LatLngLog = JSON.parse(result);
-                        this.setState({
-                            center: {
-                                latitude: parseFloat(LatLngLog[0]),
-                                longitude: parseFloat(LatLngLog[1])
-                            },
-                            radius: parseFloat(LatLngLog[2] * 5),
-                            zoom: parseFloat(LatLngLog[3])
-                        });
+                        if (LatLngLog[0]===null||LatLngLog[1]===null){
+                            this.getPosition();
+                        }else {
+                            this.setState({
+                                center: {
+                                    latitude: parseFloat(LatLngLog[0]),
+                                    longitude: parseFloat(LatLngLog[1])
+                                },
+                                radius: parseFloat(LatLngLog[2] * 5),
+                                zoom: parseFloat(LatLngLog[3])
+                            });
+                        }
                     }
                 }
             );
@@ -243,7 +248,7 @@ export default class AMapSelect extends PureComponent<Props, State> {
                                 {/*this.onLongPressEvent();*/}
                                 {/*this.props.navigation.goBack();*/}
                             {/*}}>*/}
-                            {/*<Image source={require('../../img/mine/icon_homepage_left_arrow.png')}*/}
+                            {/*<Image source={LocalImage.goBackIcon}*/}
                                    {/*style={[commonStyle.searchIcon, {}]}/>*/}
                         {/*</TouchableOpacity>*/}
                     {/*</View>*/}

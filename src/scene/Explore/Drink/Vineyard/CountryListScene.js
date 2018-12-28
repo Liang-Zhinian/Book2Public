@@ -16,6 +16,7 @@ import DrinkDetailDataUtils from "../DrinkDetailDataUtils";
 import {Heading3} from "../../../../widget/Text";
 import {screen} from "../../../../common";
 import LinearGradient from "react-native-linear-gradient";
+import LocalImage from "../../../../widget/LocalImage";
 
 const countryImgList={
     'Italy':require('../../../../img/nearby/Drink/area/country/Italy.png'),
@@ -287,7 +288,7 @@ export default class CountryListScene extends Component {
                                     this.setState({waiting: false})
                                 }, 1500);//设置的时间间隔由你决定
                             }}>
-                            <Image source={require('../../../../img/mine/icon_homepage_left_arrow.png')}
+                            <Image source={LocalImage.goBackIcon}
                                    style={[styles.callbackIcon, {}]}
                                    onPress={() => {
                                        // i>0?this.scrollToLastPage(i-1):this.props._toggle();

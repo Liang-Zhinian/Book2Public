@@ -11,6 +11,7 @@ import {
     TouchableOpacity,
     StatusBar
 } from 'react-native';
+import * as ScreenUtil from "../../Common/ScreenUtil";
 
 export default class Header extends Component {
     _onBackBtn(e) {
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
         marginTop: 5
     },
     title: {
-        fontSize: 16,
+        fontSize: ScreenUtil.setSpText(16),
         textAlign: 'center',
         marginLeft: 5,
         marginRight: 5,

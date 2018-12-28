@@ -27,6 +27,7 @@ class ExploreRangeMarkerList extends PureComponent<Props, State>  {
         }
     }
     _GetBusinessLocationsWithinRadius = async (latitude,longitude,name,radius) => {
+        console.log('ExploreRangeMarkerList------>_GetBusinessLocationsWithinRadius');
       let pageSize=10,pageIndex=0;
         await  GetBusinessLocationsWithinRadius(latitude,longitude,radius,name,pageSize,pageIndex)
             .then((responseJson) => {

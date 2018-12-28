@@ -6,7 +6,7 @@
  */
 
 import React, {Component} from 'react'
-import {AsyncStorage, BVLinearGradient, FlatList, Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
+import {AsyncStorage, BVLinearGradient, FlatList, Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView} from 'react-native'
 import SearchBox from '../../Events/SearchBox'
 import LinearGradient from 'react-native-linear-gradient';
 import {screen} from "../../../common/index";
@@ -18,6 +18,8 @@ import Slider from "../../Common/Slider2";
 import SliderV from 'react-native-slider'
 import {getPosition} from "../ExploreRangeScene";
 import {CoordinateConverter} from "../../../api";
+import LocalImage from "../../../widget/LocalImage";
+
 var Geolocation = require('Geolocation');
 
 
@@ -72,7 +74,7 @@ export default class Drink2SearchScene extends Component<Props, State> {
             letterSelect:true,
             picker2Value: 'A',
             defaultValue:null,
-            defaultLocationValue:null,
+            defaultLocationValue:'',
             placeholderLocationValue:'My Location - 0.25km',
             onScrollChange:false,
             showLetter:true,
@@ -96,8 +98,9 @@ export default class Drink2SearchScene extends Component<Props, State> {
     }
     saveAndGoBack(v){
         let {defaultValue, sliderValue, LatLng, defaultLocationValue,zoom} = this.state;
-        AsyncStorage.setItem('defaultSliderValue', (this.state.sliderValue / 5).toString());
-        AsyncStorage.setItem('LocationSearchKey', defaultLocationValue);
+        //console.log(defaultLocationValue)
+        AsyncStorage.setItem('defaultSliderValue', ((this.state.sliderValue||0) / 5).toString());
+        defaultLocationValue && AsyncStorage.setItem('LocationSearchKey', defaultLocationValue);
         if (LatLng===null){
             LatLng = {
                 longitude: 116.404,
@@ -579,7 +582,8 @@ export default class Drink2SearchScene extends Component<Props, State> {
                             this.setState({
                                 sliderValue:e,
                                 placeholderLocationValue:'My Location - '+e+'km',
-                                defaultSliderValue:e/5
+                                defaultSliderValue:e/5,
+                                defaultLocationValue:'My Location - '+e+'km',
                             });
                             // li.map((info,i)=>{
                             //
@@ -666,7 +670,7 @@ export default class Drink2SearchScene extends Component<Props, State> {
                         key={'My-Location'}
                     >
                         <View style={{paddingRight: 5}}>
-                            <Image source={require('../../../img/nearby/locationB.png')}
+                            <Image source={LocalImage.locationIcon}
                                    style={[commonStyle.searchIcon, {}]}/>
                         </View>
                         <View style={{}}>
@@ -705,12 +709,15 @@ export default class Drink2SearchScene extends Component<Props, State> {
                             start={{x: 0, y: 0}}
                             end={{x: 1, y: 1}}
                             style={[commonStyle.linearGradient,{}]}>
+                            <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }}>
+
                 <View style={{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignSelf: 'center',
                     width: screen.width * 0.95,
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    marginTop: 20
                 }}>
                     <View style={{flexDirection: 'row', alignItems: 'center',marginTop:5}}>
                         <TouchableOpacity
@@ -788,6 +795,7 @@ export default class Drink2SearchScene extends Component<Props, State> {
                     }}
                 />
                 <View style={{backgroundColor:'#ffffff00',padding:2,width:screen.width}}/>
+                {this.props.navigation.state.params.category!=='wine'&&
                 <SearchBox
                     img={'location'}
                     backgroundColor={this.state.SearchBoxLocationBGC}
@@ -809,6 +817,8 @@ export default class Drink2SearchScene extends Component<Props, State> {
                         this.setState({defaultLocationValue:null})
                     }}
                 />
+                }
+
                 {/*{this.state.showLetter&&this.showLetter()}*/}
 
                 {this.state.showLocation&&this.showSlider()}
@@ -834,7 +844,7 @@ export default class Drink2SearchScene extends Component<Props, State> {
                         {/*}}>*/}
                     {/*</TextInput>*/}
                 {/*</View>*/}
-
+                </SafeAreaView>
 
             </LinearGradient>
         )

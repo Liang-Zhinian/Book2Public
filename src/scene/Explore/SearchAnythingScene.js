@@ -11,7 +11,8 @@ import GroupPurchaseCell from '../GroupPurchase/GroupPurchaseCell'
 import CommodityDetails from "../GroupPurchase/CommodityDetails";
 import {commonStyle} from "../../widget/commonStyle";
 import AMapSelect from "../Api/AMapSelect";
-
+import  LocalImage from '../../widget/LocalImage'
+import * as ScreenUtil from "../Common/ScreenUtil";
 var Geolocation = require('Geolocation');
 type
 Props = {
@@ -218,13 +219,13 @@ export default class SearchAnythingScene extends PureComponent<Props> {
                         }} onPress={() => {
                             this.props.navigation.goBack();//返回按钮图片
                         }}>
-                            <Image source={require('../../img/mine/icon_homepage_left_arrow.png')}
+                            <Image source={LocalImage.goBackIcon}
                                    style={[commonStyle.searchIcon, {}]}/>
                         </TouchableOpacity>
                         <TouchableOpacity style={commonStyle.BarTitle}>
                             <Text style={{
                                 color: '#ffffff',
-                                fontSize: 16,
+                                fontSize: ScreenUtil.setSpText(16),
                                 fontFamily: 'arial',
                             }}>BUSINESSES</Text>
                         </TouchableOpacity>
@@ -271,7 +272,7 @@ export default class SearchAnythingScene extends PureComponent<Props> {
                                 siteId: this.props.navigation.state.params.siteId,
                             });
                     }}>
-                        <Image source={require('../../img/nearby/locationB.png')} style={commonStyle.searchIcon}/>
+                        <Image source={LocalImage.locationIcon} style={commonStyle.searchIcon}/>
                         <Text
                             numberOfLines={1}
                             style={[{width:lo?null:screen.width*0.8,},commonStyle.searchText]}

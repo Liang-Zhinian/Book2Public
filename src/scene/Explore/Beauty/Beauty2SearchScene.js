@@ -18,6 +18,8 @@ import Slider from "../../Common/Slider2";
 import SliderV from 'react-native-slider'
 import {getPosition} from "../ExploreRangeScene";
 import {CoordinateConverter} from "../../../api";
+import LocalImage from "../../../widget/LocalImage";
+
 var Geolocation = require('Geolocation');
 
 
@@ -606,7 +608,7 @@ export default class Beauty2SearchScene extends Component<Props, State> {
                         key={'My-Location'}
                     >
                         <View style={{paddingRight:5}}>
-                            <Image source={require('../../../img/nearby/locationB.png')}
+                            <Image source={LocalImage.locationIcon}
                                    style={[commonStyle.searchIcon, {}]}/>
                         </View>
                         <View style={{}}>
